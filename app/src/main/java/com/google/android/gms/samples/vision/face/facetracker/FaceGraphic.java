@@ -18,9 +18,12 @@ package com.google.android.gms.samples.vision.face.facetracker;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 
 import com.google.android.gms.samples.vision.face.facetracker.ui.camera.GraphicOverlay;
 import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.Landmark;
+import com.google.common.base.Optional;
 
 /**
  * Graphic instance for rendering face position, orientation, and landmarks within an associated
@@ -34,19 +37,20 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     private static final float BOX_STROKE_WIDTH = 5.0f;
 
     private static final int COLOR_CHOICES[] = {
-        Color.BLUE,
-        Color.CYAN,
-        Color.GREEN,
-        Color.MAGENTA,
-        Color.RED,
-        Color.WHITE,
-        Color.YELLOW
+            Color.BLUE,
+            Color.CYAN,
+            Color.GREEN,
+            Color.MAGENTA,
+            Color.RED,
+            Color.WHITE,
+            Color.YELLOW
     };
     private static int mCurrentColorIndex = 0;
 
     private Paint mFacePositionPaint;
     private Paint mIdPaint;
     private Paint mBoxPaint;
+    private final Paint mEyeOutlinePaint;
 
     private volatile Face mFace;
     private int mFaceId;
@@ -69,6 +73,11 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         mBoxPaint.setColor(selectedColor);
         mBoxPaint.setStyle(Paint.Style.STROKE);
         mBoxPaint.setStrokeWidth(BOX_STROKE_WIDTH);
+
+        mEyeOutlinePaint = new Paint();
+        mEyeOutlinePaint.setColor(Color.BLACK);
+        mEyeOutlinePaint.setStyle(Paint.Style.STROKE);
+        mEyeOutlinePaint.setStrokeWidth(5);
     }
 
     void setId(int id) {
@@ -100,8 +109,8 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         float y = translateY(face.getPosition().y + face.getHeight() / 2);
         canvas.drawCircle(x, y, FACE_POSITION_RADIUS, mFacePositionPaint);
         canvas.drawText("id: " + mFaceId, x + ID_X_OFFSET, y + ID_Y_OFFSET, mIdPaint);
-        canvas.drawText("right eye: " + String.format("%.2f", face.getIsRightEyeOpenProbability()), x + ID_X_OFFSET * 2, y + ID_Y_OFFSET * 2, mIdPaint);
-        canvas.drawText("left eye: " + String.format("%.2f", face.getIsLeftEyeOpenProbability()), x - ID_X_OFFSET*2, y - ID_Y_OFFSET*2, mIdPaint);
+        drawEyesIfDetected(canvas, face);
+        drawEyesOpenProbabilities(canvas, face);
 
         // Draws a bounding box around the face.
         float xOffset = scaleX(face.getWidth() / 2.0f);
@@ -111,5 +120,51 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         float right = x + xOffset;
         float bottom = y + yOffset;
         canvas.drawRect(left, top, right, bottom, mBoxPaint);
+    }
+
+    private void drawEyesOpenProbabilities(Canvas canvas, Face face) {
+        drawLeftEyeOpenProbability(canvas, face);
+        drawRightEyeOpenProbability(canvas, face);
+    }
+
+    private void drawLeftEyeOpenProbability(Canvas canvas, Face face) {
+        Optional<PointF> eyePos = getLandmarkPosition(face, Landmark.LEFT_EYE);
+        if(eyePos.isPresent()) {
+            canvas.drawText("left eye: " + String.format("%.2f", face.getIsLeftEyeOpenProbability()), translateX(eyePos.get().x), translateY(eyePos.get().y), mIdPaint);
+        }
+    }
+
+    private void drawRightEyeOpenProbability(Canvas canvas, Face face) {
+        Optional<PointF> eyePos = getLandmarkPosition(face, Landmark.RIGHT_EYE);
+        if(eyePos.isPresent()) {
+            canvas.drawText("right eye: " + String.format("%.2f", face.getIsRightEyeOpenProbability()), translateX(eyePos.get().x), translateY(eyePos.get().y), mIdPaint);
+        }
+    }
+
+    private void drawEyesIfDetected(Canvas canvas, Face face) {
+        drawEyeIfDetected(canvas, face, Landmark.LEFT_EYE);
+        drawEyeIfDetected(canvas, face, Landmark.RIGHT_EYE);
+    }
+
+    private void drawEyeIfDetected(Canvas canvas, Face face, int eyeLandmark) {
+        float eyeRadius = 50;
+        Optional<PointF> eyePos = getLandmarkPosition(face, eyeLandmark);
+        if(eyePos.isPresent()) {
+            PointF eyePos2Draw = new PointF(translateX(eyePos.get().x), translateY(eyePos.get().y));
+            canvas.drawCircle(eyePos2Draw.x, eyePos2Draw.y, eyeRadius, mEyeOutlinePaint);
+        }
+    }
+
+    /**
+     * Finds a specific landmark position, or approximates the position based on past observations
+     * if it is not present.
+     */
+    private Optional<PointF> getLandmarkPosition(Face face, int landmarkId) {
+        for (Landmark landmark : face.getLandmarks()) {
+            if (landmark.getType() == landmarkId) {
+                return Optional.of(landmark.getPosition());
+            }
+        }
+        return Optional.absent();
     }
 }
