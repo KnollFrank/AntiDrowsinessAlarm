@@ -111,7 +111,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         canvas.drawCircle(x, y, FACE_POSITION_RADIUS, mFacePositionPaint);
         canvas.drawText("id: " + mFaceId, x + ID_X_OFFSET, y + ID_Y_OFFSET, mIdPaint);
         drawEyesIfDetected(canvas, face);
-        drawEyesOpenProbabilities(canvas, face);
+        drawEyesOpenProbabilitiesIfDetected(canvas, face);
 
         // Draws a bounding box around the face.
         float xOffset = scaleX(face.getWidth() / 2.0f);
@@ -123,13 +123,13 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         canvas.drawRect(left, top, right, bottom, mBoxPaint);
     }
 
-    private void drawEyesOpenProbabilities(Canvas canvas, Face face) {
-        drawLeftEyeOpenProbability(canvas, face);
-        drawRightEyeOpenProbability(canvas, face);
+    private void drawEyesOpenProbabilitiesIfDetected(Canvas canvas, Face face) {
+        drawLeftEyeOpenProbabilityIfDetected(canvas, face);
+        drawRightEyeOpenProbabilityIfDetected(canvas, face);
     }
 
-    private void drawLeftEyeOpenProbability(Canvas canvas, Face face) {
-        drawEyeOpenProbability(
+    private void drawLeftEyeOpenProbabilityIfDetected(Canvas canvas, Face face) {
+        drawEyeOpenProbabilityIfDetected(
                 canvas,
                 face,
                 Landmark.LEFT_EYE,
@@ -141,8 +141,8 @@ class FaceGraphic extends GraphicOverlay.Graphic {
                 });
     }
 
-    private void drawRightEyeOpenProbability(Canvas canvas, Face face) {
-        drawEyeOpenProbability(
+    private void drawRightEyeOpenProbabilityIfDetected(Canvas canvas, Face face) {
+        drawEyeOpenProbabilityIfDetected(
                 canvas,
                 face,
                 Landmark.RIGHT_EYE,
@@ -154,7 +154,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
                 });
     }
 
-    private void drawEyeOpenProbability(Canvas canvas, Face face, int eyeLandmark, Function<Face, Float> isEyeOpenProbabilitySupplier) {
+    private void drawEyeOpenProbabilityIfDetected(Canvas canvas, Face face, int eyeLandmark, Function<Face, Float> isEyeOpenProbabilitySupplier) {
         Optional<PointF> eyePos = getLandmarkPosition(face, eyeLandmark);
         if(eyePos.isPresent()) {
             canvas.drawText(String.format("%.2f", isEyeOpenProbabilitySupplier.apply(face)), translateX(eyePos.get().x), translateY(eyePos.get().y), mIdPaint);
