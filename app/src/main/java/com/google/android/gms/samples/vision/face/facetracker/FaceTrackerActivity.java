@@ -28,6 +28,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -52,6 +53,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
+    private TextView mStatusView;
 
     private static final int RC_HANDLE_GMS = 9001;
     // permission request codes need to be < 256
@@ -71,6 +73,9 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
         mPreview = (CameraSourcePreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
+
+        mStatusView = (TextView)findViewById(R.id.textView);
+        mStatusView.setText("Hello this is me, FK");
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
@@ -270,7 +275,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
         @Override
         public Tracker<Face> create(Face face) {
-            return new GraphicFaceTracker(mGraphicOverlay);
+            return new GraphicFaceTracker(mGraphicOverlay, mStatusView);
         }
     }
 
@@ -281,9 +286,11 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private class GraphicFaceTracker extends Tracker<Face> {
         private GraphicOverlay mOverlay;
         private FaceGraphic mFaceGraphic;
+        private TextView mStatusView;
 
-        GraphicFaceTracker(GraphicOverlay overlay) {
+        GraphicFaceTracker(GraphicOverlay overlay, TextView statusView) {
             mOverlay = overlay;
+            mStatusView = statusView;
             mFaceGraphic = new FaceGraphic(overlay);
         }
 
@@ -299,9 +306,21 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          * Update the position/characteristics of the face within the overlay.
          */
         @Override
-        public void onUpdate(FaceDetector.Detections<Face> detectionResults, Face face) {
+        public void onUpdate(FaceDetector.Detections<Face> detectionResults, final Face face) {
             mOverlay.add(mFaceGraphic);
             mFaceGraphic.updateFace(face);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5) {
+                        mStatusView.setText("eyes opened");
+                    } else if(face.getIsLeftEyeOpenProbability() < 0.5 && face.getIsRightEyeOpenProbability() < 0.5) {
+                        mStatusView.setText("eyes closed");
+                    } else {
+                        mStatusView.setText("I don't know");
+                    }
+                }
+            });
         }
 
         /**
