@@ -23,6 +23,7 @@ import android.graphics.PointF;
 import com.google.android.gms.samples.vision.face.facetracker.ui.camera.GraphicOverlay;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.Landmark;
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
 /**
@@ -128,16 +129,35 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     }
 
     private void drawLeftEyeOpenProbability(Canvas canvas, Face face) {
-        Optional<PointF> eyePos = getLandmarkPosition(face, Landmark.LEFT_EYE);
-        if(eyePos.isPresent()) {
-            canvas.drawText("left eye: " + String.format("%.2f", face.getIsLeftEyeOpenProbability()), translateX(eyePos.get().x), translateY(eyePos.get().y), mIdPaint);
-        }
+        drawEyeOpenProbability(
+                canvas,
+                face,
+                Landmark.LEFT_EYE,
+                new Function<Face, Float>() {
+                    @Override
+                    public Float apply(Face face) {
+                        return face.getIsLeftEyeOpenProbability();
+                    }
+                });
     }
 
     private void drawRightEyeOpenProbability(Canvas canvas, Face face) {
-        Optional<PointF> eyePos = getLandmarkPosition(face, Landmark.RIGHT_EYE);
+        drawEyeOpenProbability(
+                canvas,
+                face,
+                Landmark.RIGHT_EYE,
+                new Function<Face, Float>() {
+                    @Override
+                    public Float apply(Face face) {
+                        return face.getIsRightEyeOpenProbability();
+                    }
+                });
+    }
+
+    private void drawEyeOpenProbability(Canvas canvas, Face face, int eyeLandmark, Function<Face, Float> isEyeOpenProbabilitySupplier) {
+        Optional<PointF> eyePos = getLandmarkPosition(face, eyeLandmark);
         if(eyePos.isPresent()) {
-            canvas.drawText("right eye: " + String.format("%.2f", face.getIsRightEyeOpenProbability()), translateX(eyePos.get().x), translateY(eyePos.get().y), mIdPaint);
+            canvas.drawText(String.format("%.2f", isEyeOpenProbabilitySupplier.apply(face)), translateX(eyePos.get().x), translateY(eyePos.get().y), mIdPaint);
         }
     }
 
