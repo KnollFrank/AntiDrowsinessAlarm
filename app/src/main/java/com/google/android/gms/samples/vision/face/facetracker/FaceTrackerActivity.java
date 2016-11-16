@@ -22,9 +22,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.PointF;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -41,8 +41,6 @@ import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.android.gms.samples.vision.face.facetracker.ui.camera.CameraSourcePreview;
 import com.google.android.gms.samples.vision.face.facetracker.ui.camera.GraphicOverlay;
-import com.google.android.gms.vision.face.Landmark;
-import com.google.common.base.Optional;
 
 import java.io.IOException;
 
@@ -57,7 +55,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
-    private TextView mStatusView;
+    private TextView eyesInfoView;
 
     private static final int RC_HANDLE_GMS = 9001;
     // permission request codes need to be < 256
@@ -77,9 +75,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
         mPreview = (CameraSourcePreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
-
-        mStatusView = (TextView)findViewById(R.id.textView);
-        mStatusView.setText("Hello this is me, FK");
+        eyesInfoView = (TextView)findViewById(R.id.eyesInfoView);
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
@@ -279,7 +275,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
         @Override
         public Tracker<Face> create(Face face) {
-            return new GraphicFaceTracker(mGraphicOverlay, mStatusView);
+            return new GraphicFaceTracker(mGraphicOverlay);
         }
     }
 
@@ -290,12 +286,10 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private class GraphicFaceTracker extends Tracker<Face> {
         private GraphicOverlay mOverlay;
         private FaceGraphic mFaceGraphic;
-        private TextView mStatusView;
         private MediaPlayer mediaPlayer;
 
-        GraphicFaceTracker(GraphicOverlay overlay, TextView statusView) {
+        GraphicFaceTracker(GraphicOverlay overlay) {
             mOverlay = overlay;
-            mStatusView = statusView;
             mFaceGraphic = new FaceGraphic(overlay);
             this.mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.hupe);
         }
@@ -315,20 +309,39 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         public void onUpdate(FaceDetector.Detections<Face> detectionResults, final Face face) {
             mOverlay.add(mFaceGraphic);
             mFaceGraphic.updateFace(face);
-            // TODO: refactor
+            if(getEyesInfo(face) == EyesInfo.CLOSED) {
+                mediaPlayer.start();
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5) {
-                        mStatusView.setText("eyes opened");
-                    } else if(face.getIsLeftEyeOpenProbability() < 0.5 && face.getIsRightEyeOpenProbability() < 0.5) {
-                        mStatusView.setText("eyes closed");
-                        mediaPlayer.start();
-                    } else {
-                        mStatusView.setText("I don't know");
-                    }
+                    eyesInfoView.setText(asString(getEyesInfo(face)));
                 }
             });
+        }
+
+        @NonNull
+        private String asString(EyesInfo eyesInfo) {
+            switch(eyesInfo) {
+                case OPENED:
+                    return "eyes opened";
+                case CLOSED:
+                    return "eyes closed";
+                case UNKNOWN:
+                    return "I don't know";
+            }
+
+            throw new IllegalStateException();
+        }
+
+        private EyesInfo getEyesInfo(Face face) {
+            if(face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5) {
+                return EyesInfo.OPENED;
+            } else if(face.getIsLeftEyeOpenProbability() < 0.5 && face.getIsRightEyeOpenProbability() < 0.5) {
+                return EyesInfo.CLOSED;
+            } else {
+                return EyesInfo.UNKNOWN;
+            }
         }
 
         /**
