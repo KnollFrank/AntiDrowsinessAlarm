@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.PointF;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -290,11 +291,13 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         private GraphicOverlay mOverlay;
         private FaceGraphic mFaceGraphic;
         private TextView mStatusView;
+        private MediaPlayer mediaPlayer;
 
         GraphicFaceTracker(GraphicOverlay overlay, TextView statusView) {
             mOverlay = overlay;
             mStatusView = statusView;
             mFaceGraphic = new FaceGraphic(overlay);
+            this.mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.hupe);
         }
 
         /**
@@ -312,6 +315,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         public void onUpdate(FaceDetector.Detections<Face> detectionResults, final Face face) {
             mOverlay.add(mFaceGraphic);
             mFaceGraphic.updateFace(face);
+            // TODO: refactor
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -319,6 +323,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                         mStatusView.setText("eyes opened");
                     } else if(face.getIsLeftEyeOpenProbability() < 0.5 && face.getIsRightEyeOpenProbability() < 0.5) {
                         mStatusView.setText("eyes closed");
+                        mediaPlayer.start();
                     } else {
                         mStatusView.setText("I don't know");
                     }
@@ -341,8 +346,10 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          * the overlay.
          */
         @Override
-        public void onDone() {
+        public void onDone()
+        {
             mOverlay.remove(mFaceGraphic);
+            this.mediaPlayer.release();
         }
     }
 }
