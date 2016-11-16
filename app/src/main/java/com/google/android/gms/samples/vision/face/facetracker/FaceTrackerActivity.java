@@ -334,6 +334,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             throw new IllegalStateException();
         }
 
+        // TODO: wann sind die Augen wirklich aus Müdigkeit geschlossen, und wann ist es nur ein normales Blinzeln?
         private EyesInfo getEyesInfo(Face face) {
             if(face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5) {
                 return EyesInfo.OPENED;
