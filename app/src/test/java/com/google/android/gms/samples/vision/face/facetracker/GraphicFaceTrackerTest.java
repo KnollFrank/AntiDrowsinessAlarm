@@ -1,10 +1,14 @@
 package com.google.android.gms.samples.vision.face.facetracker;
 
 import com.google.android.gms.samples.vision.face.facetracker.event.Event;
+import com.google.android.gms.samples.vision.face.facetracker.event.EyesClosedEvent;
+import com.google.android.gms.samples.vision.face.facetracker.event.EyesOpenedEvent;
+import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.android.gms.vision.Frame.Metadata;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -20,7 +24,7 @@ public class GraphicFaceTrackerTest {
         private Event event;
 
         @Subscribe
-        public void recordCustomerChange(Event event) {
+        public void recordEvent(Event event) {
             this.event = event;
         }
 
@@ -31,7 +35,12 @@ public class GraphicFaceTrackerTest {
 
     @Test
     public void shouldCreateEyesClosedEvent() {
-        shouldCreateEvent(0.4f, 0.4f, Event.EyesClosedEvent);
+        shouldCreateEvent(0.4f, 0.4f, new EyesClosedEvent(100));
+    }
+
+    @Test
+    public void shouldCreateEyesClosedEvent2() {
+        shouldCreateEvent(0.4f, 0.4f, new EyesClosedEvent(101));
     }
 
     private void shouldCreateEvent(float isLeftEyeOpenProbability, float isRightEyeOpenProbability, Event event) {
@@ -45,8 +54,13 @@ public class GraphicFaceTrackerTest {
         doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
         doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
 
+        Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
+        Metadata metaData = Mockito.mock(Metadata.class);
+        doReturn(event.getTimestampMillis()).when(metaData).getTimestampMillis();
+        doReturn(metaData).when(detections).getFrameMetadata();
+
         // When
-        tracker.onUpdate(null, face);
+        tracker.onUpdate(detections, face);
 
         // Then
         assertThat(listener.getEvent(), is(event));
@@ -54,6 +68,11 @@ public class GraphicFaceTrackerTest {
 
     @Test
     public void shouldCreateEyesOpenedClosedEvent() {
-        shouldCreateEvent(0.8f, 0.8f, Event.EyesOpenedEvent);
+        shouldCreateEvent(0.8f, 0.8f, new EyesOpenedEvent(123));
+    }
+
+    @Test
+    public void shouldCreateEyesOpenedClosedEvent2() {
+        shouldCreateEvent(0.8f, 0.8f, new EyesOpenedEvent(1234));
     }
 }
