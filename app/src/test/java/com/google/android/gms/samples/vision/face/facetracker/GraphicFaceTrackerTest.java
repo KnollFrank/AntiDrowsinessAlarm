@@ -31,25 +31,10 @@ public class GraphicFaceTrackerTest {
 
     @Test
     public void shouldCreateEyesClosedEvent() {
-        // Given
-        EventListener listener = new EventListener();
-        EventBus eventBus = new EventBus();
-        eventBus.register(listener);
-
-        Tracker<Face> tracker = new GraphicFaceTracker(eventBus);
-        Face face = Mockito.mock(Face.class);
-        doReturn(0.4f).when(face).getIsRightEyeOpenProbability();
-        doReturn(0.4f).when(face).getIsLeftEyeOpenProbability();
-
-        // When
-       tracker.onUpdate(null, face);
-
-        // Then
-        assertThat(listener.getEvent(), is(Event.EyesClosedEvent));
+        shouldCreateEvent(0.4f, 0.4f, Event.EyesClosedEvent);
     }
 
-    @Test
-    public void shouldCreateEyesOpenedClosedEvent() {
+    private void shouldCreateEvent(float isLeftEyeOpenProbability, float isRightEyeOpenProbability, Event event) {
         // Given
         EventListener listener = new EventListener();
         EventBus eventBus = new EventBus();
@@ -57,13 +42,18 @@ public class GraphicFaceTrackerTest {
 
         Tracker<Face> tracker = new GraphicFaceTracker(eventBus);
         Face face = Mockito.mock(Face.class);
-        doReturn(0.8f).when(face).getIsRightEyeOpenProbability();
-        doReturn(0.8f).when(face).getIsLeftEyeOpenProbability();
+        doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
+        doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
 
         // When
         tracker.onUpdate(null, face);
 
         // Then
-        assertThat(listener.getEvent(), is(Event.EyesOpenedEvent));
+        assertThat(listener.getEvent(), is(event));
+    }
+
+    @Test
+    public void shouldCreateEyesOpenedClosedEvent() {
+        shouldCreateEvent(0.8f, 0.8f, Event.EyesOpenedEvent);
     }
 }
