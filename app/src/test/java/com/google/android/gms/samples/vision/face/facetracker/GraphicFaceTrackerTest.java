@@ -40,7 +40,7 @@ public class GraphicFaceTrackerTest {
 
     @Test
     public void shouldCreateEyesClosedEvent2() {
-        shouldCreateEvent(0.4f, 0.4f, new EyesClosedEvent(101));
+        shouldCreateEvent(0.3f, 0.4f, new EyesClosedEvent(101));
     }
 
     private void shouldCreateEvent(float isLeftEyeOpenProbability, float isRightEyeOpenProbability, Event event) {
@@ -54,9 +54,9 @@ public class GraphicFaceTrackerTest {
         doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
         doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
 
-        Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
         Metadata metaData = Mockito.mock(Metadata.class);
         doReturn(event.getTimestampMillis()).when(metaData).getTimestampMillis();
+        Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
         doReturn(metaData).when(detections).getFrameMetadata();
 
         // When
@@ -73,6 +73,6 @@ public class GraphicFaceTrackerTest {
 
     @Test
     public void shouldCreateEyesOpenedClosedEvent2() {
-        shouldCreateEvent(0.8f, 0.8f, new EyesOpenedEvent(1234));
+        shouldCreateEvent(0.8f, 0.9f, new EyesOpenedEvent(1234));
     }
 }
