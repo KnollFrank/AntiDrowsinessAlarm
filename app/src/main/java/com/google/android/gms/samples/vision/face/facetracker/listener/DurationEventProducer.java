@@ -6,13 +6,12 @@ import com.google.android.gms.samples.vision.face.facetracker.event.EyesOpenedEv
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-abstract class DurationEventProducer {
+abstract class DurationEventProducer extends EventProducer {
 
-    private final EventBus eventBus;
     private EyesClosedEvent eyesClosedEvent;
 
     DurationEventProducer(final EventBus eventBus) {
-        this.eventBus = eventBus;
+        super(eventBus);
     }
 
     @Subscribe
@@ -28,7 +27,7 @@ abstract class DurationEventProducer {
 
         long duration=eyesOpenedEvent.getTimestampMillis() - this.eyesClosedEvent.getTimestampMillis();
         if(this.shallCreateEventFor(duration)) {
-            this.eventBus.post(this.createDurationEvent(this.eyesClosedEvent.getTimestampMillis(), duration));
+            this.postEvent(this.createDurationEvent(this.eyesClosedEvent.getTimestampMillis(), duration));
         }
     }
 

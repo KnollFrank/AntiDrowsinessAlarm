@@ -5,6 +5,8 @@ import com.google.android.gms.samples.vision.face.facetracker.event.EyesClosedEv
 import com.google.android.gms.samples.vision.face.facetracker.event.EyesOpenedEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.NormalEyeBlinkEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidClosureEvent;
+import com.google.android.gms.samples.vision.face.facetracker.listener.EyesClosedEventProducer;
+import com.google.android.gms.samples.vision.face.facetracker.listener.EyesOpenedEventProducer;
 import com.google.android.gms.samples.vision.face.facetracker.listener.NormalEyeBlinkEventProducer;
 import com.google.android.gms.samples.vision.face.facetracker.listener.SlowEyelidClosureEventProducer;
 import com.google.android.gms.vision.Detector;
@@ -40,6 +42,8 @@ public class GraphicFaceTrackerTest {
         eventBus.register(this.listener);
         eventBus.register(new NormalEyeBlinkEventProducer(eventBus));
         eventBus.register(new SlowEyelidClosureEventProducer(eventBus));
+        eventBus.register(new EyesOpenedEventProducer(eventBus));
+        eventBus.register(new EyesClosedEventProducer(eventBus));
 
         this.tracker = new GraphicFaceTracker(eventBus);
     }
