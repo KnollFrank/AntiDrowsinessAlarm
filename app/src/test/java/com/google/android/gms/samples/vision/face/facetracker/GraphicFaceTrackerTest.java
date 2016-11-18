@@ -6,6 +6,7 @@ import com.google.android.gms.samples.vision.face.facetracker.event.EyesOpenedEv
 import com.google.android.gms.samples.vision.face.facetracker.event.NormalEyeBlinkEvent;
 import com.google.android.gms.samples.vision.face.facetracker.listener.NormalEyeBlinkEventProducer;
 import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
@@ -46,7 +47,7 @@ public class GraphicFaceTrackerTest {
         shouldCreateEvent(0.3f, 0.4f, new EyesClosedEvent(101));
     }
 
-    private void shouldCreateEvent(float isLeftEyeOpenProbability, float isRightEyeOpenProbability, Event event) {
+    private void shouldCreateEvent(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability, final Event event) {
         // Given
         EventListener listener = new EventListener();
         EventBus eventBus = new EventBus();
@@ -54,14 +55,8 @@ public class GraphicFaceTrackerTest {
 
         Tracker<Face> tracker = new GraphicFaceTracker(eventBus);
 
-        Face face = Mockito.mock(Face.class);
-        doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
-        doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
-
-        Metadata metaData = Mockito.mock(Metadata.class);
-        doReturn(event.getTimestampMillis()).when(metaData).getTimestampMillis();
-        Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
-        doReturn(metaData).when(detections).getFrameMetadata();
+        Face face = createFace(isLeftEyeOpenProbability, isRightEyeOpenProbability);
+        Detector.Detections<Face> detections = getFaceDetections(event.getTimestampMillis());
 
         // When
         tracker.onUpdate(detections, face);
@@ -90,23 +85,11 @@ public class GraphicFaceTrackerTest {
 
         Tracker<Face> tracker = new GraphicFaceTracker(eventBus);
 
-        Face face = Mockito.mock(Face.class);
-        doReturn(0.4f).when(face).getIsLeftEyeOpenProbability();
-        doReturn(0.4f).when(face).getIsRightEyeOpenProbability();
+        Face face = createFaceWithEyesClosed();
+        Detector.Detections<Face> detections = getFaceDetections(0);
 
-        Metadata metaData = Mockito.mock(Metadata.class);
-        doReturn(0l).when(metaData).getTimestampMillis();
-        Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
-        doReturn(metaData).when(detections).getFrameMetadata();
-
-        Face face2 = Mockito.mock(Face.class);
-        doReturn(0.8f).when(face2).getIsLeftEyeOpenProbability();
-        doReturn(0.8f).when(face2).getIsRightEyeOpenProbability();
-
-        Metadata metaData2 = Mockito.mock(Metadata.class);
-        doReturn(499l).when(metaData2).getTimestampMillis();
-        Detector.Detections<Face> detections2 = Mockito.mock(Detector.Detections.class);
-        doReturn(metaData2).when(detections2).getFrameMetadata();
+        Face face2 = createFaceWithEyesOpened();
+        Detector.Detections<Face> detections2 = getFaceDetections(499l);
 
         // When
         tracker.onUpdate(detections, face);
@@ -114,5 +97,30 @@ public class GraphicFaceTrackerTest {
 
         // Then
         assertThat(listener.getEvent(), Matchers.<Event>is(new NormalEyeBlinkEvent(0, 499)));
+    }
+
+    private Detector.Detections<Face> getFaceDetections(long timestampMillis) {
+        Metadata metaData = Mockito.mock(Metadata.class);
+        doReturn(timestampMillis).when(metaData).getTimestampMillis();
+
+        Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
+        doReturn(metaData).when(detections).getFrameMetadata();
+
+        return detections;
+    }
+
+    private Face createFaceWithEyesClosed() {
+        return createFace(0.4f, 0.4f);
+    }
+
+    private Face createFace(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability) {
+        Face face = Mockito.mock(Face.class);
+        doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
+        doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
+        return face;
+    }
+
+    private Face createFaceWithEyesOpened() {
+        return createFace(0.8f, 0.8f);
     }
 }
