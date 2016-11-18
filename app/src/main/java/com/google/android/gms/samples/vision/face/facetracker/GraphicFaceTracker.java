@@ -12,7 +12,7 @@ public class GraphicFaceTracker extends Tracker<Face> {
 
     private final EventBus eventBus;
 
-    public GraphicFaceTracker(EventBus eventBus) {
+    public GraphicFaceTracker(final EventBus eventBus) {
         this.eventBus = eventBus;
     }
 

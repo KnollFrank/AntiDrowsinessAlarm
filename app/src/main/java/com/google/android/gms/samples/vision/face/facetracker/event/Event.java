@@ -2,8 +2,6 @@ package com.google.android.gms.samples.vision.face.facetracker.event;
 
 import com.google.common.base.MoreObjects;
 
-import java.util.Objects;
-
 public abstract class Event {
 
     private final long timestampMillis;
