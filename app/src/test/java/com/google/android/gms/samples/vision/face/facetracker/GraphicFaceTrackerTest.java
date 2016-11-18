@@ -55,11 +55,8 @@ public class GraphicFaceTrackerTest {
 
         Tracker<Face> tracker = new GraphicFaceTracker(eventBus);
 
-        Face face = createFace(isLeftEyeOpenProbability, isRightEyeOpenProbability);
-        Detector.Detections<Face> detections = getFaceDetections(event.getTimestampMillis());
-
         // When
-        tracker.onUpdate(detections, face);
+        tracker.onUpdate(getFaceDetections(event.getTimestampMillis()), createFace(isLeftEyeOpenProbability, isRightEyeOpenProbability));
 
         // Then
         assertThat(listener.getEvent(), is(event));
@@ -85,15 +82,9 @@ public class GraphicFaceTrackerTest {
 
         Tracker<Face> tracker = new GraphicFaceTracker(eventBus);
 
-        Face face = createFaceWithEyesClosed();
-        Detector.Detections<Face> detections = getFaceDetections(0);
-
-        Face face2 = createFaceWithEyesOpened();
-        Detector.Detections<Face> detections2 = getFaceDetections(499l);
-
         // When
-        tracker.onUpdate(detections, face);
-        tracker.onUpdate(detections2, face2);
+        tracker.onUpdate(getFaceDetections(0), createFaceWithEyesClosed());
+        tracker.onUpdate(getFaceDetections(499l), createFaceWithEyesOpened());
 
         // Then
         assertThat(listener.getEvent(), Matchers.<Event>is(new NormalEyeBlinkEvent(0, 499)));
