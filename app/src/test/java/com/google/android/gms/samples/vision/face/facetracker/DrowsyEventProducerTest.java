@@ -7,6 +7,7 @@ import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidCl
 import com.google.android.gms.samples.vision.face.facetracker.listener.DrowsyEventProducer;
 import com.google.common.eventbus.EventBus;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,21 +16,26 @@ import static org.hamcrest.Matchers.is;
 public class DrowsyEventProducerTest {
 
     private GraphicFaceTrackerTest.EventListener listener;
+    private EventBus eventBus;
+    private DrowsyEventProducer drowsyEventProducer;
+
+    @Before
+    public void setup() {
+        this.listener = new GraphicFaceTrackerTest.EventListener();
+        this.eventBus = new EventBus();
+        this.drowsyEventProducer = new DrowsyEventProducer(this.eventBus, 2000);
+        this.eventBus.register(this.drowsyEventProducer);
+        this.eventBus.register(this.listener);
+    }
 
     @Test
     public void shouldCreateDrowsyEvent() {
         // Given
-        this.listener = new GraphicFaceTrackerTest.EventListener();
-        final EventBus eventBus = new EventBus();
-        DrowsyEventProducer drowsyEventProducer = new DrowsyEventProducer(eventBus, 2000);
-        eventBus.register(drowsyEventProducer);
-        eventBus.register(this.listener);
-
-        eventBus.post(new SlowEyelidClosureEvent(100, 600));
-        eventBus.post(new SlowEyelidClosureEvent(1000, 550));
+        this.eventBus.post(new SlowEyelidClosureEvent(100, 600));
+        this.eventBus.post(new SlowEyelidClosureEvent(1000, 550));
 
         // When
-        drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
 
         // Then
         assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(2000, (600.0 + 550.0) / 2000.0)));
@@ -38,17 +44,11 @@ public class DrowsyEventProducerTest {
     @Test
     public void shouldCreateLikelyDrowsyEvent() {
         // Given
-        this.listener = new GraphicFaceTrackerTest.EventListener();
-        final EventBus eventBus = new EventBus();
-        DrowsyEventProducer drowsyEventProducer = new DrowsyEventProducer(eventBus, 2000);
-        eventBus.register(drowsyEventProducer);
-        eventBus.register(this.listener);
-
-        eventBus.post(new SlowEyelidClosureEvent(100, 150));
-        eventBus.post(new SlowEyelidClosureEvent(1000, 55));
+        this.eventBus.post(new SlowEyelidClosureEvent(100, 150));
+        this.eventBus.post(new SlowEyelidClosureEvent(1000, 55));
 
         // When
-        drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
 
         // Then
         assertThat(this.listener.getEvent(), is((Event) new LikelyDrowsyEvent(2000, (150 + 55.0) / 2000.0)));
