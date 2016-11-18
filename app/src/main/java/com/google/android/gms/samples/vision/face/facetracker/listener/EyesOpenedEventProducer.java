@@ -5,28 +5,25 @@ import com.google.android.gms.samples.vision.face.facetracker.event.UpdateEvent;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 
-public class EyesOpenedEventProducer extends EventProducer {
-
-    private Boolean isEyesOpen;
+public class EyesOpenedEventProducer extends StateChangeEventProducer {
 
     public EyesOpenedEventProducer(EventBus eventBus) {
         super(eventBus);
     }
 
-    @Subscribe
-    public void maybeProduceEyesOpenedEvent(UpdateEvent event) {
-        if(this.isEyesOpen(event.getFace())) {
-            if(this.isEyesOpen == null || !this.isEyesOpen) {
-                this.postEvent(new EyesOpenedEvent(this.getTimestampMillis(event.getDetections())));
-                this.isEyesOpen = true;
-            }
-        }
+    @Override
+    protected boolean hasState(Face face) {
+        return this.isEyesOpen(face);
     }
 
     private boolean isEyesOpen(Face face) {
         return face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5;
+    }
+
+    @Override
+    protected Object createStateEventFrom(UpdateEvent event) {
+        return new EyesOpenedEvent(this.getTimestampMillis(event.getDetections()));
     }
 
     private long getTimestampMillis(Detector.Detections<Face> detections) {

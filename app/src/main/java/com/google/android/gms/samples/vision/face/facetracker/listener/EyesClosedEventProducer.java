@@ -5,31 +5,28 @@ import com.google.android.gms.samples.vision.face.facetracker.event.UpdateEvent;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 
-public class EyesClosedEventProducer extends EventProducer {
+public class EyesClosedEventProducer extends StateChangeEventProducer {
 
-    private Boolean isEyesClosed;
-
-    public EyesClosedEventProducer(EventBus eventBus) {
+    public EyesClosedEventProducer(final EventBus eventBus) {
         super(eventBus);
     }
 
-    @Subscribe
-    public void maybeProduceEyesClosedEvent(UpdateEvent event) {
-        if(this.isEyesClosed(event.getFace())) {
-            if(this.isEyesClosed == null || !this.isEyesClosed) {
-                this.postEvent(new EyesClosedEvent(this.getTimestampMillis(event.getDetections())));
-                this.isEyesClosed = true;
-            }
-        }
+    @Override
+    protected boolean hasState(final Face face) {
+        return this.isEyesClosed(face);
     }
 
-    private boolean isEyesClosed(Face face) {
+    private boolean isEyesClosed(final Face face) {
         return face.getIsLeftEyeOpenProbability() < 0.5 && face.getIsRightEyeOpenProbability() < 0.5;
     }
 
-    private long getTimestampMillis(Detector.Detections<Face> detections) {
+    @Override
+    protected Object createStateEventFrom(final UpdateEvent event) {
+        return new EyesClosedEvent(this.getTimestampMillis(event.getDetections()));
+    }
+
+    private long getTimestampMillis(final Detector.Detections<Face> detections) {
         return detections.getFrameMetadata().getTimestampMillis();
     }
 }

@@ -27,6 +27,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.mockito.Mockito.doReturn;
 
 public class GraphicFaceTrackerTest {
@@ -114,6 +115,22 @@ public class GraphicFaceTrackerTest {
 
         // Then
         assertThat(this.listener.getEvents(), contains((Event) (new EyesOpenedEvent(100))));
+    }
+
+    @Test
+    public void shouldCreateEvents() {
+        // When
+        this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(102), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(this.getFaceDetections(103), this.createFaceWithEyesClosed());
+
+        // Then
+        assertThat(this.listener.getEvents(), hasItems(
+                new EyesOpenedEvent(100),
+                new EyesClosedEvent(101),
+                new EyesOpenedEvent(102),
+                new EyesClosedEvent(103)));
     }
 
     private Detector.Detections<Face> getFaceDetections(long timestampMillis) {
