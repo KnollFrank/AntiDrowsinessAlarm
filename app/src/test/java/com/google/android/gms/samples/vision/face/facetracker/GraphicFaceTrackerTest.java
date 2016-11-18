@@ -39,7 +39,7 @@ public class GraphicFaceTrackerTest {
     public void setup() {
         // Given
         this.listener = new EventListener();
-        EventBus eventBus = new EventBus();
+        final EventBus eventBus = new EventBus();
         eventBus.register(this.listener);
         eventBus.register(new NormalEyeBlinkEventProducer(eventBus));
         eventBus.register(new SlowEyelidClosureEventProducer(eventBus));
@@ -151,11 +151,11 @@ public class GraphicFaceTrackerTest {
                 new EyesOpenedEvent(103)));
     }
 
-    private Detector.Detections<Face> getFaceDetections(long timestampMillis) {
-        Metadata metaData = Mockito.mock(Metadata.class);
+    private Detector.Detections<Face> getFaceDetections(final long timestampMillis) {
+        final Metadata metaData = Mockito.mock(Metadata.class);
         doReturn(timestampMillis).when(metaData).getTimestampMillis();
 
-        Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
+        final Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
         doReturn(metaData).when(detections).getFrameMetadata();
 
         return detections;
@@ -166,7 +166,7 @@ public class GraphicFaceTrackerTest {
     }
 
     private Face createFace(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability) {
-        Face face = Mockito.mock(Face.class);
+        final Face face = Mockito.mock(Face.class);
         doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
         doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
         return face;
@@ -176,12 +176,12 @@ public class GraphicFaceTrackerTest {
         return this.createFace(0.8f, 0.8f);
     }
 
-    private static class EventListener {
+    static class EventListener {
 
         private final List<Event> events = new ArrayList<Event>();
 
         @Subscribe
-        public void recordEvent(Event event) {
+        public void recordEvent(final Event event) {
             this.events.add(event);
         }
 

@@ -4,13 +4,13 @@ import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidCl
 
 import java.util.List;
 
-class PERCLOSCalculator {
+public class PERCLOSCalculator {
 
-    public double calculatePERCLOS(List<SlowEyelidClosureEvent> slowEyelidClosureEvents, long timeWindowMillis) {
+    public double calculatePERCLOS(final List<SlowEyelidClosureEvent> slowEyelidClosureEvents, final long timeWindowMillis) {
         return (double) this.getSumDurationsMillis(slowEyelidClosureEvents) / (double) timeWindowMillis;
     }
 
-    private long getSumDurationsMillis(List<SlowEyelidClosureEvent> slowEyelidClosureEvents) {
+    private long getSumDurationsMillis(final List<SlowEyelidClosureEvent> slowEyelidClosureEvents) {
         long sumDurationsMillis = 0;
         for(SlowEyelidClosureEvent slowEyelidClosureEvent : slowEyelidClosureEvents) {
             sumDurationsMillis += slowEyelidClosureEvent.getDurationMillis();
