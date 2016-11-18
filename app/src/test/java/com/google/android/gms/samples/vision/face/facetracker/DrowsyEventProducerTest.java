@@ -2,6 +2,7 @@ package com.google.android.gms.samples.vision.face.facetracker;
 
 import com.google.android.gms.samples.vision.face.facetracker.event.DrowsyEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.Event;
+import com.google.android.gms.samples.vision.face.facetracker.event.LikelyDrowsyEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidClosureEvent;
 import com.google.android.gms.samples.vision.face.facetracker.listener.DrowsyEventProducer;
 import com.google.common.eventbus.EventBus;
@@ -28,7 +29,7 @@ public class DrowsyEventProducerTest {
         eventBus.post(new SlowEyelidClosureEvent(1000, 550));
 
         // When
-        drowsyEventProducer.evaluate(2000);
+        drowsyEventProducer.maybeProduceDrowsyEvent(2000);
 
         // Then
         assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(2000, (600.0 + 550.0) / 2000.0)));
@@ -36,6 +37,20 @@ public class DrowsyEventProducerTest {
 
     @Test
     public void shouldCreateLikelyDrowsyEvent() {
+        // Given
+        this.listener = new GraphicFaceTrackerTest.EventListener();
+        final EventBus eventBus = new EventBus();
+        DrowsyEventProducer drowsyEventProducer = new DrowsyEventProducer(eventBus, 2000);
+        eventBus.register(drowsyEventProducer);
+        eventBus.register(this.listener);
 
+        eventBus.post(new SlowEyelidClosureEvent(100, 150));
+        eventBus.post(new SlowEyelidClosureEvent(1000, 55));
+
+        // When
+        drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+
+        // Then
+        assertThat(this.listener.getEvent(), is((Event) new LikelyDrowsyEvent(2000, (150 + 55.0) / 2000.0)));
     }
 }

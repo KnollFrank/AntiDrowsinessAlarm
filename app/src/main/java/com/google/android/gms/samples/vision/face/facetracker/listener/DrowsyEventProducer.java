@@ -2,6 +2,7 @@ package com.google.android.gms.samples.vision.face.facetracker.listener;
 
 import com.google.android.gms.samples.vision.face.facetracker.PERCLOSCalculator;
 import com.google.android.gms.samples.vision.face.facetracker.event.DrowsyEvent;
+import com.google.android.gms.samples.vision.face.facetracker.event.LikelyDrowsyEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidClosureEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -24,10 +25,12 @@ public class DrowsyEventProducer extends EventProducer {
         this.slowEyelidClosureEvents.add(slowEyelidClosureEvent);
     }
 
-    public void evaluate(final long timestampMillis) {
+    public void maybeProduceDrowsyEvent(final long timestampMillis) {
         double perclos = new PERCLOSCalculator().calculatePERCLOS(this.slowEyelidClosureEvents, this.timeWindowMillis);
         if(perclos >= 0.15) {
             this.postEvent(new DrowsyEvent(timestampMillis, perclos));
+        } else if(perclos >= 0.08) {
+            this.postEvent(new LikelyDrowsyEvent(timestampMillis, perclos));
         }
     }
 }
