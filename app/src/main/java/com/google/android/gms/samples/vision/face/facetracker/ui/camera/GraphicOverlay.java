@@ -126,7 +126,7 @@ public class GraphicOverlay extends View {
     public static abstract class Graphic {
         private final GraphicOverlay mOverlay;
 
-        public Graphic(GraphicOverlay overlay) {
+        public Graphic(final GraphicOverlay overlay) {
             this.mOverlay=overlay;
         }
 
