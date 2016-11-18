@@ -4,6 +4,7 @@ import com.google.android.gms.samples.vision.face.facetracker.event.Event;
 import com.google.android.gms.samples.vision.face.facetracker.event.EyesClosedEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.EyesOpenedEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.NormalEyeBlinkEvent;
+import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidClosureEvent;
 import com.google.android.gms.samples.vision.face.facetracker.listener.NormalEyeBlinkEventProducer;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame;
@@ -88,6 +89,24 @@ public class GraphicFaceTrackerTest {
 
         // Then
         assertThat(listener.getEvent(), Matchers.<Event>is(new NormalEyeBlinkEvent(0, 499)));
+    }
+
+    @Test
+    public void shouldCreateSlowEyelidClosureEvent() {
+        // Given
+        EventListener listener = new EventListener();
+        EventBus eventBus = new EventBus();
+        eventBus.register(listener);
+        eventBus.register(new NormalEyeBlinkEventProducer(eventBus));
+
+        Tracker<Face> tracker = new GraphicFaceTracker(eventBus);
+
+        // When
+        tracker.onUpdate(getFaceDetections(0), createFaceWithEyesClosed());
+        tracker.onUpdate(getFaceDetections(501l), createFaceWithEyesOpened());
+
+        // Then
+        assertThat(listener.getEvent(), Matchers.<Event>is(new SlowEyelidClosureEvent(0, 501)));
     }
 
     private Detector.Detections<Face> getFaceDetections(long timestampMillis) {
