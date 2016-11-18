@@ -19,7 +19,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doReturn;
 
@@ -31,13 +35,13 @@ public class GraphicFaceTrackerTest {
     @Before
     public void setup() {
         // Given
-        this.listener=new EventListener();
-        EventBus eventBus=new EventBus();
+        this.listener = new EventListener();
+        EventBus eventBus = new EventBus();
         eventBus.register(this.listener);
         eventBus.register(new NormalEyeBlinkEventProducer(eventBus));
         eventBus.register(new SlowEyelidClosureEventProducer(eventBus));
 
-        this.tracker=new GraphicFaceTracker(eventBus);
+        this.tracker = new GraphicFaceTracker(eventBus);
     }
 
     @Test
@@ -88,11 +92,31 @@ public class GraphicFaceTrackerTest {
         assertThat(this.listener.getEvent(), Matchers.<Event>is(new SlowEyelidClosureEvent(0, 501)));
     }
 
+    @Test
+    public void shouldCreateASingleEyesClosedEvent() {
+        // When
+        this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesClosed());
+
+        // Then
+        assertThat(this.listener.getEvents(), contains((Event) (new EyesClosedEvent(100))));
+    }
+
+    @Test
+    public void shouldCreateASingleEyesOpenedEvent() {
+        // When
+        this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesOpened());
+
+        // Then
+        assertThat(this.listener.getEvents(), contains((Event) (new EyesOpenedEvent(100))));
+    }
+
     private Detector.Detections<Face> getFaceDetections(long timestampMillis) {
-        Metadata metaData=Mockito.mock(Metadata.class);
+        Metadata metaData = Mockito.mock(Metadata.class);
         doReturn(timestampMillis).when(metaData).getTimestampMillis();
 
-        Detector.Detections<Face> detections=Mockito.mock(Detector.Detections.class);
+        Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
         doReturn(metaData).when(detections).getFrameMetadata();
 
         return detections;
@@ -103,7 +127,7 @@ public class GraphicFaceTrackerTest {
     }
 
     private Face createFace(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability) {
-        Face face=Mockito.mock(Face.class);
+        Face face = Mockito.mock(Face.class);
         doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
         doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
         return face;
@@ -115,15 +139,19 @@ public class GraphicFaceTrackerTest {
 
     private static class EventListener {
 
-        private Event event;
+        private final List<Event> events = new ArrayList<Event>();
 
         @Subscribe
         public void recordEvent(Event event) {
-            this.event=event;
+            this.events.add(event);
         }
 
         Event getEvent() {
-            return this.event;
+            return !this.events.isEmpty() ? this.events.get(this.events.size() - 1) : null;
+        }
+
+        List<Event> getEvents() {
+            return this.events;
         }
     }
 }

@@ -281,6 +281,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      * associated face overlay.
      */
     private class GraphicFaceTracker extends Tracker<Face> {
+        private static final String TAG = "GraphicFaceTracker";
+
         private final GraphicOverlay mOverlay;
         private final FaceGraphic mFaceGraphic;
         private final MediaPlayer mediaPlayer;
@@ -296,6 +298,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          */
         @Override
         public void onNewItem(int faceId, Face item) {
+            Log.i(TAG, "onNewItem called");
             this.mFaceGraphic.setId(faceId);
         }
 
@@ -304,6 +307,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          */
         @Override
         public void onUpdate(FaceDetector.Detections<Face> detectionResults, final Face face) {
+            Log.i(TAG, "onUpdate called");
             this.mOverlay.add(this.mFaceGraphic);
             this.mFaceGraphic.updateFace(face);
             if(this.getEyesInfo(face) == EyesInfo.CLOSED) {
