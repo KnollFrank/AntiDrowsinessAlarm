@@ -68,19 +68,19 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setContentView(R.layout.main);
+        this.setContentView(R.layout.main);
 
-        mPreview = (CameraSourcePreview) findViewById(R.id.preview);
-        mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
-        eyesInfoView = (TextView)findViewById(R.id.eyesInfoView);
+        this.mPreview=(CameraSourcePreview) this.findViewById(R.id.preview);
+        this.mGraphicOverlay=(GraphicOverlay) this.findViewById(R.id.faceOverlay);
+        this.eyesInfoView=(TextView) this.findViewById(R.id.eyesInfoView);
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (rc == PackageManager.PERMISSION_GRANTED) {
-            createCameraSource();
+            this.createCameraSource();
         } else {
-            requestCameraPermission();
+            this.requestCameraPermission();
         }
     }
 
@@ -110,7 +110,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             }
         };
 
-        Snackbar.make(mGraphicOverlay, R.string.permission_camera_rationale,
+        Snackbar.make(this.mGraphicOverlay, R.string.permission_camera_rationale,
                 Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.ok, listener)
                 .show();
@@ -123,7 +123,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      */
     private void createCameraSource() {
 
-        Context context = getApplicationContext();
+        Context context=this.getApplicationContext();
         FaceDetector detector = new FaceDetector.Builder(context)
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .setMode(FaceDetector.ACCURATE_MODE)
@@ -145,7 +145,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             Log.w(TAG, "Face detector dependencies are not yet available.");
         }
 
-        mCameraSource = new CameraSource.Builder(context, detector)
+        this.mCameraSource=new CameraSource.Builder(context, detector)
                 .setRequestedPreviewSize(640, 480)
                 .setFacing(CameraSource.CAMERA_FACING_FRONT)
                 .setRequestedFps(30.0f)
@@ -159,7 +159,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        startCameraSource();
+        this.startCameraSource();
     }
 
     /**
@@ -168,7 +168,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mPreview.stop();
+        this.mPreview.stop();
     }
 
     /**
@@ -178,8 +178,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mCameraSource != null) {
-            mCameraSource.release();
+        if(this.mCameraSource != null) {
+            this.mCameraSource.release();
         }
     }
 
@@ -210,7 +210,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Camera permission granted - initialize the camera source");
             // we have permission, so create the camerasource
-            createCameraSource();
+            this.createCameraSource();
             return;
         }
 
@@ -219,7 +219,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                finish();
+                FaceTrackerActivity.this.finish();
             }
         };
 
@@ -243,20 +243,20 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
         // check that the device has play services available.
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
-                getApplicationContext());
+                this.getApplicationContext());
         if (code != ConnectionResult.SUCCESS) {
             Dialog dlg =
                     GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
             dlg.show();
         }
 
-        if (mCameraSource != null) {
+        if(this.mCameraSource != null) {
             try {
-                mPreview.start(mCameraSource, mGraphicOverlay);
+                this.mPreview.start(this.mCameraSource, this.mGraphicOverlay);
             } catch (IOException e) {
                 Log.e(TAG, "Unable to start camera source.", e);
-                mCameraSource.release();
-                mCameraSource = null;
+                this.mCameraSource.release();
+                this.mCameraSource=null;
             }
         }
     }
@@ -272,7 +272,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
         @Override
         public Tracker<Face> create(Face face) {
-            return new GraphicFaceTracker(mGraphicOverlay);
+            return new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
         }
     }
 
@@ -281,14 +281,14 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      * associated face overlay.
      */
     private class GraphicFaceTracker extends Tracker<Face> {
-        private GraphicOverlay mOverlay;
-        private FaceGraphic mFaceGraphic;
-        private MediaPlayer mediaPlayer;
+        private final GraphicOverlay mOverlay;
+        private final FaceGraphic mFaceGraphic;
+        private final MediaPlayer mediaPlayer;
 
         GraphicFaceTracker(GraphicOverlay overlay) {
-            mOverlay = overlay;
-            mFaceGraphic = new FaceGraphic(overlay);
-            this.mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.hupe);
+            this.mOverlay=overlay;
+            this.mFaceGraphic=new FaceGraphic(overlay);
+            this.mediaPlayer=MediaPlayer.create(FaceTrackerActivity.this.getApplicationContext(), R.raw.hupe);
         }
 
         /**
@@ -296,7 +296,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          */
         @Override
         public void onNewItem(int faceId, Face item) {
-            mFaceGraphic.setId(faceId);
+            this.mFaceGraphic.setId(faceId);
         }
 
         /**
@@ -304,15 +304,15 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          */
         @Override
         public void onUpdate(FaceDetector.Detections<Face> detectionResults, final Face face) {
-            mOverlay.add(mFaceGraphic);
-            mFaceGraphic.updateFace(face);
-            if(getEyesInfo(face) == EyesInfo.CLOSED) {
-                mediaPlayer.start();
+            this.mOverlay.add(this.mFaceGraphic);
+            this.mFaceGraphic.updateFace(face);
+            if(this.getEyesInfo(face) == EyesInfo.CLOSED) {
+                this.mediaPlayer.start();
             }
-            runOnUiThread(new Runnable() {
+            FaceTrackerActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    eyesInfoView.setText(asString(getEyesInfo(face)));
+                    FaceTrackerActivity.this.eyesInfoView.setText(GraphicFaceTracker.this.asString(GraphicFaceTracker.this.getEyesInfo(face)));
                 }
             });
         }
@@ -349,7 +349,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          */
         @Override
         public void onMissing(FaceDetector.Detections<Face> detectionResults) {
-            mOverlay.remove(mFaceGraphic);
+            this.mOverlay.remove(this.mFaceGraphic);
         }
 
         /**
@@ -359,7 +359,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         @Override
         public void onDone()
         {
-            mOverlay.remove(mFaceGraphic);
+            this.mOverlay.remove(this.mFaceGraphic);
             this.mediaPlayer.release();
         }
     }

@@ -45,12 +45,78 @@ import java.util.Set;
  */
 public class GraphicOverlay extends View {
     private final Object mLock = new Object();
+    private final Set<Graphic> mGraphics=new HashSet<>();
     private int mPreviewWidth;
     private float mWidthScaleFactor = 1.0f;
     private int mPreviewHeight;
     private float mHeightScaleFactor = 1.0f;
     private int mFacing = CameraSource.CAMERA_FACING_BACK;
-    private Set<Graphic> mGraphics = new HashSet<>();
+
+    public GraphicOverlay(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    /**
+     * Removes all graphics from the overlay.
+     */
+    public void clear() {
+        synchronized (this.mLock) {
+            this.mGraphics.clear();
+        }
+        this.postInvalidate();
+    }
+
+    /**
+     * Adds a graphic to the overlay.
+     */
+    public void add(Graphic graphic) {
+        synchronized (this.mLock) {
+            this.mGraphics.add(graphic);
+        }
+        this.postInvalidate();
+    }
+
+    /**
+     * Removes a graphic from the overlay.
+     */
+    public void remove(Graphic graphic) {
+        synchronized (this.mLock) {
+            this.mGraphics.remove(graphic);
+        }
+        this.postInvalidate();
+    }
+
+    /**
+     * Sets the camera attributes for size and facing direction, which informs how to transform
+     * image coordinates later.
+     */
+    public void setCameraInfo(int previewWidth, int previewHeight, int facing) {
+        synchronized (this.mLock) {
+            this.mPreviewWidth=previewWidth;
+            this.mPreviewHeight=previewHeight;
+            this.mFacing=facing;
+        }
+        this.postInvalidate();
+    }
+
+    /**
+     * Draws the overlay with its associated graphic objects.
+     */
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        synchronized (this.mLock) {
+            if((this.mPreviewWidth != 0) && (this.mPreviewHeight != 0)) {
+                this.mWidthScaleFactor=(float) canvas.getWidth() / (float) this.mPreviewWidth;
+                this.mHeightScaleFactor=(float) canvas.getHeight() / (float) this.mPreviewHeight;
+            }
+
+            for(Graphic graphic : this.mGraphics) {
+                graphic.draw(canvas);
+            }
+        }
+    }
 
     /**
      * Base class for a custom graphics object to be rendered within the graphic overlay.  Subclass
@@ -58,10 +124,10 @@ public class GraphicOverlay extends View {
      * graphics element.  Add instances to the overlay using {@link GraphicOverlay#add(Graphic)}.
      */
     public static abstract class Graphic {
-        private GraphicOverlay mOverlay;
+        private final GraphicOverlay mOverlay;
 
         public Graphic(GraphicOverlay overlay) {
-            mOverlay = overlay;
+            this.mOverlay=overlay;
         }
 
         /**
@@ -83,14 +149,14 @@ public class GraphicOverlay extends View {
          * scale.
          */
         public float scaleX(float horizontal) {
-            return horizontal * mOverlay.mWidthScaleFactor;
+            return horizontal * this.mOverlay.mWidthScaleFactor;
         }
 
         /**
          * Adjusts a vertical value of the supplied value from the preview scale to the view scale.
          */
         public float scaleY(float vertical) {
-            return vertical * mOverlay.mHeightScaleFactor;
+            return vertical * this.mOverlay.mHeightScaleFactor;
         }
 
         /**
@@ -98,10 +164,10 @@ public class GraphicOverlay extends View {
          * system.
          */
         public float translateX(float x) {
-            if (mOverlay.mFacing == CameraSource.CAMERA_FACING_FRONT) {
-                return mOverlay.getWidth() - scaleX(x);
+            if(this.mOverlay.mFacing == CameraSource.CAMERA_FACING_FRONT) {
+                return this.mOverlay.getWidth() - this.scaleX(x);
             } else {
-                return scaleX(x);
+                return this.scaleX(x);
             }
         }
 
@@ -110,77 +176,11 @@ public class GraphicOverlay extends View {
          * system.
          */
         public float translateY(float y) {
-            return scaleY(y);
+            return this.scaleY(y);
         }
 
         public void postInvalidate() {
-            mOverlay.postInvalidate();
-        }
-    }
-
-    public GraphicOverlay(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    /**
-     * Removes all graphics from the overlay.
-     */
-    public void clear() {
-        synchronized (mLock) {
-            mGraphics.clear();
-        }
-        postInvalidate();
-    }
-
-    /**
-     * Adds a graphic to the overlay.
-     */
-    public void add(Graphic graphic) {
-        synchronized (mLock) {
-            mGraphics.add(graphic);
-        }
-        postInvalidate();
-    }
-
-    /**
-     * Removes a graphic from the overlay.
-     */
-    public void remove(Graphic graphic) {
-        synchronized (mLock) {
-            mGraphics.remove(graphic);
-        }
-        postInvalidate();
-    }
-
-    /**
-     * Sets the camera attributes for size and facing direction, which informs how to transform
-     * image coordinates later.
-     */
-    public void setCameraInfo(int previewWidth, int previewHeight, int facing) {
-        synchronized (mLock) {
-            mPreviewWidth = previewWidth;
-            mPreviewHeight = previewHeight;
-            mFacing = facing;
-        }
-        postInvalidate();
-    }
-
-    /**
-     * Draws the overlay with its associated graphic objects.
-     */
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        synchronized (mLock) {
-            if ((mPreviewWidth != 0) && (mPreviewHeight != 0)) {
-                mWidthScaleFactor = (float) canvas.getWidth() / (float) mPreviewWidth;
-                mHeightScaleFactor = (float) canvas.getHeight() / (float) mPreviewHeight;
-            }
-
-            for (Graphic graphic : mGraphics) {
-                graphic.draw(canvas);
-            }
+            this.mOverlay.postInvalidate();
         }
     }
 }

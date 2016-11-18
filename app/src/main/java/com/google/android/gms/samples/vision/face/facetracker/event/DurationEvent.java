@@ -7,28 +7,28 @@ public abstract class DurationEvent extends Event {
 
     private final long duration;
 
-    public DurationEvent(long timestampMillis, final long duration) {
+    DurationEvent(final long timestampMillis, final long duration) {
         super(timestampMillis);
         this.duration = duration;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if(o == null || this.getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        DurationEvent that = (DurationEvent) o;
-        return duration == that.duration;
+        final DurationEvent that=(DurationEvent) o;
+        return this.duration == that.duration;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(super.hashCode(), duration);
+        return Objects.hashCode(super.hashCode(), this.duration);
     }
 
     protected MoreObjects.ToStringHelper getToStringHelper() {
         return super
                 .getToStringHelper()
-                .add("duration", duration);
+                .add("duration", this.duration);
     }
 }

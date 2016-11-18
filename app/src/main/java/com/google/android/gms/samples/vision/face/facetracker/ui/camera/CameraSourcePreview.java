@@ -31,8 +31,8 @@ import java.io.IOException;
 public class CameraSourcePreview extends ViewGroup {
     private static final String TAG = "CameraSourcePreview";
 
-    private Context mContext;
-    private SurfaceView mSurfaceView;
+    private final Context mContext;
+    private final SurfaceView mSurfaceView;
     private boolean mStartRequested;
     private boolean mSurfaceAvailable;
     private CameraSource mCameraSource;
@@ -41,84 +41,63 @@ public class CameraSourcePreview extends ViewGroup {
 
     public CameraSourcePreview(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
-        mStartRequested = false;
-        mSurfaceAvailable = false;
+        this.mContext=context;
+        this.mStartRequested=false;
+        this.mSurfaceAvailable=false;
 
-        mSurfaceView = new SurfaceView(context);
-        mSurfaceView.getHolder().addCallback(new SurfaceCallback());
-        addView(mSurfaceView);
+        this.mSurfaceView=new SurfaceView(context);
+        this.mSurfaceView.getHolder().addCallback(new SurfaceCallback());
+        this.addView(this.mSurfaceView);
     }
 
     public void start(CameraSource cameraSource) throws IOException {
         if (cameraSource == null) {
-            stop();
+            this.stop();
         }
 
-        mCameraSource = cameraSource;
+        this.mCameraSource=cameraSource;
 
-        if (mCameraSource != null) {
-            mStartRequested = true;
-            startIfReady();
+        if(this.mCameraSource != null) {
+            this.mStartRequested=true;
+            this.startIfReady();
         }
     }
 
     public void start(CameraSource cameraSource, GraphicOverlay overlay) throws IOException {
-        mOverlay = overlay;
-        start(cameraSource);
+        this.mOverlay=overlay;
+        this.start(cameraSource);
     }
 
     public void stop() {
-        if (mCameraSource != null) {
-            mCameraSource.stop();
+        if(this.mCameraSource != null) {
+            this.mCameraSource.stop();
         }
     }
 
     public void release() {
-        if (mCameraSource != null) {
-            mCameraSource.release();
-            mCameraSource = null;
+        if(this.mCameraSource != null) {
+            this.mCameraSource.release();
+            this.mCameraSource=null;
         }
     }
 
     private void startIfReady() throws IOException {
-        if (mStartRequested && mSurfaceAvailable) {
-            mCameraSource.start(mSurfaceView.getHolder());
-            if (mOverlay != null) {
-                Size size = mCameraSource.getPreviewSize();
+        if(this.mStartRequested && this.mSurfaceAvailable) {
+            this.mCameraSource.start(this.mSurfaceView.getHolder());
+            if(this.mOverlay != null) {
+                Size size=this.mCameraSource.getPreviewSize();
                 int min = Math.min(size.getWidth(), size.getHeight());
                 int max = Math.max(size.getWidth(), size.getHeight());
-                if (isPortraitMode()) {
+                if(this.isPortraitMode()) {
                     // Swap width and height sizes when in portrait, since it will be rotated by
                     // 90 degrees
-                    mOverlay.setCameraInfo(min, max, mCameraSource.getCameraFacing());
+                    this.mOverlay.setCameraInfo(min, max, this.mCameraSource.getCameraFacing());
                 } else {
-                    mOverlay.setCameraInfo(max, min, mCameraSource.getCameraFacing());
+                    this.mOverlay.setCameraInfo(max, min, this.mCameraSource.getCameraFacing());
                 }
-                mOverlay.clear();
+                this.mOverlay.clear();
             }
-            mStartRequested = false;
-        }
-    }
-
-    private class SurfaceCallback implements SurfaceHolder.Callback {
-        @Override
-        public void surfaceCreated(SurfaceHolder surface) {
-            mSurfaceAvailable = true;
-            try {
-                startIfReady();
-            } catch (IOException e) {
-                Log.e(TAG, "Could not start camera source.", e);
-            }
-        }
-
-        @Override
-        public void surfaceDestroyed(SurfaceHolder surface) {
-            mSurfaceAvailable = false;
-        }
-
-        @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            this.mStartRequested=false;
         }
     }
 
@@ -126,8 +105,8 @@ public class CameraSourcePreview extends ViewGroup {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int width = 320;
         int height = 240;
-        if (mCameraSource != null) {
-            Size size = mCameraSource.getPreviewSize();
+        if(this.mCameraSource != null) {
+            Size size=this.mCameraSource.getPreviewSize();
             if (size != null) {
                 width = size.getWidth();
                 height = size.getHeight();
@@ -135,7 +114,7 @@ public class CameraSourcePreview extends ViewGroup {
         }
 
         // Swap width and height sizes when in portrait, since it will be rotated 90 degrees
-        if (isPortraitMode()) {
+        if(this.isPortraitMode()) {
             int tmp = width;
             width = height;
             height = tmp;
@@ -154,19 +133,19 @@ public class CameraSourcePreview extends ViewGroup {
             childWidth = (int)(((float) layoutHeight / (float) height) * width);
         }
 
-        for (int i = 0; i < getChildCount(); ++i) {
-            getChildAt(i).layout(0, 0, childWidth, childHeight);
+        for(int i=0; i < this.getChildCount(); ++i) {
+            this.getChildAt(i).layout(0, 0, childWidth, childHeight);
         }
 
         try {
-            startIfReady();
+            this.startIfReady();
         } catch (IOException e) {
             Log.e(TAG, "Could not start camera source.", e);
         }
     }
 
     private boolean isPortraitMode() {
-        int orientation = mContext.getResources().getConfiguration().orientation;
+        int orientation=this.mContext.getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             return false;
         }
@@ -176,5 +155,26 @@ public class CameraSourcePreview extends ViewGroup {
 
         Log.d(TAG, "isPortraitMode returning false by default");
         return false;
+    }
+
+    private class SurfaceCallback implements SurfaceHolder.Callback {
+        @Override
+        public void surfaceCreated(SurfaceHolder surface) {
+            CameraSourcePreview.this.mSurfaceAvailable=true;
+            try {
+                CameraSourcePreview.this.startIfReady();
+            } catch (IOException e) {
+                Log.e(TAG, "Could not start camera source.", e);
+            }
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder surface) {
+            CameraSourcePreview.this.mSurfaceAvailable=false;
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        }
     }
 }

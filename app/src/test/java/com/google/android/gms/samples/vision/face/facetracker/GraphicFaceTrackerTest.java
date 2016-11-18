@@ -31,86 +31,86 @@ public class GraphicFaceTrackerTest {
     @Before
     public void setup() {
         // Given
-        this.listener = new EventListener();
-        EventBus eventBus = new EventBus();
-        eventBus.register(listener);
+        this.listener=new EventListener();
+        EventBus eventBus=new EventBus();
+        eventBus.register(this.listener);
         eventBus.register(new NormalEyeBlinkEventProducer(eventBus));
         eventBus.register(new SlowEyelidClosureEventProducer(eventBus));
 
-        this.tracker = new GraphicFaceTracker(eventBus);
+        this.tracker=new GraphicFaceTracker(eventBus);
     }
 
     @Test
     public void shouldCreateEyesClosedEvent() {
-        shouldCreateEvent(0.4f, 0.4f, new EyesClosedEvent(100));
+        this.shouldCreateEvent(0.4f, 0.4f, new EyesClosedEvent(100));
     }
 
     @Test
     public void shouldCreateEyesClosedEvent2() {
-        shouldCreateEvent(0.3f, 0.4f, new EyesClosedEvent(101));
+        this.shouldCreateEvent(0.3f, 0.4f, new EyesClosedEvent(101));
     }
 
     private void shouldCreateEvent(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability, final Event event) {
         // When
-        tracker.onUpdate(getFaceDetections(event.getTimestampMillis()), createFace(isLeftEyeOpenProbability, isRightEyeOpenProbability));
+        this.tracker.onUpdate(this.getFaceDetections(event.getTimestampMillis()), this.createFace(isLeftEyeOpenProbability, isRightEyeOpenProbability));
 
         // Then
-        assertThat(listener.getEvent(), is(event));
+        assertThat(this.listener.getEvent(), is(event));
     }
 
     @Test
     public void shouldCreateEyesOpenedClosedEvent() {
-        shouldCreateEvent(0.8f, 0.8f, new EyesOpenedEvent(123));
+        this.shouldCreateEvent(0.8f, 0.8f, new EyesOpenedEvent(123));
     }
 
     @Test
     public void shouldCreateEyesOpenedClosedEvent2() {
-        shouldCreateEvent(0.8f, 0.9f, new EyesOpenedEvent(1234));
+        this.shouldCreateEvent(0.8f, 0.9f, new EyesOpenedEvent(1234));
     }
 
     @Test
     public void shouldCreateNormalEyeBlink() {
         // When
-        tracker.onUpdate(getFaceDetections(0), createFaceWithEyesClosed());
-        tracker.onUpdate(getFaceDetections(499), createFaceWithEyesOpened());
+        this.tracker.onUpdate(this.getFaceDetections(0), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(499), this.createFaceWithEyesOpened());
 
         // Then
-        assertThat(listener.getEvent(), Matchers.<Event>is(new NormalEyeBlinkEvent(0, 499)));
+        assertThat(this.listener.getEvent(), Matchers.<Event>is(new NormalEyeBlinkEvent(0, 499)));
     }
 
     @Test
     public void shouldCreateSlowEyelidClosureEvent() {
         // When
-        tracker.onUpdate(getFaceDetections(0), createFaceWithEyesClosed());
-        tracker.onUpdate(getFaceDetections(501), createFaceWithEyesOpened());
+        this.tracker.onUpdate(this.getFaceDetections(0), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(501), this.createFaceWithEyesOpened());
 
         // Then
-        assertThat(listener.getEvent(), Matchers.<Event>is(new SlowEyelidClosureEvent(0, 501)));
+        assertThat(this.listener.getEvent(), Matchers.<Event>is(new SlowEyelidClosureEvent(0, 501)));
     }
 
     private Detector.Detections<Face> getFaceDetections(long timestampMillis) {
-        Metadata metaData = Mockito.mock(Metadata.class);
+        Metadata metaData=Mockito.mock(Metadata.class);
         doReturn(timestampMillis).when(metaData).getTimestampMillis();
 
-        Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
+        Detector.Detections<Face> detections=Mockito.mock(Detector.Detections.class);
         doReturn(metaData).when(detections).getFrameMetadata();
 
         return detections;
     }
 
     private Face createFaceWithEyesClosed() {
-        return createFace(0.4f, 0.4f);
+        return this.createFace(0.4f, 0.4f);
     }
 
     private Face createFace(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability) {
-        Face face = Mockito.mock(Face.class);
+        Face face=Mockito.mock(Face.class);
         doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
         doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
         return face;
     }
 
     private Face createFaceWithEyesOpened() {
-        return createFace(0.8f, 0.8f);
+        return this.createFace(0.8f, 0.8f);
     }
 
     private static class EventListener {
@@ -119,11 +119,11 @@ public class GraphicFaceTrackerTest {
 
         @Subscribe
         public void recordEvent(Event event) {
-            this.event = event;
+            this.event=event;
         }
 
         Event getEvent() {
-            return event;
+            return this.event;
         }
     }
 }

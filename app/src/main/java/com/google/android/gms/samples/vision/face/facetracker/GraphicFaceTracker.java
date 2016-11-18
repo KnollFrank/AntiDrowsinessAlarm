@@ -18,9 +18,9 @@ class GraphicFaceTracker extends Tracker<Face> {
     @Override
     public void onUpdate(Detector.Detections<Face> detections, Face face) {
         if(face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5) {
-            this.eventBus.post(new EyesOpenedEvent(getTimestampMillis(detections)));
+            this.eventBus.post(new EyesOpenedEvent(this.getTimestampMillis(detections)));
         } else if(face.getIsLeftEyeOpenProbability() < 0.5 && face.getIsRightEyeOpenProbability() < 0.5) {
-            this.eventBus.post(new EyesClosedEvent(getTimestampMillis(detections)));
+            this.eventBus.post(new EyesClosedEvent(this.getTimestampMillis(detections)));
         }
     }
 

@@ -22,13 +22,13 @@ abstract class DurationEventProducer {
 
     @Subscribe
     public void recordEyesOpenedEventAndPostDurationEvent(EyesOpenedEvent eyesOpenedEvent) {
-        if (eyesClosedEvent == null) {
+        if(this.eyesClosedEvent == null) {
             return;
         }
 
-        long duration = eyesOpenedEvent.getTimestampMillis() - eyesClosedEvent.getTimestampMillis();
-        if (shallCreateEventFor(duration)) {
-            eventBus.post(createDurationEvent(eyesClosedEvent.getTimestampMillis(), duration));
+        long duration=eyesOpenedEvent.getTimestampMillis() - this.eyesClosedEvent.getTimestampMillis();
+        if(this.shallCreateEventFor(duration)) {
+            this.eventBus.post(this.createDurationEvent(this.eyesClosedEvent.getTimestampMillis(), duration));
         }
     }
 

@@ -48,9 +48,9 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     };
     private static int mCurrentColorIndex = 0;
 
-    private Paint mFacePositionPaint;
-    private Paint mIdPaint;
-    private Paint mBoxPaint;
+    private final Paint mFacePositionPaint;
+    private final Paint mIdPaint;
+    private final Paint mBoxPaint;
     private final Paint mEyeOutlinePaint;
 
     private volatile Face mFace;
@@ -63,26 +63,26 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         mCurrentColorIndex = (mCurrentColorIndex + 1) % COLOR_CHOICES.length;
         final int selectedColor = COLOR_CHOICES[mCurrentColorIndex];
 
-        mFacePositionPaint = new Paint();
-        mFacePositionPaint.setColor(selectedColor);
+        this.mFacePositionPaint=new Paint();
+        this.mFacePositionPaint.setColor(selectedColor);
 
-        mIdPaint = new Paint();
-        mIdPaint.setColor(selectedColor);
-        mIdPaint.setTextSize(ID_TEXT_SIZE);
+        this.mIdPaint=new Paint();
+        this.mIdPaint.setColor(selectedColor);
+        this.mIdPaint.setTextSize(ID_TEXT_SIZE);
 
-        mBoxPaint = new Paint();
-        mBoxPaint.setColor(selectedColor);
-        mBoxPaint.setStyle(Paint.Style.STROKE);
-        mBoxPaint.setStrokeWidth(BOX_STROKE_WIDTH);
+        this.mBoxPaint=new Paint();
+        this.mBoxPaint.setColor(selectedColor);
+        this.mBoxPaint.setStyle(Paint.Style.STROKE);
+        this.mBoxPaint.setStrokeWidth(BOX_STROKE_WIDTH);
 
-        mEyeOutlinePaint = new Paint();
-        mEyeOutlinePaint.setColor(Color.BLACK);
-        mEyeOutlinePaint.setStyle(Paint.Style.STROKE);
-        mEyeOutlinePaint.setStrokeWidth(5);
+        this.mEyeOutlinePaint=new Paint();
+        this.mEyeOutlinePaint.setColor(Color.BLACK);
+        this.mEyeOutlinePaint.setStyle(Paint.Style.STROKE);
+        this.mEyeOutlinePaint.setStrokeWidth(5);
     }
 
     void setId(int id) {
-        mFaceId = id;
+        this.mFaceId=id;
     }
 
 
@@ -91,8 +91,8 @@ class FaceGraphic extends GraphicOverlay.Graphic {
      * relevant portions of the overlay to trigger a redraw.
      */
     void updateFace(Face face) {
-        mFace = face;
-        postInvalidate();
+        this.mFace=face;
+        this.postInvalidate();
     }
 
     /**
@@ -100,36 +100,36 @@ class FaceGraphic extends GraphicOverlay.Graphic {
      */
     @Override
     public void draw(Canvas canvas) {
-        Face face = mFace;
+        Face face=this.mFace;
         if (face == null) {
             return;
         }
 
         // Draws a circle at the position of the detected face, with the face's track id below.
-        float x = translateX(face.getPosition().x + face.getWidth() / 2);
-        float y = translateY(face.getPosition().y + face.getHeight() / 2);
-        canvas.drawCircle(x, y, FACE_POSITION_RADIUS, mFacePositionPaint);
-        canvas.drawText("id: " + mFaceId, x + ID_X_OFFSET, y + ID_Y_OFFSET, mIdPaint);
-        drawEyesIfDetected(canvas, face);
-        drawEyesOpenProbabilitiesIfDetected(canvas, face);
+        float x=this.translateX(face.getPosition().x + face.getWidth() / 2);
+        float y=this.translateY(face.getPosition().y + face.getHeight() / 2);
+        canvas.drawCircle(x, y, FACE_POSITION_RADIUS, this.mFacePositionPaint);
+        canvas.drawText("id: " + this.mFaceId, x + ID_X_OFFSET, y + ID_Y_OFFSET, this.mIdPaint);
+        this.drawEyesIfDetected(canvas, face);
+        this.drawEyesOpenProbabilitiesIfDetected(canvas, face);
 
         // Draws a bounding box around the face.
-        float xOffset = scaleX(face.getWidth() / 2.0f);
-        float yOffset = scaleY(face.getHeight() / 2.0f);
+        float xOffset=this.scaleX(face.getWidth() / 2.0f);
+        float yOffset=this.scaleY(face.getHeight() / 2.0f);
         float left = x - xOffset;
         float top = y - yOffset;
         float right = x + xOffset;
         float bottom = y + yOffset;
-        canvas.drawRect(left, top, right, bottom, mBoxPaint);
+        canvas.drawRect(left, top, right, bottom, this.mBoxPaint);
     }
 
     private void drawEyesOpenProbabilitiesIfDetected(Canvas canvas, Face face) {
-        drawLeftEyeOpenProbabilityIfDetected(canvas, face);
-        drawRightEyeOpenProbabilityIfDetected(canvas, face);
+        this.drawLeftEyeOpenProbabilityIfDetected(canvas, face);
+        this.drawRightEyeOpenProbabilityIfDetected(canvas, face);
     }
 
     private void drawLeftEyeOpenProbabilityIfDetected(Canvas canvas, Face face) {
-        drawEyeOpenProbabilityIfDetected(
+        this.drawEyeOpenProbabilityIfDetected(
                 canvas,
                 face,
                 Landmark.LEFT_EYE,
@@ -142,7 +142,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     }
 
     private void drawRightEyeOpenProbabilityIfDetected(Canvas canvas, Face face) {
-        drawEyeOpenProbabilityIfDetected(
+        this.drawEyeOpenProbabilityIfDetected(
                 canvas,
                 face,
                 Landmark.RIGHT_EYE,
@@ -155,23 +155,23 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     }
 
     private void drawEyeOpenProbabilityIfDetected(Canvas canvas, Face face, int eyeLandmark, Function<Face, Float> isEyeOpenProbabilitySupplier) {
-        Optional<PointF> eyePos = getLandmarkPosition(face, eyeLandmark);
+        Optional<PointF> eyePos=this.getLandmarkPosition(face, eyeLandmark);
         if(eyePos.isPresent()) {
-            canvas.drawText(String.format("%.2f", isEyeOpenProbabilitySupplier.apply(face)), translateX(eyePos.get().x), translateY(eyePos.get().y), mIdPaint);
+            canvas.drawText(String.format("%.2f", isEyeOpenProbabilitySupplier.apply(face)), this.translateX(eyePos.get().x), this.translateY(eyePos.get().y), this.mIdPaint);
         }
     }
 
     private void drawEyesIfDetected(Canvas canvas, Face face) {
-        drawEyeIfDetected(canvas, face, Landmark.LEFT_EYE);
-        drawEyeIfDetected(canvas, face, Landmark.RIGHT_EYE);
+        this.drawEyeIfDetected(canvas, face, Landmark.LEFT_EYE);
+        this.drawEyeIfDetected(canvas, face, Landmark.RIGHT_EYE);
     }
 
     private void drawEyeIfDetected(Canvas canvas, Face face, int eyeLandmark) {
         float eyeRadius = 50;
-        Optional<PointF> eyePos = getLandmarkPosition(face, eyeLandmark);
+        Optional<PointF> eyePos=this.getLandmarkPosition(face, eyeLandmark);
         if(eyePos.isPresent()) {
-            PointF eyePos2Draw = new PointF(translateX(eyePos.get().x), translateY(eyePos.get().y));
-            canvas.drawCircle(translateX(eyePos.get().x), eyePos2Draw.y, eyeRadius, mEyeOutlinePaint);
+            PointF eyePos2Draw=new PointF(this.translateX(eyePos.get().x), this.translateY(eyePos.get().y));
+            canvas.drawCircle(this.translateX(eyePos.get().x), eyePos2Draw.y, eyeRadius, this.mEyeOutlinePaint);
         }
     }
 
