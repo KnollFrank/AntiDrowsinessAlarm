@@ -6,8 +6,8 @@ import com.google.android.gms.samples.vision.face.facetracker.event.EyesOpenedEv
 import com.google.android.gms.samples.vision.face.facetracker.event.NormalEyeBlinkEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidClosureEvent;
 import com.google.android.gms.samples.vision.face.facetracker.listener.NormalEyeBlinkEventProducer;
+import com.google.android.gms.samples.vision.face.facetracker.listener.SlowEyelidClosureEventProducer;
 import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
@@ -15,6 +15,7 @@ import com.google.android.gms.vision.Frame.Metadata;
 import com.google.common.eventbus.Subscribe;
 
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -38,6 +39,20 @@ public class GraphicFaceTrackerTest {
         }
     }
 
+    private EventListener listener;
+    private Tracker<Face> tracker;
+
+    @Before
+    public void setup() {
+        this.listener = new EventListener();
+        EventBus eventBus = new EventBus();
+        eventBus.register(listener);
+        eventBus.register(new NormalEyeBlinkEventProducer(eventBus));
+        eventBus.register(new SlowEyelidClosureEventProducer(eventBus));
+
+        this.tracker = new GraphicFaceTracker(eventBus);
+    }
+
     @Test
     public void shouldCreateEyesClosedEvent() {
         shouldCreateEvent(0.4f, 0.4f, new EyesClosedEvent(100));
@@ -50,11 +65,6 @@ public class GraphicFaceTrackerTest {
 
     private void shouldCreateEvent(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability, final Event event) {
         // Given
-        EventListener listener = new EventListener();
-        EventBus eventBus = new EventBus();
-        eventBus.register(listener);
-
-        Tracker<Face> tracker = new GraphicFaceTracker(eventBus);
 
         // When
         tracker.onUpdate(getFaceDetections(event.getTimestampMillis()), createFace(isLeftEyeOpenProbability, isRightEyeOpenProbability));
@@ -76,12 +86,6 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldCreateNormalEyeBlink() {
         // Given
-        EventListener listener = new EventListener();
-        EventBus eventBus = new EventBus();
-        eventBus.register(listener);
-        eventBus.register(new NormalEyeBlinkEventProducer(eventBus));
-
-        Tracker<Face> tracker = new GraphicFaceTracker(eventBus);
 
         // When
         tracker.onUpdate(getFaceDetections(0), createFaceWithEyesClosed());
@@ -94,12 +98,6 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldCreateSlowEyelidClosureEvent() {
         // Given
-        EventListener listener = new EventListener();
-        EventBus eventBus = new EventBus();
-        eventBus.register(listener);
-        eventBus.register(new NormalEyeBlinkEventProducer(eventBus));
-
-        Tracker<Face> tracker = new GraphicFaceTracker(eventBus);
 
         // When
         tracker.onUpdate(getFaceDetections(0), createFaceWithEyesClosed());
