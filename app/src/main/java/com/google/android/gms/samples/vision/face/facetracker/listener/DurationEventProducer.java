@@ -1,5 +1,6 @@
 package com.google.android.gms.samples.vision.face.facetracker.listener;
 
+import com.google.android.gms.samples.vision.face.facetracker.event.DurationEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.Event;
 import com.google.android.gms.samples.vision.face.facetracker.event.EyesClosedEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.EyesOpenedEvent;
@@ -8,12 +9,12 @@ import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-abstract class EventProducer {
+abstract class DurationEventProducer {
 
     private final EventBus eventBus;
     private EyesClosedEvent eyesClosedEvent;
 
-    public EventProducer(final EventBus eventBus) {
+    public DurationEventProducer(final EventBus eventBus) {
         this.eventBus = eventBus;
     }
 
@@ -23,18 +24,18 @@ abstract class EventProducer {
     }
 
     @Subscribe
-    public void recordEyesOpenedEventAndPostEvent(EyesOpenedEvent eyesOpenedEvent) {
+    public void recordEyesOpenedEventAndPostDurationEvent(EyesOpenedEvent eyesOpenedEvent) {
         if (eyesClosedEvent == null) {
             return;
         }
 
         long duration = eyesOpenedEvent.getTimestampMillis() - eyesClosedEvent.getTimestampMillis();
         if (shallCreateEventFor(duration)) {
-            eventBus.post(createEvent(eyesClosedEvent.getTimestampMillis(), duration));
+            eventBus.post(createDurationEvent(eyesClosedEvent.getTimestampMillis(), duration));
         }
     }
 
     protected abstract boolean shallCreateEventFor(long duration);
 
-    protected abstract Event createEvent(final long timestampMillis, final long duration);
+    protected abstract DurationEvent createDurationEvent(final long timestampMillis, final long duration);
 }

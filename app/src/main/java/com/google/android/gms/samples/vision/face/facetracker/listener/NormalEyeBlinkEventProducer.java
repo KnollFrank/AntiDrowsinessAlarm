@@ -1,14 +1,10 @@
 package com.google.android.gms.samples.vision.face.facetracker.listener;
 
-import com.google.android.gms.samples.vision.face.facetracker.event.Event;
-import com.google.android.gms.samples.vision.face.facetracker.event.EyesClosedEvent;
-import com.google.android.gms.samples.vision.face.facetracker.event.EyesOpenedEvent;
+import com.google.android.gms.samples.vision.face.facetracker.event.DurationEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.NormalEyeBlinkEvent;
-import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 
-public class NormalEyeBlinkEventProducer extends EventProducer {
+public class NormalEyeBlinkEventProducer extends DurationEventProducer {
 
     public NormalEyeBlinkEventProducer(final EventBus eventBus) {
         super(eventBus);
@@ -20,7 +16,7 @@ public class NormalEyeBlinkEventProducer extends EventProducer {
     }
 
     @Override
-    protected Event createEvent(long timestampMillis, long duration) {
+    protected DurationEvent createDurationEvent(long timestampMillis, long duration) {
         return new NormalEyeBlinkEvent(timestampMillis, duration);
     }
 }
