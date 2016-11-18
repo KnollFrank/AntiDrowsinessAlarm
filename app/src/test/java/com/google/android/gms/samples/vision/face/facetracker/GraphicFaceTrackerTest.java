@@ -44,6 +44,7 @@ public class GraphicFaceTrackerTest {
 
     @Before
     public void setup() {
+        // Given
         this.listener = new EventListener();
         EventBus eventBus = new EventBus();
         eventBus.register(listener);
@@ -64,8 +65,6 @@ public class GraphicFaceTrackerTest {
     }
 
     private void shouldCreateEvent(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability, final Event event) {
-        // Given
-
         // When
         tracker.onUpdate(getFaceDetections(event.getTimestampMillis()), createFace(isLeftEyeOpenProbability, isRightEyeOpenProbability));
 
@@ -85,11 +84,9 @@ public class GraphicFaceTrackerTest {
 
     @Test
     public void shouldCreateNormalEyeBlink() {
-        // Given
-
         // When
         tracker.onUpdate(getFaceDetections(0), createFaceWithEyesClosed());
-        tracker.onUpdate(getFaceDetections(499l), createFaceWithEyesOpened());
+        tracker.onUpdate(getFaceDetections(499), createFaceWithEyesOpened());
 
         // Then
         assertThat(listener.getEvent(), Matchers.<Event>is(new NormalEyeBlinkEvent(0, 499)));
@@ -97,11 +94,9 @@ public class GraphicFaceTrackerTest {
 
     @Test
     public void shouldCreateSlowEyelidClosureEvent() {
-        // Given
-
         // When
         tracker.onUpdate(getFaceDetections(0), createFaceWithEyesClosed());
-        tracker.onUpdate(getFaceDetections(501l), createFaceWithEyesOpened());
+        tracker.onUpdate(getFaceDetections(501), createFaceWithEyesOpened());
 
         // Then
         assertThat(listener.getEvent(), Matchers.<Event>is(new SlowEyelidClosureEvent(0, 501)));
