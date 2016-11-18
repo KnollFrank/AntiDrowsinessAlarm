@@ -8,10 +8,10 @@ import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidCl
 import com.google.android.gms.samples.vision.face.facetracker.listener.NormalEyeBlinkEventProducer;
 import com.google.android.gms.samples.vision.face.facetracker.listener.SlowEyelidClosureEventProducer;
 import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.Frame.Metadata;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
-import com.google.android.gms.vision.Frame.Metadata;
 import com.google.common.eventbus.Subscribe;
 
 import org.hamcrest.Matchers;
@@ -24,20 +24,6 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doReturn;
 
 public class GraphicFaceTrackerTest {
-
-    private static class EventListener {
-
-        private Event event;
-
-        @Subscribe
-        public void recordEvent(Event event) {
-            this.event = event;
-        }
-
-        public Event getEvent() {
-            return event;
-        }
-    }
 
     private EventListener listener;
     private Tracker<Face> tracker;
@@ -125,5 +111,19 @@ public class GraphicFaceTrackerTest {
 
     private Face createFaceWithEyesOpened() {
         return createFace(0.8f, 0.8f);
+    }
+
+    private static class EventListener {
+
+        private Event event;
+
+        @Subscribe
+        public void recordEvent(Event event) {
+            this.event = event;
+        }
+
+        Event getEvent() {
+            return event;
+        }
     }
 }

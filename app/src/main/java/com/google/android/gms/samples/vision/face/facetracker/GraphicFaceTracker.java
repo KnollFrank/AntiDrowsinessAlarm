@@ -1,6 +1,5 @@
 package com.google.android.gms.samples.vision.face.facetracker;
 
-import com.google.android.gms.samples.vision.face.facetracker.event.Event;
 import com.google.android.gms.samples.vision.face.facetracker.event.EyesClosedEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.EyesOpenedEvent;
 import com.google.android.gms.vision.Detector;
@@ -8,11 +7,11 @@ import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
 
-public class GraphicFaceTracker extends Tracker<Face> {
+class GraphicFaceTracker extends Tracker<Face> {
 
     private final EventBus eventBus;
 
-    public GraphicFaceTracker(final EventBus eventBus) {
+    GraphicFaceTracker(final EventBus eventBus) {
         this.eventBus = eventBus;
     }
 

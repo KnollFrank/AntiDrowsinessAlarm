@@ -1,11 +1,8 @@
 package com.google.android.gms.samples.vision.face.facetracker.listener;
 
 import com.google.android.gms.samples.vision.face.facetracker.event.DurationEvent;
-import com.google.android.gms.samples.vision.face.facetracker.event.Event;
 import com.google.android.gms.samples.vision.face.facetracker.event.EyesClosedEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.EyesOpenedEvent;
-import com.google.android.gms.samples.vision.face.facetracker.event.NormalEyeBlinkEvent;
-import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -14,7 +11,7 @@ abstract class DurationEventProducer {
     private final EventBus eventBus;
     private EyesClosedEvent eyesClosedEvent;
 
-    public DurationEventProducer(final EventBus eventBus) {
+    DurationEventProducer(final EventBus eventBus) {
         this.eventBus = eventBus;
     }
 
