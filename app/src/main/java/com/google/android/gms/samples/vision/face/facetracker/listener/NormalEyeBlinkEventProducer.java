@@ -11,12 +11,12 @@ public class NormalEyeBlinkEventProducer extends DurationEventProducer {
     }
 
     @Override
-    protected boolean shallCreateEventFor(long duration) {
-        return duration < 500;
+    protected boolean shallCreateEventFor(long durationMillis) {
+        return durationMillis < 500;
     }
 
     @Override
-    protected DurationEvent createDurationEvent(long timestampMillis, long duration) {
-        return new NormalEyeBlinkEvent(timestampMillis, duration);
+    protected DurationEvent createDurationEvent(long timestampMillis, long durationMillis) {
+        return new NormalEyeBlinkEvent(timestampMillis, durationMillis);
     }
 }

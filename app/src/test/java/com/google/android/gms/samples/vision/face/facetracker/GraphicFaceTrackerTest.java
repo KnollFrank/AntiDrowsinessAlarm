@@ -68,12 +68,12 @@ public class GraphicFaceTrackerTest {
     }
 
     @Test
-    public void shouldCreateEyesOpenedClosedEvent() {
+    public void shouldCreateEyesOpenedEvent() {
         this.shouldCreateEvent(0.8f, 0.8f, new EyesOpenedEvent(123));
     }
 
     @Test
-    public void shouldCreateEyesOpenedClosedEvent2() {
+    public void shouldCreateEyesOpenedEvent2() {
         this.shouldCreateEvent(0.8f, 0.9f, new EyesOpenedEvent(1234));
     }
 

@@ -5,11 +5,16 @@ import com.google.common.base.Objects;
 
 public abstract class DurationEvent extends Event {
 
-    private final long duration;
+    private final long durationMillis;
 
-    DurationEvent(final long timestampMillis, final long duration) {
+    // TODO: use data types from Joda-Time for timestampMillis nad durationMillis
+    DurationEvent(final long timestampMillis, final long durationMillis) {
         super(timestampMillis);
-        this.duration = duration;
+        this.durationMillis = durationMillis;
+    }
+
+    public long getDurationMillis() {
+        return this.durationMillis;
     }
 
     @Override
@@ -18,17 +23,17 @@ public abstract class DurationEvent extends Event {
         if(o == null || this.getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         final DurationEvent that=(DurationEvent) o;
-        return this.duration == that.duration;
+        return this.durationMillis == that.durationMillis;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(super.hashCode(), this.duration);
+        return Objects.hashCode(super.hashCode(), this.durationMillis);
     }
 
     protected MoreObjects.ToStringHelper getToStringHelper() {
         return super
                 .getToStringHelper()
-                .add("duration", this.duration);
+                .add("durationMillis", this.durationMillis);
     }
 }

@@ -25,13 +25,13 @@ abstract class DurationEventProducer extends EventProducer {
             return;
         }
 
-        final long duration = eyesOpenedEvent.getTimestampMillis() - this.eyesClosedEvent.getTimestampMillis();
-        if(this.shallCreateEventFor(duration)) {
-            this.postEvent(this.createDurationEvent(this.eyesClosedEvent.getTimestampMillis(), duration));
+        final long durationMillis = eyesOpenedEvent.getTimestampMillis() - this.eyesClosedEvent.getTimestampMillis();
+        if(this.shallCreateEventFor(durationMillis)) {
+            this.postEvent(this.createDurationEvent(this.eyesClosedEvent.getTimestampMillis(), durationMillis));
         }
     }
 
-    protected abstract boolean shallCreateEventFor(final long duration);
+    protected abstract boolean shallCreateEventFor(final long durationMillis);
 
-    protected abstract DurationEvent createDurationEvent(final long timestampMillis, final long duration);
+    protected abstract DurationEvent createDurationEvent(final long timestampMillis, final long durationMillis);
 }
