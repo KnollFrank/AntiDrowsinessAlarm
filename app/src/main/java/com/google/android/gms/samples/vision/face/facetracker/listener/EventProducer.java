@@ -4,7 +4,7 @@ import com.google.common.eventbus.EventBus;
 
 abstract class EventProducer {
 
-    protected final EventBus eventBus;
+    private final EventBus eventBus;
 
     EventProducer(final EventBus eventBus) {
         this.eventBus = eventBus;

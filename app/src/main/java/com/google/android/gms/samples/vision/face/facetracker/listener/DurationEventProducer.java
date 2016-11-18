@@ -15,23 +15,23 @@ abstract class DurationEventProducer extends EventProducer {
     }
 
     @Subscribe
-    public void recordEyesClosedEvent(EyesClosedEvent eyesClosedEvent) {
+    public void recordEyesClosedEvent(final EyesClosedEvent eyesClosedEvent) {
         this.eyesClosedEvent = eyesClosedEvent;
     }
 
     @Subscribe
-    public void recordEyesOpenedEventAndPostDurationEvent(EyesOpenedEvent eyesOpenedEvent) {
+    public void recordEyesOpenedEventAndPostDurationEvent(final EyesOpenedEvent eyesOpenedEvent) {
         if(this.eyesClosedEvent == null) {
             return;
         }
 
-        long duration=eyesOpenedEvent.getTimestampMillis() - this.eyesClosedEvent.getTimestampMillis();
+        final long duration = eyesOpenedEvent.getTimestampMillis() - this.eyesClosedEvent.getTimestampMillis();
         if(this.shallCreateEventFor(duration)) {
             this.postEvent(this.createDurationEvent(this.eyesClosedEvent.getTimestampMillis(), duration));
         }
     }
 
-    protected abstract boolean shallCreateEventFor(long duration);
+    protected abstract boolean shallCreateEventFor(final long duration);
 
     protected abstract DurationEvent createDurationEvent(final long timestampMillis, final long duration);
 }

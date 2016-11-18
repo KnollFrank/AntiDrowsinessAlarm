@@ -19,7 +19,7 @@ public class EyesClosedEventProducer extends EventProducer {
     public void maybeProduceEyesClosedEvent(UpdateEvent event) {
         if(this.isEyesClosed(event.getFace())) {
             if(this.isEyesClosed == null || !this.isEyesClosed) {
-                this.eventBus.post(new EyesClosedEvent(this.getTimestampMillis(event.getDetections())));
+                this.postEvent(new EyesClosedEvent(this.getTimestampMillis(event.getDetections())));
                 this.isEyesClosed = true;
             }
         }
