@@ -7,25 +7,23 @@ import com.google.common.eventbus.Subscribe;
 
 abstract class StateChangeEventProducer extends EventProducer {
 
-    private boolean hasState = false;
+    private boolean hasPreviousState = false;
 
     StateChangeEventProducer(final EventBus eventBus) {
         super(eventBus);
     }
 
     @Subscribe
-    public void maybeProduceStateChangeEvent(final UpdateEvent event) {
-        if(!this.hasState) {
-            if(this.hasState(event.getFace())) {
-                this.postEvent(this.createStateEventFrom(event));
-                this.hasState = true;
-            }
-        } else {
-            this.hasState = this.hasState(event.getFace());
+    public void maybeProduceStateChangeEvent(final UpdateEvent actualEvent) {
+        boolean hasActualState = this.getState(actualEvent.getFace());
+        if(!this.hasPreviousState && hasActualState) {
+            this.postEvent(this.createStateChangeEventFrom(actualEvent));
         }
+
+        this.hasPreviousState = hasActualState;
     }
 
-    protected abstract boolean hasState(Face face);
+    protected abstract boolean getState(Face face);
 
-    protected abstract Object createStateEventFrom(UpdateEvent event);
+    protected abstract Object createStateChangeEventFrom(UpdateEvent event);
 }

@@ -13,7 +13,7 @@ public class EyesOpenedEventProducer extends StateChangeEventProducer {
     }
 
     @Override
-    protected boolean hasState(Face face) {
+    protected boolean getState(Face face) {
         return this.isEyesOpen(face);
     }
 
@@ -22,7 +22,7 @@ public class EyesOpenedEventProducer extends StateChangeEventProducer {
     }
 
     @Override
-    protected Object createStateEventFrom(UpdateEvent event) {
+    protected Object createStateChangeEventFrom(UpdateEvent event) {
         return new EyesOpenedEvent(this.getTimestampMillis(event.getDetections()));
     }
 

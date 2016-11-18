@@ -120,6 +120,7 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldCreateEvents() {
         // When
+        this.tracker.onNewItem(1, this.createFaceWithEyesOpened());
         this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesOpened());
         this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesClosed());
         this.tracker.onUpdate(this.getFaceDetections(102), this.createFaceWithEyesOpened());
@@ -131,6 +132,23 @@ public class GraphicFaceTrackerTest {
                 new EyesClosedEvent(101),
                 new EyesOpenedEvent(102),
                 new EyesClosedEvent(103)));
+    }
+
+    @Test
+    public void shouldCreateEvents2() {
+        // When
+        this.tracker.onNewItem(1, this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(this.getFaceDetections(102), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(103), this.createFaceWithEyesOpened());
+
+        // Then
+        assertThat(this.listener.getEvents(), hasItems(
+                new EyesClosedEvent(100),
+                new EyesOpenedEvent(101),
+                new EyesClosedEvent(102),
+                new EyesOpenedEvent(103)));
     }
 
     private Detector.Detections<Face> getFaceDetections(long timestampMillis) {
