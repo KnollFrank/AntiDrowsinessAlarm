@@ -34,13 +34,22 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.samples.vision.face.facetracker.event.NormalEyeBlinkEvent;
+import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidClosureEvent;
+import com.google.android.gms.samples.vision.face.facetracker.listener.EyesClosedEventProducer;
+import com.google.android.gms.samples.vision.face.facetracker.listener.EyesOpenedEventProducer;
+import com.google.android.gms.samples.vision.face.facetracker.listener.NormalEyeBlinkEventProducer;
+import com.google.android.gms.samples.vision.face.facetracker.listener.SlowEyelidClosureEventProducer;
 import com.google.android.gms.samples.vision.face.facetracker.ui.camera.CameraSourcePreview;
 import com.google.android.gms.samples.vision.face.facetracker.ui.camera.GraphicOverlay;
 import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import java.io.IOException;
 
@@ -272,7 +281,45 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
         @Override
         public Tracker<Face> create(Face face) {
-            return new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
+            EventBus eventBus = new EventBus();
+            eventBus.register(new NormalEyeBlinkEventProducer(eventBus));
+            eventBus.register(new SlowEyelidClosureEventProducer(eventBus));
+            eventBus.register(new EyesOpenedEventProducer(eventBus));
+            eventBus.register(new EyesClosedEventProducer(eventBus));
+
+            // final SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider();
+            // DrowsyEventProducer drowsyEventProducer = new DrowsyEventProducer(this.eventBus, 2000, slowEyelidClosureEventsProvider);
+            // eventBus.register(slowEyelidClosureEventsProvider);
+
+            final Tracker<Face> tracker1 = new com.google.android.gms.samples.vision.face.facetracker.GraphicFaceTracker(eventBus);
+            final Tracker<Face> tracker2 = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
+            eventBus.register(tracker2);
+
+            return new Tracker<Face>() {
+                @Override
+                public void onNewItem(int faceId, Face face) {
+                    tracker1.onNewItem(faceId, face);
+                    tracker2.onNewItem(faceId, face);
+                }
+
+                @Override
+                public void onUpdate(Detector.Detections<Face> detections, Face face) {
+                    tracker1.onUpdate(detections, face);
+                    tracker2.onUpdate(detections, face);
+                }
+
+                @Override
+                public void onMissing(Detector.Detections<Face> detections) {
+                    tracker1.onMissing(detections);
+                    tracker2.onMissing(detections);
+                }
+
+                @Override
+                public void onDone() {
+                    tracker1.onDone();
+                    tracker2.onDone();
+                }
+            };
         }
     }
 
@@ -291,6 +338,26 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             this.mOverlay=overlay;
             this.mFaceGraphic=new FaceGraphic(overlay);
             this.mediaPlayer=MediaPlayer.create(FaceTrackerActivity.this.getApplicationContext(), R.raw.hupe);
+        }
+
+        @Subscribe
+        public void recordSlowEyelidClosureEvent(final SlowEyelidClosureEvent event) {
+            FaceTrackerActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    FaceTrackerActivity.this.eyesInfoView.setText("" + event);
+                }
+            });
+        }
+
+        @Subscribe
+        public void recordNormalEyeBlinkEvent(final NormalEyeBlinkEvent event) {
+            FaceTrackerActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    FaceTrackerActivity.this.eyesInfoView.setText("" + event);
+                }
+            });
         }
 
         /**
@@ -313,12 +380,12 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             if(this.getEyesInfo(face) == EyesInfo.CLOSED) {
                 this.mediaPlayer.start();
             }
-            FaceTrackerActivity.this.runOnUiThread(new Runnable() {
+/*            FaceTrackerActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     FaceTrackerActivity.this.eyesInfoView.setText(GraphicFaceTracker.this.asString(GraphicFaceTracker.this.getEyesInfo(face)));
                 }
-            });
+            });*/
         }
 
         @NonNull
