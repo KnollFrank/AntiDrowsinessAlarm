@@ -5,6 +5,7 @@ import com.google.android.gms.samples.vision.face.facetracker.event.Event;
 import com.google.android.gms.samples.vision.face.facetracker.event.LikelyDrowsyEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidClosureEvent;
 import com.google.android.gms.samples.vision.face.facetracker.listener.DrowsyEventProducer;
+import com.google.android.gms.samples.vision.face.facetracker.listener.SlowEyelidClosureEventsProvider;
 import com.google.common.eventbus.EventBus;
 
 import org.junit.Before;
@@ -26,8 +27,9 @@ public class DrowsyEventProducerTest {
     public void setup() {
         this.listener = new GraphicFaceTrackerTest.EventListener();
         this.eventBus = new EventBus();
-        this.drowsyEventProducer = new DrowsyEventProducer(this.eventBus, 2000);
-        this.eventBus.register(this.drowsyEventProducer);
+        final SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider();
+        this.drowsyEventProducer = new DrowsyEventProducer(this.eventBus, 2000, slowEyelidClosureEventsProvider);
+        this.eventBus.register(slowEyelidClosureEventsProvider);
         this.eventBus.register(this.listener);
     }
 
