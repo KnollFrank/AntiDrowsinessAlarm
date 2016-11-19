@@ -6,12 +6,11 @@ import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
 
-class GraphicFaceTracker extends Tracker<Face> {
+public class GraphicFaceTracker extends Tracker<Face> {
 
     private final EventBus eventBus;
-    private final Boolean isEyesOpen = null;
 
-    GraphicFaceTracker(final EventBus eventBus) {
+    public GraphicFaceTracker(final EventBus eventBus) {
         this.eventBus = eventBus;
     }
 
