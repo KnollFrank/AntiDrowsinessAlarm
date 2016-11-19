@@ -11,7 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.Is.isA;
+import static org.hamcrest.core.IsNot.not;
 
 public class DrowsyEventProducerTest {
 
@@ -52,5 +55,19 @@ public class DrowsyEventProducerTest {
 
         // Then
         assertThat(this.listener.getEvent(), is((Event) new LikelyDrowsyEvent(2000, (150 + 55.0) / 2000.0)));
+    }
+
+    @Test
+    public void shouldCreateNoDrowsyEvents() {
+        // Given
+        this.eventBus.post(new SlowEyelidClosureEvent(100, 150));
+        this.eventBus.post(new SlowEyelidClosureEvent(1000, 55));
+
+        // When
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(5000);
+
+        // Then
+        assertThat(this.listener.getEvents(), not(hasItem(isA(LikelyDrowsyEvent.class))));
+        assertThat(this.listener.getEvents(), not(hasItem(isA(DrowsyEvent.class))));
     }
 }
