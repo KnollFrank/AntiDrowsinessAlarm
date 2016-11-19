@@ -4,12 +4,12 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 
-class FaceTrackerDelegate extends Tracker<Face> {
+class CompositeFaceTracker extends Tracker<Face> {
 
     private final Tracker<Face> tracker1;
     private final Tracker<Face> tracker2;
 
-    public FaceTrackerDelegate(Tracker<Face> tracker1, Tracker<Face> tracker2) {
+    public CompositeFaceTracker(Tracker<Face> tracker1, Tracker<Face> tracker2) {
         this.tracker1 = tracker1;
         this.tracker2 = tracker2;
     }

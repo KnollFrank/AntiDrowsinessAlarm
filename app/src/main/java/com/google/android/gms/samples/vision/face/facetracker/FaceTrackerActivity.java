@@ -53,7 +53,7 @@ import java.io.IOException;
  * overlay graphics to indicate the position, size, and ID of each face.
  */
 public final class FaceTrackerActivity extends AppCompatActivity {
-    private static final String TAG = "FaceTrackerDelegate";
+    private static final String TAG = "CompositeFaceTracker";
     private static final int RC_HANDLE_GMS = 9001;
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
@@ -278,11 +278,10 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         public Tracker<Face> create(Face face) {
             DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector();
 
-            final Tracker<Face> tracker1 = new com.google.android.gms.samples.vision.face.facetracker.GraphicFaceTracker(drowsyEventDetector.getEventBus());
-            final Tracker<Face> tracker2 = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
-            drowsyEventDetector.getEventBus().register(tracker2);
+            final Tracker<Face> tracker = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
+            drowsyEventDetector.getEventBus().register(tracker);
 
-            return new FaceTrackerDelegate(tracker1, tracker2);
+            return new CompositeFaceTracker(drowsyEventDetector.getGraphicFaceTracker(), tracker);
         }
     }
 
