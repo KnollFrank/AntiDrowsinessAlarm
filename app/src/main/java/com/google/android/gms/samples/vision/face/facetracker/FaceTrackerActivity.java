@@ -311,6 +311,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                     FaceTrackerActivity.this.eyesInfoView.setText("" + event);
                 }
             });
+            this.mediaPlayer.start();
         }
 
         @Subscribe
@@ -340,40 +341,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             Log.i(TAG, "onUpdate called");
             this.mOverlay.add(this.mFaceGraphic);
             this.mFaceGraphic.updateFace(face);
-            if(this.getEyesInfo(face) == EyesInfo.CLOSED) {
-                this.mediaPlayer.start();
-            }
-/*            FaceTrackerActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    FaceTrackerActivity.this.eyesInfoView.setText(GraphicFaceTracker.this.asString(GraphicFaceTracker.this.getEyesInfo(face)));
-                }
-            });*/
-        }
-
-        @NonNull
-        private String asString(EyesInfo eyesInfo) {
-            switch(eyesInfo) {
-                case OPENED:
-                    return "eyes opened";
-                case CLOSED:
-                    return "eyes closed";
-                case UNKNOWN:
-                    return "I don't know";
-            }
-
-            throw new IllegalStateException();
-        }
-
-        // TODO: wann sind die Augen wirklich aus Müdigkeit geschlossen, und wann ist es nur ein normales Blinzeln?
-        private EyesInfo getEyesInfo(Face face) {
-            if(face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5) {
-                return EyesInfo.OPENED;
-            } else if(face.getIsLeftEyeOpenProbability() < 0.5 && face.getIsRightEyeOpenProbability() < 0.5) {
-                return EyesInfo.CLOSED;
-            } else {
-                return EyesInfo.UNKNOWN;
-            }
         }
 
         /**
