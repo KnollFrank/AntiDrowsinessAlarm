@@ -14,7 +14,7 @@ public class SlowEyelidClosureEventsProvider {
 
     @Subscribe
     // TODO: this list will grow indefinitely when the app runs a long time, so shrink it somehow
-    public void recordEyesClosedEvent(final SlowEyelidClosureEvent slowEyelidClosureEvent) {
+    public void recordSlowEyelidClosureEvent(final SlowEyelidClosureEvent slowEyelidClosureEvent) {
         this.slowEyelidClosureEvents.add(slowEyelidClosureEvent);
     }
 
