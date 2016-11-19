@@ -10,6 +10,9 @@ import java.util.List;
 
 public class DrowsyEventProducer extends EventProducer {
 
+    private static final double DROWSY_THRESHOLD = 0.15;
+    private static final double LIKELY_DROWSY_THRESHOLD = 0.08;
+
     private final long timeWindowMillis;
     private final SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider;
 
@@ -20,12 +23,16 @@ public class DrowsyEventProducer extends EventProducer {
     }
 
     public void maybeProduceDrowsyEvent(final long nowMillis) {
-        List<SlowEyelidClosureEvent> recordedEventsWithinTimeWindow = this.slowEyelidClosureEventsProvider.getRecordedEventsWithinTimeWindow(nowMillis, this.timeWindowMillis);
-        double perclos = new PERCLOSCalculator().calculatePERCLOS(recordedEventsWithinTimeWindow, this.timeWindowMillis);
-        if(perclos >= 0.15) {
+        double perclos = this.getPerclos(nowMillis);
+        if(perclos >= DROWSY_THRESHOLD) {
             this.postEvent(new DrowsyEvent(nowMillis, perclos));
-        } else if(perclos >= 0.08) {
+        } else if(perclos >= LIKELY_DROWSY_THRESHOLD) {
             this.postEvent(new LikelyDrowsyEvent(nowMillis, perclos));
         }
+    }
+
+    private double getPerclos(long nowMillis) {
+        List<SlowEyelidClosureEvent> recordedEventsWithinTimeWindow = this.slowEyelidClosureEventsProvider.getRecordedEventsWithinTimeWindow(nowMillis, this.timeWindowMillis);
+        return new PERCLOSCalculator().calculatePERCLOS(recordedEventsWithinTimeWindow, this.timeWindowMillis);
     }
 }
