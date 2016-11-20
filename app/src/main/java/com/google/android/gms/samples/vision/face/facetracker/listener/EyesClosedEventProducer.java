@@ -18,7 +18,12 @@ public class EyesClosedEventProducer extends StateChangeEventProducer {
     }
 
     private boolean isEyesClosed(final Face face) {
-        return face.getIsLeftEyeOpenProbability() < 0.5 && face.getIsRightEyeOpenProbability() < 0.5;
+        return this.isDefined(face.getIsLeftEyeOpenProbability()) && face.getIsLeftEyeOpenProbability() < 0.5 &&
+                this.isDefined(face.getIsRightEyeOpenProbability()) && face.getIsRightEyeOpenProbability() < 0.5 ;
+    }
+
+    private boolean isDefined(float probability) {
+        return probability != Face.UNCOMPUTED_PROBABILITY;
     }
 
     @Override

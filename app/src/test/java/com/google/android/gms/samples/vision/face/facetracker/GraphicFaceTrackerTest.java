@@ -28,8 +28,10 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Mockito.doReturn;
 
 public class GraphicFaceTrackerTest {
@@ -67,6 +69,24 @@ public class GraphicFaceTrackerTest {
 
         // Then
         assertThat(this.listener.getEvent(), is(event));
+    }
+
+    @Test
+    public void shouldNotCreateEyesClosedEventOnUNCOMPUTED_PROBABILITIES() {
+        // When
+        this.tracker.onUpdate(this.getFaceDetections(100), this.createFace(Face.UNCOMPUTED_PROBABILITY, Face.UNCOMPUTED_PROBABILITY));
+
+        // Then
+        assertThat(this.listener.getEvents(), not(hasItem(Matchers.<Event>instanceOf(EyesClosedEvent.class))));
+    }
+
+    @Test
+    public void shouldNotCreateEyesOpenedEventOnUNCOMPUTED_PROBABILITIES() {
+        // When
+        this.tracker.onUpdate(this.getFaceDetections(100), this.createFace(Face.UNCOMPUTED_PROBABILITY, Face.UNCOMPUTED_PROBABILITY));
+
+        // Then
+        assertThat(this.listener.getEvents(), not(hasItem(Matchers.<Event>instanceOf(EyesOpenedEvent.class))));
     }
 
     @Test
