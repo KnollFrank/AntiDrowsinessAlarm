@@ -46,7 +46,7 @@ public class GraphicFaceTrackerTest {
         eventBus.register(new EyesOpenedEventProducer(eventBus));
         eventBus.register(new EyesClosedEventProducer(eventBus));
 
-        this.tracker = new GraphicFaceTracker(eventBus);
+        this.tracker = new GraphicFaceTracker(eventBus, drowsyEventProducer);
     }
 
     @Test

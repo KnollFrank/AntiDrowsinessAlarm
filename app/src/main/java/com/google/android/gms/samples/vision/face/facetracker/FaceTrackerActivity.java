@@ -34,8 +34,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.samples.vision.face.facetracker.event.NormalEyeBlinkEvent;
-import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidClosureEvent;
+import com.google.android.gms.samples.vision.face.facetracker.event.DrowsyEvent;
+import com.google.android.gms.samples.vision.face.facetracker.event.LikelyDrowsyEvent;
 import com.google.android.gms.samples.vision.face.facetracker.listener.DrowsyEventDetector;
 import com.google.android.gms.samples.vision.face.facetracker.ui.camera.CameraSourcePreview;
 import com.google.android.gms.samples.vision.face.facetracker.ui.camera.GraphicOverlay;
@@ -297,13 +297,13 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         private final MediaPlayer mediaPlayer;
 
         GraphicFaceTracker(GraphicOverlay overlay) {
-            this.mOverlay=overlay;
-            this.mFaceGraphic=new FaceGraphic(overlay);
-            this.mediaPlayer=MediaPlayer.create(FaceTrackerActivity.this.getApplicationContext(), R.raw.hupe);
+            this.mOverlay = overlay;
+            this.mFaceGraphic = new FaceGraphic(overlay);
+            this.mediaPlayer = MediaPlayer.create(FaceTrackerActivity.this.getApplicationContext(), R.raw.hupe);
         }
 
         @Subscribe
-        public void recordSlowEyelidClosureEvent(final SlowEyelidClosureEvent event) {
+        public void onDrowsyEvent(final DrowsyEvent event) {
             FaceTrackerActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -314,7 +314,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         }
 
         @Subscribe
-        public void recordNormalEyeBlinkEvent(final NormalEyeBlinkEvent event) {
+        public void onLikelyDrowsyEvent(final LikelyDrowsyEvent event) {
             FaceTrackerActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

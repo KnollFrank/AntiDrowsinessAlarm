@@ -6,23 +6,20 @@ import com.google.common.eventbus.EventBus;
 public class DrowsyEventDetector {
 
     private final EventBus eventBus;
-    private final SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider;
+    private final DrowsyEventProducer drowsyEventProducer;
     private final GraphicFaceTracker graphicFaceTracker;
 
     public DrowsyEventDetector() {
-        this.slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider();
         this.eventBus = new EventBus();
-        this.initializeEventBus();
-        this.graphicFaceTracker = new GraphicFaceTracker(this.eventBus);
-    }
-
-    private void initializeEventBus() {
         this.eventBus.register(new EyesOpenedEventProducer(this.eventBus));
         this.eventBus.register(new EyesClosedEventProducer(this.eventBus));
         this.eventBus.register(new NormalEyeBlinkEventProducer(this.eventBus));
         this.eventBus.register(new SlowEyelidClosureEventProducer(this.eventBus));
-        // DrowsyEventProducer drowsyEventProducer = new DrowsyEventProducer(this.eventBus, 2000, slowEyelidClosureEventsProvider);
-        this.eventBus.register(this.slowEyelidClosureEventsProvider);
+        SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider();
+        this.eventBus.register(slowEyelidClosureEventsProvider);
+
+        this.drowsyEventProducer = new DrowsyEventProducer(this.eventBus, 15000, slowEyelidClosureEventsProvider);
+        this.graphicFaceTracker = new GraphicFaceTracker(this.eventBus, this.drowsyEventProducer);
     }
 
     public EventBus getEventBus() {
@@ -33,7 +30,7 @@ public class DrowsyEventDetector {
         return this.graphicFaceTracker;
     }
 
-    public SlowEyelidClosureEventsProvider getSlowEyelidClosureEventsProvider() {
-        return this.slowEyelidClosureEventsProvider;
+    public DrowsyEventProducer getDrowsyEventProducer() {
+        return this.drowsyEventProducer;
     }
 }
