@@ -38,12 +38,13 @@ public class DrowsyEventProducerTest {
         // Given
         this.eventBus.post(new SlowEyelidClosureEvent(100, 600));
         this.eventBus.post(new SlowEyelidClosureEvent(1000, 550));
+        double perclos = (600.0 + 550.0) / 2000.0; // = 0.575 > 0.15
 
         // When
         this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
 
         // Then
-        assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(2000, (600.0 + 550.0) / 2000.0)));
+        assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(2000, perclos)));
     }
 
     @Test
@@ -51,12 +52,13 @@ public class DrowsyEventProducerTest {
         // Given
         this.eventBus.post(new SlowEyelidClosureEvent(100, 150));
         this.eventBus.post(new SlowEyelidClosureEvent(1000, 55));
+        double perclos = (150 + 55.0) / 2000.0; // = 0.1025 wich is between 0.08 and 0.15
 
         // When
         this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
 
         // Then
-        assertThat(this.listener.getEvent(), is((Event) new LikelyDrowsyEvent(2000, (150 + 55.0) / 2000.0)));
+        assertThat(this.listener.getEvent(), is((Event) new LikelyDrowsyEvent(2000, perclos)));
     }
 
     @Test
@@ -66,6 +68,7 @@ public class DrowsyEventProducerTest {
         this.eventBus.post(new SlowEyelidClosureEvent(1000, 55));
 
         // When
+        // given SlowEyelidClosureEvents are not within time window
         this.drowsyEventProducer.maybeProduceDrowsyEvent(5000);
 
         // Then
