@@ -1,15 +1,16 @@
 package de.antidrowsinessalarm;
 
-import de.antidrowsinessalarm.event.DrowsyEvent;
-import de.antidrowsinessalarm.event.Event;
-import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
-import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
-import de.antidrowsinessalarm.listener.DrowsyEventProducer;
-import de.antidrowsinessalarm.listener.SlowEyelidClosureEventsProvider;
 import com.google.common.eventbus.EventBus;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import de.antidrowsinessalarm.event.DrowsyEvent;
+import de.antidrowsinessalarm.event.Event;
+import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
+import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
+import de.antidrowsinessalarm.eventproducer.DrowsyEventProducer;
+import de.antidrowsinessalarm.eventproducer.SlowEyelidClosureEventsProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;

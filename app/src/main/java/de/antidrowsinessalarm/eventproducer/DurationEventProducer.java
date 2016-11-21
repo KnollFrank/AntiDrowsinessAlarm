@@ -1,10 +1,11 @@
-package de.antidrowsinessalarm.listener;
+package de.antidrowsinessalarm.eventproducer;
+
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import de.antidrowsinessalarm.event.DurationEvent;
 import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.EyesOpenedEvent;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 
 abstract class DurationEventProducer extends EventProducer {
 

@@ -1,12 +1,13 @@
-package de.antidrowsinessalarm.listener;
+package de.antidrowsinessalarm.eventproducer;
+
+import com.google.common.eventbus.EventBus;
+
+import java.util.List;
 
 import de.antidrowsinessalarm.PERCLOSCalculator;
 import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
-import com.google.common.eventbus.EventBus;
-
-import java.util.List;
 
 public class DrowsyEventProducer extends EventProducer {
 

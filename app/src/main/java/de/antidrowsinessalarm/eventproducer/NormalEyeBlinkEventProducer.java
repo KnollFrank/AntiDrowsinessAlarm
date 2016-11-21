@@ -1,8 +1,9 @@
-package de.antidrowsinessalarm.listener;
+package de.antidrowsinessalarm.eventproducer;
+
+import com.google.common.eventbus.EventBus;
 
 import de.antidrowsinessalarm.event.DurationEvent;
 import de.antidrowsinessalarm.event.NormalEyeBlinkEvent;
-import com.google.common.eventbus.EventBus;
 
 public class NormalEyeBlinkEventProducer extends DurationEventProducer {
 

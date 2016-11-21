@@ -1,12 +1,13 @@
-package de.antidrowsinessalarm.listener;
+package de.antidrowsinessalarm.eventproducer;
 
-import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 
 public class SlowEyelidClosureEventsProvider {
 

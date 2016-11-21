@@ -47,7 +47,7 @@ import de.antidrowsinessalarm.camera.CameraSourcePreview;
 import de.antidrowsinessalarm.camera.GraphicOverlay;
 import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
-import de.antidrowsinessalarm.listener.DrowsyEventDetector;
+import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 
 /**
  * Activity for the face tracker app.  This app detects faces with the rear facing camera, and draws

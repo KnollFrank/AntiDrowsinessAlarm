@@ -1,18 +1,5 @@
 package de.antidrowsinessalarm;
 
-import de.antidrowsinessalarm.GraphicFaceTracker;
-import de.antidrowsinessalarm.event.Event;
-import de.antidrowsinessalarm.event.EyesClosedEvent;
-import de.antidrowsinessalarm.event.EyesOpenedEvent;
-import de.antidrowsinessalarm.event.NormalEyeBlinkEvent;
-import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
-import de.antidrowsinessalarm.listener.ConsecutiveUpdateEventsProducer;
-import de.antidrowsinessalarm.listener.DrowsyEventProducer;
-import de.antidrowsinessalarm.listener.EyesClosedEventProducer;
-import de.antidrowsinessalarm.listener.EyesOpenedEventProducer;
-import de.antidrowsinessalarm.listener.NormalEyeBlinkEventProducer;
-import de.antidrowsinessalarm.listener.SlowEyelidClosureEventProducer;
-import de.antidrowsinessalarm.listener.SlowEyelidClosureEventsProvider;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame.Metadata;
 import com.google.android.gms.vision.Tracker;
@@ -27,6 +14,19 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.antidrowsinessalarm.event.Event;
+import de.antidrowsinessalarm.event.EyesClosedEvent;
+import de.antidrowsinessalarm.event.EyesOpenedEvent;
+import de.antidrowsinessalarm.event.NormalEyeBlinkEvent;
+import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
+import de.antidrowsinessalarm.eventproducer.ConsecutiveUpdateEventsProducer;
+import de.antidrowsinessalarm.eventproducer.DrowsyEventProducer;
+import de.antidrowsinessalarm.eventproducer.EyesClosedEventProducer;
+import de.antidrowsinessalarm.eventproducer.EyesOpenedEventProducer;
+import de.antidrowsinessalarm.eventproducer.NormalEyeBlinkEventProducer;
+import de.antidrowsinessalarm.eventproducer.SlowEyelidClosureEventProducer;
+import de.antidrowsinessalarm.eventproducer.SlowEyelidClosureEventsProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;

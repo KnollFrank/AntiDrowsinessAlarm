@@ -1,4 +1,4 @@
-package de.antidrowsinessalarm.listener;
+package de.antidrowsinessalarm.eventproducer;
 
 import com.google.common.eventbus.EventBus;
 

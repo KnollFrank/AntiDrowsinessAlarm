@@ -1,10 +1,11 @@
-package de.antidrowsinessalarm.listener;
+package de.antidrowsinessalarm.eventproducer;
 
-import de.antidrowsinessalarm.event.EyesOpenedEvent;
-import de.antidrowsinessalarm.event.UpdateEvent;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
+
+import de.antidrowsinessalarm.event.EyesOpenedEvent;
+import de.antidrowsinessalarm.event.UpdateEvent;
 
 public class EyesOpenedEventProducer extends StateChangeEventProducer {
 

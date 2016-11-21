@@ -1,11 +1,12 @@
-package de.antidrowsinessalarm.listener;
+package de.antidrowsinessalarm.eventproducer;
 
-import de.antidrowsinessalarm.event.ConsecutiveUpdateEvents;
-import de.antidrowsinessalarm.event.UpdateEvent;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
+import de.antidrowsinessalarm.event.ConsecutiveUpdateEvents;
+import de.antidrowsinessalarm.event.UpdateEvent;
 
 abstract class StateChangeEventProducer extends EventProducer {
 

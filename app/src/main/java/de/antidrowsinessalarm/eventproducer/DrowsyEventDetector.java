@@ -1,7 +1,8 @@
-package de.antidrowsinessalarm.listener;
+package de.antidrowsinessalarm.eventproducer;
+
+import com.google.common.eventbus.EventBus;
 
 import de.antidrowsinessalarm.GraphicFaceTracker;
-import com.google.common.eventbus.EventBus;
 
 public class DrowsyEventDetector {
 

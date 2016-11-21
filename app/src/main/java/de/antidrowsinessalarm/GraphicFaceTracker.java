@@ -6,7 +6,7 @@ import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
 
 import de.antidrowsinessalarm.event.UpdateEvent;
-import de.antidrowsinessalarm.listener.DrowsyEventProducer;
+import de.antidrowsinessalarm.eventproducer.DrowsyEventProducer;
 
 public class GraphicFaceTracker extends Tracker<Face> {
 
