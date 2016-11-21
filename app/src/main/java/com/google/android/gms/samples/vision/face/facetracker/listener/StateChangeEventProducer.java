@@ -14,7 +14,7 @@ abstract class StateChangeEventProducer extends EventProducer {
 
     @Subscribe
     public void maybeProduceStateChangeEvent(final ConsecutiveUpdateEvents events) {
-        this.maybeProduceStateChangeEvent(events.getPreviousUpdateEvent(), events.getActualUpdateEvent());
+        this.maybeProduceStateChangeEvent(events.getPreviousEvent(), events.getActualEvent());
     }
 
     public void maybeProduceStateChangeEvent(final UpdateEvent previousEvent, final UpdateEvent actualEvent) {

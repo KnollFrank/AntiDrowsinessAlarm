@@ -7,15 +7,15 @@ import com.google.common.eventbus.Subscribe;
 
 public class ConsecutiveUpdateEventsProducer extends EventProducer {
 
-    private UpdateEvent previousUpdateEvent = null;
+    private UpdateEvent previousEvent = null;
 
     public ConsecutiveUpdateEventsProducer(final EventBus eventBus) {
         super(eventBus);
     }
 
     @Subscribe
-    public void onUpdateEvent(final UpdateEvent actualUpdateEvent) {
-        this.postEvent(new ConsecutiveUpdateEvents(this.previousUpdateEvent, actualUpdateEvent));
-        this.previousUpdateEvent = actualUpdateEvent;
+    public void onUpdateEvent(final UpdateEvent actualEvent) {
+        this.postEvent(new ConsecutiveUpdateEvents(this.previousEvent, actualEvent));
+        this.previousEvent = actualEvent;
     }
 }

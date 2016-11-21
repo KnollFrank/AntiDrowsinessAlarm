@@ -2,19 +2,19 @@ package com.google.android.gms.samples.vision.face.facetracker.event;
 
 public class ConsecutiveUpdateEvents {
 
-    private final UpdateEvent previousUpdateEvent;
-    private final UpdateEvent actualUpdateEvent;
+    private final UpdateEvent previousEvent;
+    private final UpdateEvent actualEvent;
 
-    public ConsecutiveUpdateEvents(final UpdateEvent previousUpdateEvent, final UpdateEvent actualUpdateEvent) {
-        this.previousUpdateEvent = previousUpdateEvent;
-        this.actualUpdateEvent = actualUpdateEvent;
+    public ConsecutiveUpdateEvents(final UpdateEvent previousEvent, final UpdateEvent actualEvent) {
+        this.previousEvent = previousEvent;
+        this.actualEvent = actualEvent;
     }
 
-    public UpdateEvent getPreviousUpdateEvent() {
-        return this.previousUpdateEvent;
+    public UpdateEvent getPreviousEvent() {
+        return this.previousEvent;
     }
 
-    public UpdateEvent getActualUpdateEvent() {
-        return this.actualUpdateEvent;
+    public UpdateEvent getActualEvent() {
+        return this.actualEvent;
     }
 }
