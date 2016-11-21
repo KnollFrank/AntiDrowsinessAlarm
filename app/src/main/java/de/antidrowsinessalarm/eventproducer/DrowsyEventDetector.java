@@ -3,6 +3,7 @@ package de.antidrowsinessalarm.eventproducer;
 import com.google.common.eventbus.EventBus;
 
 import de.antidrowsinessalarm.GraphicFaceTracker;
+import de.antidrowsinessalarm.listener.EventLogger;
 
 public class DrowsyEventDetector {
 
@@ -17,6 +18,7 @@ public class DrowsyEventDetector {
         this.eventBus.register(new EyesClosedEventProducer(this.eventBus));
         this.eventBus.register(new NormalEyeBlinkEventProducer(this.eventBus));
         this.eventBus.register(new SlowEyelidClosureEventProducer(this.eventBus));
+        this.eventBus.register(new EventLogger());
         SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider();
         this.eventBus.register(slowEyelidClosureEventsProvider);
 
