@@ -13,16 +13,16 @@
         android:layout_height="wrap_content"
         android:text="TextView" />
 
-    <com.google.android.gms.samples.vision.face.facetracker.ui.camera.CameraSourcePreview
+    <de.antidrowsinessalarm.camera.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.gms.samples.vision.face.facetracker.ui.camera.GraphicOverlay
+        <de.antidrowsinessalarm.camera.GraphicOverlay
             android:id="@+id/faceOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </com.google.android.gms.samples.vision.face.facetracker.ui.camera.CameraSourcePreview>
+    </de.antidrowsinessalarm.camera.CameraSourcePreview>
 
 </LinearLayout>

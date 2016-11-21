@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.google.android.gms.samples.vision.face.facetracker"
+    package="de.antidrowsinessalarm"
     android:installLocation="auto"
     android:versionCode="1"
     android:versionName="1">
@@ -17,7 +17,7 @@
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
-        android:label="FaceTracker"
+        android:label="AntiDrowsinessAlarm"
         android:theme="@style/Theme.AppCompat">
 
         <meta-data
@@ -29,9 +29,9 @@
             android:value="face" />
 
         <activity
-            android:name="com.google.android.gms.samples.vision.face.facetracker.FaceTrackerActivity"
+            android:name="de.antidrowsinessalarm.FaceTrackerActivity"
             android:icon="@drawable/icon"
-            android:label="Face Tracker"
+            android:label="AntiDrowsinessAlarm"
             android:screenOrientation="fullSensor"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
