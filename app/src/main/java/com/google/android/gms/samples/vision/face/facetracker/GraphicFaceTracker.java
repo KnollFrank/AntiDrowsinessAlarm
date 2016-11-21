@@ -19,6 +19,7 @@ public class GraphicFaceTracker extends Tracker<Face> {
         this.drowsyEventProducer = drowsyEventProducer;
     }
 
+    // TODO: Umrechnung zwischen detections.getFrameMetadata().getTimestampMillis() und System.currentTimeMillis() in einer Klasse behandeln.
     @Override
     public void onUpdate(Detector.Detections<Face> detections, Face face) {
         if(this.firstCallToOnUpdate) {
