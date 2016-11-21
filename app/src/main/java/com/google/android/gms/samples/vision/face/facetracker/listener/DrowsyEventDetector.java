@@ -11,6 +11,7 @@ public class DrowsyEventDetector {
 
     public DrowsyEventDetector() {
         this.eventBus = new EventBus();
+        this.eventBus.register(new ConsecutiveUpdateEventsProducer(this.eventBus));
         this.eventBus.register(new EyesOpenedEventProducer(this.eventBus));
         this.eventBus.register(new EyesClosedEventProducer(this.eventBus));
         this.eventBus.register(new NormalEyeBlinkEventProducer(this.eventBus));

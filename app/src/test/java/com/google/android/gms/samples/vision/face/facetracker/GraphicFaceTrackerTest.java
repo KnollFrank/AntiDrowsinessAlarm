@@ -5,6 +5,7 @@ import com.google.android.gms.samples.vision.face.facetracker.event.EyesClosedEv
 import com.google.android.gms.samples.vision.face.facetracker.event.EyesOpenedEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.NormalEyeBlinkEvent;
 import com.google.android.gms.samples.vision.face.facetracker.event.SlowEyelidClosureEvent;
+import com.google.android.gms.samples.vision.face.facetracker.listener.ConsecutiveUpdateEventsProducer;
 import com.google.android.gms.samples.vision.face.facetracker.listener.DrowsyEventProducer;
 import com.google.android.gms.samples.vision.face.facetracker.listener.EyesClosedEventProducer;
 import com.google.android.gms.samples.vision.face.facetracker.listener.EyesOpenedEventProducer;
@@ -49,6 +50,7 @@ public class GraphicFaceTrackerTest {
         eventBus.register(new SlowEyelidClosureEventProducer(eventBus));
         eventBus.register(new EyesOpenedEventProducer(eventBus));
         eventBus.register(new EyesClosedEventProducer(eventBus));
+        eventBus.register(new ConsecutiveUpdateEventsProducer(eventBus));
 
         this.tracker = new GraphicFaceTracker(eventBus, new DrowsyEventProducer(eventBus, 15000, new SlowEyelidClosureEventsProvider()));
     }
@@ -171,6 +173,24 @@ public class GraphicFaceTrackerTest {
                 new EyesOpenedEvent(101),
                 new EyesClosedEvent(102),
                 new EyesOpenedEvent(103)));
+    }
+
+    @Test
+    public void shouldCreateEvents3() {
+        // When
+        this.tracker.onNewItem(1, this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(102), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(this.getFaceDetections(103), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(this.getFaceDetections(104), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(105), this.createFaceWithEyesClosed());
+
+        // Then
+        assertThat(this.listener.getEvents(), hasItems(
+                new EyesClosedEvent(100),
+                new EyesOpenedEvent(102),
+                new EyesClosedEvent(104)));
     }
 
     private Detector.Detections<Face> getFaceDetections(final long timestampMillis) {

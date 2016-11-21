@@ -1,5 +1,6 @@
 package com.google.android.gms.samples.vision.face.facetracker.listener;
 
+import com.google.android.gms.samples.vision.face.facetracker.event.ConsecutiveUpdateEvents;
 import com.google.android.gms.samples.vision.face.facetracker.event.UpdateEvent;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
@@ -7,20 +8,27 @@ import com.google.common.eventbus.Subscribe;
 
 abstract class StateChangeEventProducer extends EventProducer {
 
-    private boolean hasPreviousState = false;
-
     StateChangeEventProducer(final EventBus eventBus) {
         super(eventBus);
     }
 
     @Subscribe
-    public void maybeProduceStateChangeEvent(final UpdateEvent actualEvent) {
-        boolean hasActualState = this.getState(actualEvent.getFace());
-        if(!this.hasPreviousState && hasActualState) {
+    public void maybeProduceStateChangeEvent(final ConsecutiveUpdateEvents events) {
+        this.maybeProduceStateChangeEvent(events.getPreviousUpdateEvent(), events.getActualUpdateEvent());
+    }
+
+    public void maybeProduceStateChangeEvent(final UpdateEvent previousEvent, final UpdateEvent actualEvent) {
+        if(!this.hasPreviousState(previousEvent) && this.hasActualState(actualEvent)) {
             this.postEvent(this.createStateChangeEventFrom(actualEvent));
         }
+    }
 
-        this.hasPreviousState = hasActualState;
+    private boolean hasPreviousState(final UpdateEvent event) {
+        return event != null && this.getState(event.getFace());
+    }
+
+    private boolean hasActualState(final UpdateEvent event) {
+        return this.getState(event.getFace());
     }
 
     protected abstract boolean getState(Face face);
