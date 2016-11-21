@@ -6,15 +6,15 @@ import java.util.List;
 
 public class PERCLOSCalculator {
 
-    public double calculatePERCLOS(final List<SlowEyelidClosureEvent> slowEyelidClosureEvents, final long timeWindowMillis) {
-        return (double) this.getSumDurationsMillis(slowEyelidClosureEvents) / (double) timeWindowMillis;
+    public double calculatePERCLOS(final List<SlowEyelidClosureEvent> events, final long timeWindowMillis) {
+        return (double) this.getSumDurationsMillis(events) / (double) timeWindowMillis;
     }
 
-    private long getSumDurationsMillis(final List<SlowEyelidClosureEvent> slowEyelidClosureEvents) {
-        long sumDurationsMillis = 0;
-        for(SlowEyelidClosureEvent slowEyelidClosureEvent : slowEyelidClosureEvents) {
-            sumDurationsMillis += slowEyelidClosureEvent.getDurationMillis();
+    private long getSumDurationsMillis(final List<SlowEyelidClosureEvent> events) {
+        long sum = 0;
+        for(SlowEyelidClosureEvent event : events) {
+            sum += event.getDurationMillis();
         }
-        return sumDurationsMillis;
+        return sum;
     }
 }
