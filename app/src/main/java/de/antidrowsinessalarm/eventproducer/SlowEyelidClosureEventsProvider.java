@@ -11,12 +11,12 @@ import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 
 public class SlowEyelidClosureEventsProvider {
 
-    private final List<SlowEyelidClosureEvent> slowEyelidClosureEvents = new ArrayList<SlowEyelidClosureEvent>();
+    private final List<SlowEyelidClosureEvent> events = new ArrayList<SlowEyelidClosureEvent>();
 
     @Subscribe
     // TODO: this list will grow indefinitely when the app runs a long time, so shrink it somehow
-    public void recordSlowEyelidClosureEvent(final SlowEyelidClosureEvent slowEyelidClosureEvent) {
-        this.slowEyelidClosureEvents.add(slowEyelidClosureEvent);
+    public void recordSlowEyelidClosureEvent(final SlowEyelidClosureEvent event) {
+        this.events.add(event);
     }
 
     public List<SlowEyelidClosureEvent> getRecordedEventsWithinTimeWindow(final long nowMillis, final long timeWindowMillis) {
@@ -30,6 +30,6 @@ public class SlowEyelidClosureEventsProvider {
                         return event.getTimestampMillis() >= startMillis && event.getTimestampMillis() + event.getDurationMillis() <= endMillis;
                     }
                 };
-        return FluentIterable.from(this.slowEyelidClosureEvents).filter(isEventWithinTimeWindow).toList();
+        return FluentIterable.from(this.events).filter(isEventWithinTimeWindow).toList();
     }
 }
