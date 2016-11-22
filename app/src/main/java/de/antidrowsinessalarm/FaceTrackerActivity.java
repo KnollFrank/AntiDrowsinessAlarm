@@ -75,14 +75,14 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         super.onCreate(icicle);
         this.setContentView(R.layout.main);
 
-        this.mPreview=(CameraSourcePreview) this.findViewById(R.id.preview);
-        this.mGraphicOverlay=(GraphicOverlay) this.findViewById(R.id.faceOverlay);
-        this.eyesInfoView=(TextView) this.findViewById(R.id.eyesInfoView);
+        this.mPreview = (CameraSourcePreview) this.findViewById(R.id.preview);
+        this.mGraphicOverlay = (GraphicOverlay) this.findViewById(R.id.faceOverlay);
+        this.eyesInfoView = (TextView) this.findViewById(R.id.eyesInfoView);
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        if (rc == PackageManager.PERMISSION_GRANTED) {
+        if(rc == PackageManager.PERMISSION_GRANTED) {
             this.createCameraSource();
         } else {
             this.requestCameraPermission();
@@ -99,7 +99,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
         final String[] permissions = new String[]{Manifest.permission.CAMERA};
 
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+        if(!ActivityCompat.shouldShowRequestPermissionRationale(this,
                 Manifest.permission.CAMERA)) {
             ActivityCompat.requestPermissions(this, permissions, RC_HANDLE_CAMERA_PERM);
             return;
@@ -128,7 +128,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      */
     private void createCameraSource() {
 
-        Context context=this.getApplicationContext();
+        Context context = this.getApplicationContext();
         FaceDetector detector = new FaceDetector.Builder(context)
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .setMode(FaceDetector.ACCURATE_MODE)
@@ -138,7 +138,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
                         .build());
 
-        if (!detector.isOperational()) {
+        if(!detector.isOperational()) {
             // Note: The first time that an app using face API is installed on a device, GMS will
             // download a native library to the device in order to do detection.  Usually this
             // completes before the app is run for the first time.  But if that download has not yet
@@ -150,7 +150,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             Log.w(TAG, "Face detector dependencies are not yet available.");
         }
 
-        this.mCameraSource=new CameraSource.Builder(context, detector)
+        this.mCameraSource = new CameraSource.Builder(context, detector)
                 .setRequestedPreviewSize(640, 480)
                 .setFacing(CameraSource.CAMERA_FACING_FRONT)
                 .setRequestedFps(30.0f)
@@ -206,13 +206,13 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode != RC_HANDLE_CAMERA_PERM) {
+        if(requestCode != RC_HANDLE_CAMERA_PERM) {
             Log.d(TAG, "Got unexpected permission result: " + requestCode);
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             return;
         }
 
-        if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if(grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Camera permission granted - initialize the camera source");
             // we have permission, so create the camerasource
             this.createCameraSource();
@@ -249,7 +249,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         // check that the device has play services available.
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
                 this.getApplicationContext());
-        if (code != ConnectionResult.SUCCESS) {
+        if(code != ConnectionResult.SUCCESS) {
             Dialog dlg =
                     GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
             dlg.show();
@@ -261,7 +261,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             } catch (IOException e) {
                 Log.e(TAG, "Unable to start camera source.", e);
                 this.mCameraSource.release();
-                this.mCameraSource=null;
+                this.mCameraSource = null;
             }
         }
     }
@@ -358,8 +358,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          * the overlay.
          */
         @Override
-        public void onDone()
-        {
+        public void onDone() {
             this.mOverlay.remove(this.mFaceGraphic);
             this.mediaPlayer.release();
         }
