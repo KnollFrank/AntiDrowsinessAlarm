@@ -35,6 +35,7 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
+import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
@@ -66,6 +67,16 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     //==============================================================================================
     // Activity Methods
     //==============================================================================================
+
+    public static FaceDetector createFaceDetector(final Context context, final Detector.Processor<Face> processor) {
+        FaceDetector detector = new FaceDetector.Builder(context)
+                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                .setMode(FaceDetector.ACCURATE_MODE)
+                .build();
+
+        detector.setProcessor(processor);
+        return detector;
+    }
 
     /**
      * Initializes the UI and initiates the creation of a face detector.
@@ -129,14 +140,11 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private void createCameraSource() {
 
         Context context = this.getApplicationContext();
-        FaceDetector detector = new FaceDetector.Builder(context)
-                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
-                .setMode(FaceDetector.ACCURATE_MODE)
-                .build();
-
-        detector.setProcessor(
-                new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
-                        .build());
+        FaceDetector detector =
+                createFaceDetector(
+                        context,
+                        // TODO: use a LargestFaceFocusingProcessor
+                        new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory()).build());
 
         if(!detector.isOperational()) {
             // Note: The first time that an app using face API is installed on a device, GMS will
