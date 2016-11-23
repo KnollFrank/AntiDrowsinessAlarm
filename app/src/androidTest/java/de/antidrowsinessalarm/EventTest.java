@@ -34,6 +34,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class EventTest {
@@ -57,7 +58,7 @@ public class EventTest {
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD_MR1)
     @Test
-    public void shouldCreateEvents() {
+    public void shouldCreateEyesOpenedClosedEvents() {
         // When
         this.detectorConsumesVideo(30, R.raw.slow_eyelid_closure);
 
@@ -68,6 +69,29 @@ public class EventTest {
         assertThat(this.listener.getEvents().get(2), is(instanceOf(EyesOpenedEvent.class)));
         assertThat(this.listener.getEvents().get(3), is(instanceOf(EyesClosedEvent.class)));
         assertThat(this.listener.getEvents().get(4), is(instanceOf(EyesOpenedEvent.class)));
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD_MR1)
+    @Test
+    public void testOpenCloseOpen() {
+        // When
+        this.detectorConsumesVideo(30, R.raw.open_close_open);
+
+        // Then
+        assertThat(this.listener.getEvents(), hasSize(3));
+        assertThat(this.listener.getEvents().get(0), is(instanceOf(EyesOpenedEvent.class)));
+        assertThat(this.listener.getEvents().get(1), is(instanceOf(EyesClosedEvent.class)));
+        assertThat(this.listener.getEvents().get(2), is(instanceOf(EyesOpenedEvent.class)));
+    }
+
+    @Test
+    public void shouldCreateSlowEyelidClosureEvents() {
+        fail("not yet implemented");
+    }
+
+    @Test
+    public void shouldCreateNormalEyeBlinkEvents() {
+        fail("not yet implemented");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD_MR1)
