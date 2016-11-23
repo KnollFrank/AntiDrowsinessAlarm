@@ -17,6 +17,7 @@ import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.common.eventbus.Subscribe;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,51 +31,35 @@ import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 import de.antidrowsinessalarm.test.R;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class EventTest {
 
+    private Context appContext;
     private EventListener listener;
     private DrowsyEventDetector drowsyEventDetector;
+    private FaceDetector detector;
+
+    @Before
+    public void setup() {
+        this.appContext = InstrumentationRegistry.getTargetContext();
+        this.drowsyEventDetector = new DrowsyEventDetector();
+        this.listener = new EventListener();
+        this.drowsyEventDetector.getEventBus().register(this.listener);
+        this.detector =
+                FaceTrackerActivity.createFaceDetector(
+                        this.appContext,
+                        new MultiProcessor.Builder<>(this.createFactory()).build());
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD_MR1)
     @Test
     public void shouldCreateEvents() {
-        // Given
-        this.drowsyEventDetector = new DrowsyEventDetector();
-        this.listener = new EventListener();
-        this.drowsyEventDetector.getEventBus().register(this.listener);
-
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
-
-        assertEquals("de.antidrowsinessalarm" +
-                "", appContext.getPackageName());
-        Uri videoUri = Uri.parse("android.resource://" + appContext.getPackageName() + ".test/" + R.raw.slow_eyelid_closure);
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(appContext, videoUri);
-
-        FaceDetector detector =
-                FaceTrackerActivity.createFaceDetector(
-                        appContext,
-                        new MultiProcessor.Builder<>(this.createFactory()).build());
-
-        double inc = 1000000.0 / 30.0;
-        String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        long timeInmillisec = Long.parseLong(time);
         // When
-        for(long i = 0; i < timeInmillisec * 1000; i += inc) {
-            final Bitmap bitmap = retriever.getFrameAtTime(i, MediaMetadataRetriever.OPTION_CLOSEST);
-            assertThat(bitmap, is(not(nullValue())));
-            Frame frame = new Frame.Builder().setBitmap(bitmap).setTimestampMillis(i / 1000).build();
-            detector.receiveFrame(frame);
-        }
+        this.detectorConsumesVideo(30, R.raw.slow_eyelid_closure);
 
         // Then
         assertThat(this.listener.getEvents(), hasSize(5));
@@ -83,6 +68,45 @@ public class EventTest {
         assertThat(this.listener.getEvents().get(2), is(instanceOf(EyesOpenedEvent.class)));
         assertThat(this.listener.getEvents().get(3), is(instanceOf(EyesClosedEvent.class)));
         assertThat(this.listener.getEvents().get(4), is(instanceOf(EyesOpenedEvent.class)));
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD_MR1)
+    private void detectorConsumesVideo(final int framesPerSecond, final int videoResource) {
+        MediaMetadataRetriever retriever = this.createRetriever(videoResource);
+
+        double incMicros = 1000000.0 / (double) framesPerSecond;
+        long durationMicros = this.getDurationMillis(retriever) * 1000;
+        for(long timeMicros = 0; timeMicros < durationMicros; timeMicros += incMicros) {
+            Frame frame =
+                    new Frame
+                            .Builder()
+                            .setBitmap(this.getFrameAtTime(retriever, timeMicros))
+                            .setTimestampMillis(timeMicros / 1000)
+                            .build();
+            this.detector.receiveFrame(frame);
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD_MR1)
+    @NonNull
+    private MediaMetadataRetriever createRetriever(final int videoResource) {
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        retriever.setDataSource(this.appContext, this.createUri(videoResource));
+        return retriever;
+    }
+
+    private Uri createUri(final int resource) {
+        return Uri.parse("android.resource://" + this.appContext.getPackageName() + ".test/" + resource);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD_MR1)
+    private long getDurationMillis(final MediaMetadataRetriever retriever) {
+        return Long.parseLong(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD_MR1)
+    private Bitmap getFrameAtTime(final MediaMetadataRetriever retriever, final long timeMicros) {
+        return retriever.getFrameAtTime(timeMicros, MediaMetadataRetriever.OPTION_CLOSEST);
     }
 
     @NonNull
@@ -112,14 +136,6 @@ public class EventTest {
 
         List<Event> getEvents() {
             return this.events;
-        }
-    }
-
-    private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
-
-        @Override
-        public Tracker<Face> create(Face face) {
-            return EventTest.this.drowsyEventDetector.getGraphicFaceTracker();
         }
     }
 }
