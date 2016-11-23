@@ -14,15 +14,24 @@ import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
+import com.google.common.eventbus.Subscribe;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.antidrowsinessalarm.event.Event;
+import de.antidrowsinessalarm.event.EyesClosedEvent;
+import de.antidrowsinessalarm.event.EyesOpenedEvent;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 import de.antidrowsinessalarm.test.R;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
@@ -30,16 +39,22 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class EventTest {
 
+    private EventListener listener;
+    private DrowsyEventDetector drowsyEventDetector;
+
     @RequiresApi(api = Build.VERSION_CODES.GINGERBREAD_MR1)
     @Test
     public void test() {
         // Given
+        this.drowsyEventDetector = new DrowsyEventDetector();
+        this.listener = new EventListener();
+        this.drowsyEventDetector.getEventBus().register(this.listener);
+
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
         assertEquals("de.antidrowsinessalarm" +
                 "", appContext.getPackageName());
-        // TODO: move slow_eyelid_closure.mp4 and normal_eye_blink.mp4 to raw directory within androidTest
         Uri videoUri = Uri.parse("android.resource://" + appContext.getPackageName() + ".test/" + R.raw.slow_eyelid_closure);
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(appContext, videoUri);
@@ -69,13 +84,38 @@ public class EventTest {
         }
 
         // Then
+        assertThat(this.listener.getEvents(), hasSize(5));
+        assertThat(this.listener.getEvents().get(0), is(instanceOf(EyesOpenedEvent.class)));
+        assertThat(this.listener.getEvents().get(1), is(instanceOf(EyesClosedEvent.class)));
+        assertThat(this.listener.getEvents().get(2), is(instanceOf(EyesOpenedEvent.class)));
+        assertThat(this.listener.getEvents().get(3), is(instanceOf(EyesClosedEvent.class)));
+        assertThat(this.listener.getEvents().get(4), is(instanceOf(EyesOpenedEvent.class)));
+    }
 
+    static class EventListener {
+
+        private final List<Event> events = new ArrayList<Event>();
+
+        @Subscribe
+        public void recordEvent(final Event event) {
+            if(event instanceof EyesOpenedEvent || event instanceof EyesClosedEvent) {
+                this.events.add(event);
+            }
+        }
+
+        Event getEvent() {
+            return !this.events.isEmpty() ? this.events.get(this.events.size() - 1) : null;
+        }
+
+        List<Event> getEvents() {
+            return this.events;
+        }
     }
 
     private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
         @Override
         public Tracker<Face> create(Face face) {
-            return new DrowsyEventDetector().getGraphicFaceTracker();
+            return EventTest.this.drowsyEventDetector.getGraphicFaceTracker();
         }
     }
 }
