@@ -4,6 +4,7 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame.Metadata;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
+import com.google.common.collect.FluentIterable;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -29,9 +30,9 @@ import de.antidrowsinessalarm.eventproducer.SlowEyelidClosureEventProducer;
 import de.antidrowsinessalarm.eventproducer.SlowEyelidClosureEventsProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Mockito.doReturn;
@@ -129,7 +130,11 @@ public class GraphicFaceTrackerTest {
         this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesClosed());
 
         // Then
-        assertThat(this.listener.getEvents(), contains((Event) (new EyesClosedEvent(100))));
+        assertThat(this.filterEvents(EyesClosedEvent.class), contains((Event) (new EyesClosedEvent(100))));
+    }
+
+    private <T> List<T> filterEvents(final Class<T> clazz) {
+        return FluentIterable.from(this.listener.getEvents()).filter(clazz).toList();
     }
 
     @Test
@@ -139,7 +144,7 @@ public class GraphicFaceTrackerTest {
         this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesOpened());
 
         // Then
-        assertThat(this.listener.getEvents(), contains((Event) (new EyesOpenedEvent(100))));
+        assertThat(this.filterEvents(EyesOpenedEvent.class), contains((Event) (new EyesOpenedEvent(100))));
     }
 
     @Test
