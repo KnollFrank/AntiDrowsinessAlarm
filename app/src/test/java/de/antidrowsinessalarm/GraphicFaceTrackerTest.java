@@ -130,7 +130,7 @@ public class GraphicFaceTrackerTest {
         this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesClosed());
 
         // Then
-        assertThat(this.filterEvents(EyesClosedEvent.class), contains((Event) (new EyesClosedEvent(100))));
+        assertThat(this.filterEvents(EyesClosedEvent.class), contains(new EyesClosedEvent(100)));
     }
 
     private <T> List<T> filterEvents(final Class<T> clazz) {
@@ -144,7 +144,7 @@ public class GraphicFaceTrackerTest {
         this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesOpened());
 
         // Then
-        assertThat(this.filterEvents(EyesOpenedEvent.class), contains((Event) (new EyesOpenedEvent(100))));
+        assertThat(this.filterEvents(EyesOpenedEvent.class), contains(new EyesOpenedEvent(100)));
     }
 
     @Test
