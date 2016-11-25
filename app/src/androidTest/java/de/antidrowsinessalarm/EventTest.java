@@ -35,7 +35,6 @@ import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.fail;
 
 @RunWith(AndroidJUnit4.class)
 public class EventTest {
@@ -125,6 +124,20 @@ public class EventTest {
         assertThat(this.filterListenerEventsBy(NormalEyeBlinkEvent.class), contains(instanceOf(NormalEyeBlinkEvent.class)));
     }
 
+    @Test
+    public void shouldCreateSlowEyelidClosureEventAndNormalEyeBlinkEvent() {
+        // When
+        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+        this.detectorConsumesImage(R.drawable.eyes_opened, 501);
+        this.detectorConsumesImage(R.drawable.eyes_closed, 600);
+        this.detectorConsumesImage(R.drawable.eyes_opened, 600 + 499);
+
+        // Then
+        assertThat(
+                this.filterListenerEventsBy(SlowEyelidClosureEvent.class, NormalEyeBlinkEvent.class),
+                contains(instanceOf(SlowEyelidClosureEvent.class), instanceOf(NormalEyeBlinkEvent.class)));
+    }
+
     private List<Event> filterListenerEventsBy(final Class... eventClasses) {
         return this
                 .getListenerEvents()
@@ -180,16 +193,6 @@ public class EventTest {
 
     private Bitmap getBitmap(final int imageResource) {
         return BitmapFactory.decodeResource(this.appContext.getResources(), imageResource);
-    }
-
-    @Test
-    public void shouldCreateSlowEyelidClosureEvents() {
-        fail("not yet implemented");
-    }
-
-    @Test
-    public void shouldCreateNormalEyeBlinkEvents() {
-        fail("not yet implemented");
     }
 
     @NonNull
