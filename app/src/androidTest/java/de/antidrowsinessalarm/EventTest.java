@@ -98,7 +98,7 @@ public class EventTest {
 
         // Then
         assertThat(
-                this.filterEvents(EyesOpenedEvent.class, EyesClosedEvent.class),
+                this.filterListenerEventsBy(EyesOpenedEvent.class, EyesClosedEvent.class),
                 contains(
                         instanceOf(EyesOpenedEvent.class),
                         instanceOf(EyesClosedEvent.class),
@@ -112,7 +112,7 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_opened, 501);
 
         // Then
-        assertThat(this.filterEvents(SlowEyelidClosureEvent.class), contains(instanceOf(SlowEyelidClosureEvent.class)));
+        assertThat(this.filterListenerEventsBy(SlowEyelidClosureEvent.class), contains(instanceOf(SlowEyelidClosureEvent.class)));
     }
 
     @Test
@@ -122,23 +122,47 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_opened, 499);
 
         // Then
-        assertThat(this.filterEvents(NormalEyeBlinkEvent.class), contains(instanceOf(NormalEyeBlinkEvent.class)));
+        assertThat(this.filterListenerEventsBy(NormalEyeBlinkEvent.class), contains(instanceOf(NormalEyeBlinkEvent.class)));
     }
 
-    private List<Event> filterEvents(final Class... clazzs) {
-        return FluentIterable.from(this.listener.getEvents()).filter(new Predicate<Event>() {
+    private List<Event> filterListenerEventsBy(final Class... eventClasses) {
+        return this
+                .getListenerEvents()
+                .filter(this.isInstanceOfAny(eventClasses))
+                .toList();
+    }
+
+    @NonNull
+    private FluentIterable<Event> getListenerEvents() {
+        return FluentIterable.from(this.listener.getEvents());
+    }
+
+    @NonNull
+    private Predicate<Event> isInstanceOfAny(final Class[] eventClasses) {
+        return new Predicate<Event>() {
 
             @Override
-            public boolean apply(@Nullable final Event event) {
-                return FluentIterable.from(clazzs).anyMatch(new Predicate<Class>() {
+            public boolean apply(@Nullable final Event listenerEvent) {
+                return this.isInstanceOfAny(listenerEvent, eventClasses);
+            }
+
+            private boolean isInstanceOfAny(final @Nullable Event listenerEvent, final Class[] eventClasses) {
+                return FluentIterable
+                        .from(eventClasses)
+                        .anyMatch(this.isInstanceOf(listenerEvent));
+            }
+
+            @NonNull
+            private Predicate<Class> isInstanceOf(final @Nullable Event listenerEvent) {
+                return new Predicate<Class>() {
 
                     @Override
-                    public boolean apply(@Nullable final Class clazz) {
-                        return clazz.isInstance(event);
+                    public boolean apply(@Nullable final Class eventClass) {
+                        return eventClass.isInstance(listenerEvent);
                     }
-                });
+                };
             }
-        }).toList();
+        };
     }
 
     private void detectorConsumesImage(final int imageResource, final int millis) {
@@ -171,6 +195,7 @@ public class EventTest {
     @NonNull
     private MultiProcessor.Factory<Face> createFactory() {
         return new MultiProcessor.Factory<Face>() {
+
             @Override
             public Tracker<Face> create(final Face face) {
                 return EventTest.this.drowsyEventDetector.getGraphicFaceTracker();
