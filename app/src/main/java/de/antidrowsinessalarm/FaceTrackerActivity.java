@@ -69,11 +69,13 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     //==============================================================================================
 
     public static FaceDetector createFaceDetector(final Context context, final Detector.Processor<Face> processor) {
-        FaceDetector detector = new FaceDetector.Builder(context)
-                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
-                .setMode(FaceDetector.ACCURATE_MODE)
-                .build();
-
+        FaceDetector detector =
+                new FaceDetector
+                        .Builder(context)
+                        .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
+                        .setMode(FaceDetector.ACCURATE_MODE)
+                        .setTrackingEnabled(false) // true hat im Test nicht funktioniert, wo Einzelbilder statt Videos verwendet werden
+                        .build();
         detector.setProcessor(processor);
         return detector;
     }

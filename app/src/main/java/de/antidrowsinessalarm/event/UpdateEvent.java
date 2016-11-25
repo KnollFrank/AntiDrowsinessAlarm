@@ -27,7 +27,22 @@ public class UpdateEvent extends Event {
     protected MoreObjects.ToStringHelper getToStringHelper() {
         return super
                 .getToStringHelper()
-                .add("detections", this.detections)
-                .add("face", this.face);
+                .add("detections", this.toString(this.detections))
+                .add("face", this.toString(this.face));
+    }
+
+    private String toString(final Detector.Detections<Face> detections) {
+        return MoreObjects
+                .toStringHelper(detections)
+                .add("timestampMillis", detections.getFrameMetadata().getTimestampMillis())
+                .toString();
+    }
+
+    private String toString(final Face face) {
+        return MoreObjects
+                .toStringHelper(face)
+                .add("leftEyeOpenProbability", face.getIsLeftEyeOpenProbability())
+                .add("rightEyeOpenProbability", face.getIsRightEyeOpenProbability())
+                .toString();
     }
 }
