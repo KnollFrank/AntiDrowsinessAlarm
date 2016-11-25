@@ -12,6 +12,7 @@ import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
+import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.eventbus.Subscribe;
 
@@ -21,6 +22,8 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 import de.antidrowsinessalarm.event.Event;
 import de.antidrowsinessalarm.event.EyesClosedEvent;
@@ -95,7 +98,7 @@ public class EventTest {
 
         // Then
         assertThat(
-                this.listener.getEvents(),
+                this.filterEvents(EyesOpenedEvent.class, EyesClosedEvent.class),
                 contains(
                         instanceOf(EyesOpenedEvent.class),
                         instanceOf(EyesClosedEvent.class),
@@ -122,8 +125,20 @@ public class EventTest {
         assertThat(this.filterEvents(NormalEyeBlinkEvent.class), contains(instanceOf(NormalEyeBlinkEvent.class)));
     }
 
-    private <T> List<T> filterEvents(final Class<T> eventFilter) {
-        return FluentIterable.from(this.listener.getEvents()).filter(eventFilter).toList();
+    private List<Event> filterEvents(final Class... clazzs) {
+        return FluentIterable.from(this.listener.getEvents()).filter(new Predicate<Event>() {
+
+            @Override
+            public boolean apply(@Nullable final Event event) {
+                return FluentIterable.from(clazzs).anyMatch(new Predicate<Class>() {
+
+                    @Override
+                    public boolean apply(@Nullable final Class clazz) {
+                        return clazz.isInstance(event);
+                    }
+                });
+            }
+        }).toList();
     }
 
     private void detectorConsumesImage(final int imageResource, final int millis) {
