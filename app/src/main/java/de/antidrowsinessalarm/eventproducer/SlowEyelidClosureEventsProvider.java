@@ -1,6 +1,7 @@
 package de.antidrowsinessalarm.eventproducer;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
@@ -26,26 +27,33 @@ public class SlowEyelidClosureEventsProvider {
         this.events.add(event);
     }
 
+    @VisibleForTesting
+    List<SlowEyelidClosureEvent> getEvents() {
+        return this.events;
+    }
+
     public long getTimeWindowMillis() {
         return this.timeWindowMillis;
     }
 
-    public List<SlowEyelidClosureEvent> getRecordedEventsWithinTimeWindow(final long nowMillis) {
+    public List<SlowEyelidClosureEvent> getRecordedEventsPartlyWithinTimeWindow(final long nowMillis) {
         return FluentIterable
                 .from(this.events)
-                .filter(this.isEventWithinTimeWindow(nowMillis))
+                .filter(this.isEventPartlyWithinTimeWindow(nowMillis))
                 .toList();
     }
 
     @NonNull
-    private Predicate<SlowEyelidClosureEvent> isEventWithinTimeWindow(final long nowMillis) {
-        // TODO: use Joda-Time Interval [startMillis, endMillis]
-        final long startMillis = nowMillis - this.timeWindowMillis;
-        final long endMillis = nowMillis;
+    private Predicate<SlowEyelidClosureEvent> isEventPartlyWithinTimeWindow(final long nowMillis) {
+        // TODO: use Joda-Time Interval [startMillis, endMillis] or guava Range
+        final long timewindowStartMillis = nowMillis - this.timeWindowMillis;
+        final long timewindowEndMillis = nowMillis;
         return new Predicate<SlowEyelidClosureEvent>() {
+
             @Override
             public boolean apply(SlowEyelidClosureEvent event) {
-                return event.getTimestampMillis() >= startMillis && event.getTimestampMillis() + event.getDurationMillis() <= endMillis;
+                long eventEndMillis = event.getTimestampMillis() + event.getDurationMillis();
+                return eventEndMillis >= timewindowStartMillis;
             }
         };
     }

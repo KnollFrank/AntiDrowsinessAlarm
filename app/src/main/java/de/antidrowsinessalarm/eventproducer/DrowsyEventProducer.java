@@ -32,7 +32,7 @@ public class DrowsyEventProducer extends EventProducer {
     private double getPerclos(long nowMillis) {
         return new PERCLOSCalculator()
                 .calculatePERCLOS(
-                        this.slowEyelidClosureEventsProvider.getRecordedEventsWithinTimeWindow(nowMillis),
+                        this.slowEyelidClosureEventsProvider.getRecordedEventsPartlyWithinTimeWindow(nowMillis),
                         this.slowEyelidClosureEventsProvider.getTimeWindowMillis());
     }
 }

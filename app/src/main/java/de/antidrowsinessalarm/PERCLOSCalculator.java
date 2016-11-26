@@ -13,6 +13,7 @@ public class PERCLOSCalculator {
     private long getSumDurationsMillis(final List<SlowEyelidClosureEvent> events) {
         long sum = 0;
         for(SlowEyelidClosureEvent event : events) {
+            // TODO: getDurationMillis is not correct, we have to use the intersection of the duration and the time window
             sum += event.getDurationMillis();
         }
         return sum;
