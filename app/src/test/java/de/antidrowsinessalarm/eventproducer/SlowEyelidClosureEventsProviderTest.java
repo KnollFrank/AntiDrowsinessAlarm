@@ -1,5 +1,6 @@
 package de.antidrowsinessalarm.eventproducer;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
@@ -11,31 +12,38 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 
 public class SlowEyelidClosureEventsProviderTest {
 
+    private SlowEyelidClosureEventsProvider eventsProvider;
+
+    @Before
+    public void setup() {
+        this.eventsProvider = new SlowEyelidClosureEventsProvider(10);
+    }
+
     @Test
     public void testEventCompletelyWithinTimewindow() {
         // Given
-        SlowEyelidClosureEventsProvider eventsProvider = new SlowEyelidClosureEventsProvider(10);
+        final SlowEyelidClosureEvent event = new SlowEyelidClosureEvent(0, 5);
 
         // When
-        eventsProvider.recordSlowEyelidClosureEvent(new SlowEyelidClosureEvent(0, 5));
-        List<SlowEyelidClosureEvent> recordedEventsPartlyWithinTimeWindow = eventsProvider.getRecordedEventsPartlyWithinTimeWindow(5);
+        this.eventsProvider.recordSlowEyelidClosureEvent(event);
+        List<SlowEyelidClosureEvent> recordedEventsPartlyWithinTimeWindow = this.eventsProvider.getRecordedEventsPartlyWithinTimeWindow(5);
 
         // Then
-        assertThat(recordedEventsPartlyWithinTimeWindow, contains(new SlowEyelidClosureEvent(0, 5)));
-        assertThat(eventsProvider.getEvents(), contains(new SlowEyelidClosureEvent(0, 5)));
+        assertThat(recordedEventsPartlyWithinTimeWindow, contains(event));
+        assertThat(this.eventsProvider.getEvents(), contains(event));
     }
 
     @Test
     public void testEventPartlyWithinTimewindow() {
         // Given
-        SlowEyelidClosureEventsProvider eventsProvider = new SlowEyelidClosureEventsProvider(10);
+        final SlowEyelidClosureEvent event = new SlowEyelidClosureEvent(0, 5);
 
         // When
-        eventsProvider.recordSlowEyelidClosureEvent(new SlowEyelidClosureEvent(0, 5));
-        List<SlowEyelidClosureEvent> recordedEventsPartlyWithinTimeWindow = eventsProvider.getRecordedEventsPartlyWithinTimeWindow(12);
+        this.eventsProvider.recordSlowEyelidClosureEvent(event);
+        List<SlowEyelidClosureEvent> recordedEventsPartlyWithinTimeWindow = this.eventsProvider.getRecordedEventsPartlyWithinTimeWindow(12);
 
         // Then
-        assertThat(recordedEventsPartlyWithinTimeWindow, contains(new SlowEyelidClosureEvent(0, 5)));
-        assertThat(eventsProvider.getEvents(), contains(new SlowEyelidClosureEvent(0, 5)));
+        assertThat(recordedEventsPartlyWithinTimeWindow, contains(event));
+        assertThat(this.eventsProvider.getEvents(), contains(event));
     }
 }
