@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.Event;
 import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.EyesOpenedEvent;
@@ -32,9 +33,11 @@ import de.antidrowsinessalarm.event.NormalEyeBlinkEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.core.Is.isA;
 
 @RunWith(AndroidJUnit4.class)
 public class EventTest {
@@ -46,8 +49,12 @@ public class EventTest {
 
     @Before
     public void setup() {
+        this.setup(new SystemClock());
+    }
+
+    private void setup(Clock clock) {
         this.appContext = InstrumentationRegistry.getTargetContext();
-        this.drowsyEventDetector = new DrowsyEventDetector();
+        this.drowsyEventDetector = new DrowsyEventDetector(clock);
         this.listener = new EventListener();
         this.drowsyEventDetector.getEventBus().register(this.listener);
         this.detector =
@@ -62,7 +69,7 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_opened, 0);
 
         // Then
-        assertThat(this.listener.getEvents(), contains(instanceOf(EyesOpenedEvent.class)));
+        assertThat(this.filterListenerEventsBy(EyesOpenedEvent.class), contains(instanceOf(EyesOpenedEvent.class)));
     }
 
     @Test
@@ -71,7 +78,7 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_closed, 0);
 
         // Then
-        assertThat(this.listener.getEvents(), contains(instanceOf(EyesClosedEvent.class)));
+        assertThat(this.filterListenerEventsBy(EyesClosedEvent.class), contains(instanceOf(EyesClosedEvent.class)));
     }
 
     @Test
@@ -82,7 +89,7 @@ public class EventTest {
 
         // Then
         assertThat(
-                this.listener.getEvents(),
+                this.filterListenerEventsBy(EyesOpenedEvent.class, EyesClosedEvent.class),
                 contains(
                         instanceOf(EyesOpenedEvent.class),
                         instanceOf(EyesClosedEvent.class)));
@@ -136,6 +143,41 @@ public class EventTest {
         assertThat(
                 this.filterListenerEventsBy(SlowEyelidClosureEvent.class, NormalEyeBlinkEvent.class),
                 contains(instanceOf(SlowEyelidClosureEvent.class), instanceOf(NormalEyeBlinkEvent.class)));
+    }
+
+    @Test
+    public void shouldCreateDrowsyEvent() {
+        // Given
+        class MockedClock implements Clock {
+
+            private long currentTimeMillis = 0;
+
+            @Override
+            public long currentTimeMillis() {
+                return this.currentTimeMillis;
+            }
+
+            public void setCurrentTimeMillis(long currentTimeMillis) {
+                this.currentTimeMillis = currentTimeMillis;
+            }
+        }
+
+        MockedClock clock = new MockedClock();
+        this.setup(clock);
+
+        // When
+        clock.setCurrentTimeMillis(0);
+        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+
+        clock.setCurrentTimeMillis(5000);
+        this.detectorConsumesImage(R.drawable.eyes_opened, 5000);
+
+        clock.setCurrentTimeMillis(5001);
+        // dummy image in order to give DrowsyEventProducer a chance to produce a DrowsyEvent
+        this.detectorConsumesImage(R.drawable.eyes_closed, 5001);
+
+        // Then
+        assertThat(this.listener.getEvents(), hasItem(isA(DrowsyEvent.class)));
     }
 
     private List<Event> filterListenerEventsBy(final Class... eventClasses) {
@@ -212,9 +254,7 @@ public class EventTest {
 
         @Subscribe
         public void recordEvent(final Event event) {
-            if(event instanceof EyesOpenedEvent || event instanceof EyesClosedEvent || event instanceof SlowEyelidClosureEvent || event instanceof NormalEyeBlinkEvent) {
-                this.events.add(event);
-            }
+            this.events.add(event);
         }
 
         Event getEvent() {

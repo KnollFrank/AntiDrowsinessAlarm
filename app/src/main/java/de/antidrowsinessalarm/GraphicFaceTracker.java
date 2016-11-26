@@ -12,22 +12,24 @@ public class GraphicFaceTracker extends Tracker<Face> {
 
     private final EventBus eventBus;
     private final DrowsyEventProducer drowsyEventProducer;
+    private final Clock clock;
     private long delta;
     private boolean firstCallToOnUpdate = true;
 
-    public GraphicFaceTracker(final EventBus eventBus, final DrowsyEventProducer drowsyEventProducer) {
+    public GraphicFaceTracker(final EventBus eventBus, final DrowsyEventProducer drowsyEventProducer, final Clock clock) {
         this.eventBus = eventBus;
         this.drowsyEventProducer = drowsyEventProducer;
+        this.clock = clock;
     }
 
     // TODO: Umrechnung zwischen detections.getFrameMetadata().getTimestampMillis() und System.currentTimeMillis() in einer Klasse behandeln.
     @Override
     public void onUpdate(Detector.Detections<Face> detections, Face face) {
         if(this.firstCallToOnUpdate) {
-            this.delta = detections.getFrameMetadata().getTimestampMillis() - System.currentTimeMillis();
+            this.delta = detections.getFrameMetadata().getTimestampMillis() - this.clock.currentTimeMillis();
             this.firstCallToOnUpdate = false;
         }
         this.eventBus.post(new UpdateEvent(detections, face));
-        this.drowsyEventProducer.maybeProduceDrowsyEvent(System.currentTimeMillis() + this.delta);
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(this.clock.currentTimeMillis() + this.delta);
     }
 }

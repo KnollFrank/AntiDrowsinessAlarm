@@ -19,6 +19,7 @@ public class EyesOpenedEventProducer extends StateChangeEventProducer {
     }
 
     private boolean isEyesOpen(Face face) {
+        // TODO: make 0.5 configurable
         return face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5;
     }
 

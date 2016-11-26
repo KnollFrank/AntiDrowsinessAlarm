@@ -11,7 +11,9 @@ import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 
 public class DrowsyEventProducer extends EventProducer {
 
+    // TODO: make configurable
     private static final double DROWSY_THRESHOLD = 0.15;
+    // TODO: make configurable
     private static final double LIKELY_DROWSY_THRESHOLD = 0.08;
 
     private final long timeWindowMillis;

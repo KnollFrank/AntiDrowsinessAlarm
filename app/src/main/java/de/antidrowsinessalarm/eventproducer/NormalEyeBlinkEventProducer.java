@@ -13,6 +13,7 @@ public class NormalEyeBlinkEventProducer extends DurationEventProducer {
 
     @Override
     protected boolean shallCreateEventFor(long durationMillis) {
+        // TODO: make durationMillis configurable from 300 to 500 milliseconds
         return durationMillis < 500;
     }
 

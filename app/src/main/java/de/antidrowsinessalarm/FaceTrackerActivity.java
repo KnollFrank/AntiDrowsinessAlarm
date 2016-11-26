@@ -287,7 +287,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
         @Override
         public Tracker<Face> create(Face face) {
-            DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector();
+            DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(new SystemClock());
 
             final Tracker<Face> tracker = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
             drowsyEventDetector.getEventBus().register(tracker);
