@@ -26,11 +26,15 @@ public class SlowEyelidClosureEventsProvider {
     @Subscribe
     public void recordSlowEyelidClosureEvent(final SlowEyelidClosureEvent event) {
         this.events.add(event);
-        Iterables.removeIf(this.events, Predicates.not(this.isEventPartlyWithinTimeWindow(this.getEndMillis(event))));
+        this.removeEventsNotPartlyWithinTimewindow(this.getEndMillis(event));
     }
 
     private long getEndMillis(final SlowEyelidClosureEvent event) {
         return event.getTimestampMillis() + event.getDurationMillis();
+    }
+
+    private void removeEventsNotPartlyWithinTimewindow(final long nowMillis) {
+        Iterables.removeIf(this.events, Predicates.not(this.isEventPartlyWithinTimeWindow(nowMillis)));
     }
 
     @VisibleForTesting
