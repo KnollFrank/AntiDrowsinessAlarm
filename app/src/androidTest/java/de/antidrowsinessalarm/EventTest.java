@@ -29,6 +29,7 @@ import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.Event;
 import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.EyesOpenedEvent;
+import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
 import de.antidrowsinessalarm.event.NormalEyeBlinkEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
@@ -148,20 +149,6 @@ public class EventTest {
     @Test
     public void shouldCreateDrowsyEvent() {
         // Given
-        class MockedClock implements Clock {
-
-            private long currentTimeMillis = 0;
-
-            @Override
-            public long currentTimeMillis() {
-                return this.currentTimeMillis;
-            }
-
-            public void setCurrentTimeMillis(long currentTimeMillis) {
-                this.currentTimeMillis = currentTimeMillis;
-            }
-        }
-
         MockedClock clock = new MockedClock();
         this.setup(clock);
 
@@ -178,6 +165,27 @@ public class EventTest {
 
         // Then
         assertThat(this.listener.getEvents(), hasItem(isA(DrowsyEvent.class)));
+    }
+
+    @Test
+    public void shouldCreateLikelyDrowsyEvent() {
+        // Given
+        MockedClock clock = new MockedClock();
+        this.setup(clock);
+
+        // When
+        clock.setCurrentTimeMillis(0);
+        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+
+        clock.setCurrentTimeMillis(1500);
+        this.detectorConsumesImage(R.drawable.eyes_opened, 1500);
+
+        clock.setCurrentTimeMillis(1501);
+        // dummy image in order to give DrowsyEventProducer a chance to produce a DrowsyEvent
+        this.detectorConsumesImage(R.drawable.eyes_closed, 1501);
+
+        // Then
+        assertThat(this.listener.getEvents(), hasItem(isA(LikelyDrowsyEvent.class)));
     }
 
     private List<Event> filterListenerEventsBy(final Class... eventClasses) {
@@ -246,6 +254,20 @@ public class EventTest {
                 return EventTest.this.drowsyEventDetector.getGraphicFaceTracker();
             }
         };
+    }
+
+    private static class MockedClock implements Clock {
+
+        private long currentTimeMillis = 0;
+
+        @Override
+        public long currentTimeMillis() {
+            return this.currentTimeMillis;
+        }
+
+        public void setCurrentTimeMillis(long currentTimeMillis) {
+            this.currentTimeMillis = currentTimeMillis;
+        }
     }
 
     static class EventListener {
