@@ -1,5 +1,7 @@
 package de.antidrowsinessalarm.eventproducer;
 
+import android.support.annotation.NonNull;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.eventbus.Subscribe;
@@ -29,16 +31,22 @@ public class SlowEyelidClosureEventsProvider {
     }
 
     public List<SlowEyelidClosureEvent> getRecordedEventsWithinTimeWindow(final long nowMillis) {
+        return FluentIterable
+                .from(this.events)
+                .filter(this.isEventWithinTimeWindow(nowMillis))
+                .toList();
+    }
+
+    @NonNull
+    private Predicate<SlowEyelidClosureEvent> isEventWithinTimeWindow(final long nowMillis) {
         // TODO: use Joda-Time Interval [startMillis, endMillis]
         final long startMillis = nowMillis - this.timeWindowMillis;
         final long endMillis = nowMillis;
-        Predicate<SlowEyelidClosureEvent> isEventWithinTimeWindow =
-                new Predicate<SlowEyelidClosureEvent>() {
-                    @Override
-                    public boolean apply(SlowEyelidClosureEvent event) {
-                        return event.getTimestampMillis() >= startMillis && event.getTimestampMillis() + event.getDurationMillis() <= endMillis;
-                    }
-                };
-        return FluentIterable.from(this.events).filter(isEventWithinTimeWindow).toList();
+        return new Predicate<SlowEyelidClosureEvent>() {
+            @Override
+            public boolean apply(SlowEyelidClosureEvent event) {
+                return event.getTimestampMillis() >= startMillis && event.getTimestampMillis() + event.getDurationMillis() <= endMillis;
+            }
+        };
     }
 }
