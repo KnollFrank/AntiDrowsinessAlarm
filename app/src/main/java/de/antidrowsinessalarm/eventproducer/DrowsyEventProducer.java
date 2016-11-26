@@ -2,12 +2,9 @@ package de.antidrowsinessalarm.eventproducer;
 
 import com.google.common.eventbus.EventBus;
 
-import java.util.List;
-
 import de.antidrowsinessalarm.PERCLOSCalculator;
 import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
-import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 
 public class DrowsyEventProducer extends EventProducer {
 
@@ -16,12 +13,10 @@ public class DrowsyEventProducer extends EventProducer {
     // TODO: make configurable
     private static final double LIKELY_DROWSY_THRESHOLD = 0.08;
 
-    private final long timeWindowMillis;
     private final SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider;
 
-    public DrowsyEventProducer(final EventBus eventBus, final long timeWindowMillis, final SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider) {
+    public DrowsyEventProducer(final EventBus eventBus, final SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider) {
         super(eventBus);
-        this.timeWindowMillis = timeWindowMillis;
         this.slowEyelidClosureEventsProvider = slowEyelidClosureEventsProvider;
     }
 
@@ -35,7 +30,9 @@ public class DrowsyEventProducer extends EventProducer {
     }
 
     private double getPerclos(long nowMillis) {
-        List<SlowEyelidClosureEvent> recordedEventsWithinTimeWindow = this.slowEyelidClosureEventsProvider.getRecordedEventsWithinTimeWindow(nowMillis, this.timeWindowMillis);
-        return new PERCLOSCalculator().calculatePERCLOS(recordedEventsWithinTimeWindow, this.timeWindowMillis);
+        return new PERCLOSCalculator()
+                .calculatePERCLOS(
+                        this.slowEyelidClosureEventsProvider.getRecordedEventsWithinTimeWindow(nowMillis),
+                        this.slowEyelidClosureEventsProvider.getTimeWindowMillis());
     }
 }

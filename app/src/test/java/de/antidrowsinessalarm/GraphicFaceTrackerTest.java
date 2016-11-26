@@ -54,7 +54,7 @@ public class GraphicFaceTrackerTest {
         eventBus.register(new EyesClosedEventProducer(eventBus));
         eventBus.register(new ConsecutiveUpdateEventsProducer(eventBus));
 
-        this.tracker = new GraphicFaceTracker(eventBus, new DrowsyEventProducer(eventBus, 15000, new SlowEyelidClosureEventsProvider()), new SystemClock());
+        this.tracker = new GraphicFaceTracker(eventBus, new DrowsyEventProducer(eventBus, new SlowEyelidClosureEventsProvider(15000)), new SystemClock());
     }
 
     @Test

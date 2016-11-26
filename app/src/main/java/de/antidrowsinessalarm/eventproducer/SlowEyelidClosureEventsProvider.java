@@ -12,6 +12,11 @@ import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 public class SlowEyelidClosureEventsProvider {
 
     private final List<SlowEyelidClosureEvent> events = new ArrayList<SlowEyelidClosureEvent>();
+    private final long timeWindowMillis;
+
+    public SlowEyelidClosureEventsProvider(final long timeWindowMillis) {
+        this.timeWindowMillis = timeWindowMillis;
+    }
 
     @Subscribe
     // TODO: this list will grow indefinitely when the app runs a long time, so shrink it somehow
@@ -19,9 +24,13 @@ public class SlowEyelidClosureEventsProvider {
         this.events.add(event);
     }
 
-    public List<SlowEyelidClosureEvent> getRecordedEventsWithinTimeWindow(final long nowMillis, final long timeWindowMillis) {
+    public long getTimeWindowMillis() {
+        return this.timeWindowMillis;
+    }
+
+    public List<SlowEyelidClosureEvent> getRecordedEventsWithinTimeWindow(final long nowMillis) {
         // TODO: use Joda-Time Interval [startMillis, endMillis]
-        final long startMillis = nowMillis - timeWindowMillis;
+        final long startMillis = nowMillis - this.timeWindowMillis;
         final long endMillis = nowMillis;
         Predicate<SlowEyelidClosureEvent> isEventWithinTimeWindow =
                 new Predicate<SlowEyelidClosureEvent>() {

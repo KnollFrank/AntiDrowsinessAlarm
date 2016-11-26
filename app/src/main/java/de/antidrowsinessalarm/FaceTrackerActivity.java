@@ -75,6 +75,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                         .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                         .setMode(FaceDetector.ACCURATE_MODE)
                         .setTrackingEnabled(false) // true hat im Test nicht funktioniert, wo Einzelbilder statt Videos verwendet werden
+                        .setProminentFaceOnly(true)
                         .build();
         detector.setProcessor(processor);
         return detector;
@@ -145,7 +146,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         FaceDetector detector =
                 createFaceDetector(
                         context,
-                        // TODO: use a LargestFaceFocusingProcessor
                         new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory()).build());
 
         if(!detector.isOperational()) {

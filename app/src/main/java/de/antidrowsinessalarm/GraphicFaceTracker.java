@@ -13,6 +13,7 @@ public class GraphicFaceTracker extends Tracker<Face> {
     private final EventBus eventBus;
     private final DrowsyEventProducer drowsyEventProducer;
     private final Clock clock;
+
     private long delta;
     private boolean firstCallToOnUpdate = true;
 
