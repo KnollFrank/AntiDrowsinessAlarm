@@ -46,18 +46,17 @@ public class SlowEyelidClosureEventsProvider {
         return this.timeWindowMillis;
     }
 
-    public List<SlowEyelidClosureEvent> getRecordedEventsPartlyWithinTimeWindow(final long nowMillis) {
+    public List<SlowEyelidClosureEvent> getRecordedEventsPartlyWithinTimeWindow(final long timewindowEndMillis) {
         return FluentIterable
                 .from(this.events)
-                .filter(this.isEventPartlyWithinTimeWindow(nowMillis))
+                .filter(this.isEventPartlyWithinTimeWindow(timewindowEndMillis))
                 .toList();
     }
 
     @NonNull
-    private Predicate<SlowEyelidClosureEvent> isEventPartlyWithinTimeWindow(final long nowMillis) {
+    private Predicate<SlowEyelidClosureEvent> isEventPartlyWithinTimeWindow(final long timewindowEndMillis) {
         // TODO: use Joda-Time Interval [startMillis, endMillis] or guava Range
-        final long timewindowStartMillis = nowMillis - this.timeWindowMillis;
-        final long timewindowEndMillis = nowMillis;
+        final long timewindowStartMillis = timewindowEndMillis - this.timeWindowMillis;
         return new Predicate<SlowEyelidClosureEvent>() {
 
             @Override
