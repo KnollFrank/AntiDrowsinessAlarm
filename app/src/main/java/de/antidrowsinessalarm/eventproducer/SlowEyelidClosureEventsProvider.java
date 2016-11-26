@@ -4,7 +4,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
 import com.google.common.eventbus.Subscribe;
 
 import java.util.ArrayList;
@@ -22,9 +24,13 @@ public class SlowEyelidClosureEventsProvider {
     }
 
     @Subscribe
-    // TODO: this list will grow indefinitely when the app runs a long time, so shrink it somehow
     public void recordSlowEyelidClosureEvent(final SlowEyelidClosureEvent event) {
         this.events.add(event);
+        Iterables.removeIf(this.events, Predicates.not(this.isEventPartlyWithinTimeWindow(this.getEndMillis(event))));
+    }
+
+    private long getEndMillis(final SlowEyelidClosureEvent event) {
+        return event.getTimestampMillis() + event.getDurationMillis();
     }
 
     @VisibleForTesting
@@ -52,8 +58,7 @@ public class SlowEyelidClosureEventsProvider {
 
             @Override
             public boolean apply(SlowEyelidClosureEvent event) {
-                long eventEndMillis = event.getTimestampMillis() + event.getDurationMillis();
-                return eventEndMillis >= timewindowStartMillis;
+                return SlowEyelidClosureEventsProvider.this.getEndMillis(event) >= timewindowStartMillis;
             }
         };
     }
