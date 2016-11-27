@@ -1,5 +1,7 @@
 package de.antidrowsinessalarm.eventproducer;
 
+import android.support.annotation.NonNull;
+
 import com.google.common.eventbus.EventBus;
 
 import de.antidrowsinessalarm.PERCLOSCalculator;
@@ -30,9 +32,11 @@ public class DrowsyEventProducer extends EventProducer {
     }
 
     private double getPerclos(long nowMillis) {
-        return new PERCLOSCalculator()
-                .calculatePERCLOS(
-                        this.slowEyelidClosureEventsProvider.getRecordedEventsPartlyWithinTimeWindow(nowMillis),
-                        this.slowEyelidClosureEventsProvider.getTimeWindowMillis());
+        return this.getPERCLOSCalculator().calculatePERCLOS(this.slowEyelidClosureEventsProvider.getRecordedEventsPartlyWithinTimeWindow(nowMillis), nowMillis);
+    }
+
+    @NonNull
+    private PERCLOSCalculator getPERCLOSCalculator() {
+        return new PERCLOSCalculator(this.slowEyelidClosureEventsProvider.getTimeWindowMillis());
     }
 }
