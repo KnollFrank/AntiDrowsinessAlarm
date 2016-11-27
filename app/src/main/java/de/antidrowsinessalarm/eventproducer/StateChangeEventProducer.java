@@ -19,7 +19,7 @@ abstract class StateChangeEventProducer extends EventProducer {
         this.maybeProduceStateChangeEvent(events.getPreviousEvent(), events.getActualEvent());
     }
 
-    public void maybeProduceStateChangeEvent(final Optional<UpdateEvent> previousEvent, final UpdateEvent actualEvent) {
+    private void maybeProduceStateChangeEvent(final Optional<UpdateEvent> previousEvent, final UpdateEvent actualEvent) {
         if(!this.hasPreviousState(previousEvent) && this.hasActualState(actualEvent)) {
             this.postEvent(this.createStateChangeEventFrom(actualEvent));
         }
