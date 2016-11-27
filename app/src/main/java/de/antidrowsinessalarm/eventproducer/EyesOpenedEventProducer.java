@@ -12,7 +12,7 @@ import de.antidrowsinessalarm.event.UpdateEvent;
 
 public class EyesOpenedEventProducer extends EventProducer {
 
-    private Optional<Boolean> eyesClosed = Optional.absent();
+    private Optional<Boolean> previouslyEyesClosed = Optional.absent();
 
     public EyesOpenedEventProducer(EventBus eventBus) {
         super(eventBus);
@@ -20,15 +20,19 @@ public class EyesOpenedEventProducer extends EventProducer {
 
     @Subscribe
     public void onEyesClosedEvent(EyesClosedEvent event) {
-        this.eyesClosed = Optional.of(true);
+        this.previouslyEyesClosed = Optional.of(true);
     }
 
     @Subscribe
     public void onUpdateEvent(final UpdateEvent actualEvent) {
-        if((!this.eyesClosed.isPresent() || this.eyesClosed.get()) && this.isEyesOpen(actualEvent.getFace())) {
-            this.eyesClosed = Optional.of(false);
+        if(this.isPreviouslyEyesClosed() && this.isEyesOpen(actualEvent.getFace())) {
+            this.previouslyEyesClosed = Optional.of(false);
             this.postEvent(new EyesOpenedEvent(this.getTimestampMillis(actualEvent.getDetections())));
         }
+    }
+
+    private boolean isPreviouslyEyesClosed() {
+        return !this.previouslyEyesClosed.isPresent() || this.previouslyEyesClosed.get();
     }
 
     private boolean isEyesOpen(Face face) {
