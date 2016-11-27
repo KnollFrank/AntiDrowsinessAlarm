@@ -47,6 +47,7 @@ import java.io.IOException;
 
 import de.antidrowsinessalarm.camera.CameraSourcePreview;
 import de.antidrowsinessalarm.camera.GraphicOverlay;
+import de.antidrowsinessalarm.event.AwakeEvent;
 import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
@@ -322,8 +323,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     FaceTrackerActivity.this.eyesInfoView.setText("" + event);
-                    GraphicFaceTracker.this.mediaPlayer.start();
                     FaceTrackerActivity.this.imageView.setImageResource(R.drawable.red);
+                    GraphicFaceTracker.this.mediaPlayer.start();
                 }
             });
         }
@@ -339,7 +340,16 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             });
         }
 
-        // TODO: we need an AwakeEvent to subscribe for here and show a green image
+        @Subscribe
+        public void onAwakeEvent(final AwakeEvent event) {
+            FaceTrackerActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    FaceTrackerActivity.this.eyesInfoView.setText("" + event);
+                    FaceTrackerActivity.this.imageView.setImageResource(R.drawable.green);
+                }
+            });
+        }
 
         /**
          * Start tracking the detected face instance within the face overlay.
