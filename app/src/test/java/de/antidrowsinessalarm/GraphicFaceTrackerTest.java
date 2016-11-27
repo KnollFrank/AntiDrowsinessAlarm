@@ -31,7 +31,6 @@ import de.antidrowsinessalarm.eventproducer.SlowEyelidClosureEventsProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsNot.not;
@@ -72,7 +71,7 @@ public class GraphicFaceTrackerTest {
         this.tracker.onUpdate(this.getFaceDetections(event.getTimestampMillis()), this.createFace(isLeftEyeOpenProbability, isRightEyeOpenProbability));
 
         // Then
-        assertThat(this.listener.getEvent(), is(event));
+        assertThat(this.listener.getEvents(), hasItem(event));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class GraphicFaceTrackerTest {
         this.tracker.onUpdate(this.getFaceDetections(499), this.createFaceWithEyesOpened());
 
         // Then
-        assertThat(this.listener.getEvent(), Matchers.<Event>is(new NormalEyeBlinkEvent(0, 499)));
+        assertThat(this.listener.getEvents(), hasItem(new NormalEyeBlinkEvent(0, 499)));
     }
 
     @Test
@@ -120,7 +119,7 @@ public class GraphicFaceTrackerTest {
         this.tracker.onUpdate(this.getFaceDetections(501), this.createFaceWithEyesOpened());
 
         // Then
-        assertThat(this.listener.getEvent(), Matchers.<Event>is(new SlowEyelidClosureEvent(0, 501)));
+        assertThat(this.listener.getEvents(), hasItem(new SlowEyelidClosureEvent(0, 501)));
     }
 
     @Test

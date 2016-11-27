@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.antidrowsinessalarm.event.AwakeEvent;
 import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.Event;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
@@ -60,6 +61,17 @@ public class DrowsyEventProducerTest {
 
         // Then
         assertThat(this.listener.getEvent(), is((Event) new LikelyDrowsyEvent(2000, perclos)));
+    }
+
+    @Test
+    public void shouldCreateAwakeEvent() {
+        // Given
+
+        // When
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+
+        // Then
+        assertThat(this.listener.getEvent(), is((Event) new AwakeEvent(2000, 0)));
     }
 
     @Test

@@ -25,6 +25,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import de.antidrowsinessalarm.event.AwakeEvent;
 import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.Event;
 import de.antidrowsinessalarm.event.EyesClosedEvent;
@@ -186,6 +187,20 @@ public class EventTest {
 
         // Then
         assertThat(this.listener.getEvents(), hasItem(isA(LikelyDrowsyEvent.class)));
+    }
+
+    @Test
+    public void shouldCreateAwakeEvent() {
+        // Given
+        MockedClock clock = new MockedClock();
+        this.setup(clock);
+
+        // When
+        clock.setCurrentTimeMillis(0);
+        this.detectorConsumesImage(R.drawable.eyes_opened, 0);
+
+        // Then
+        assertThat(this.listener.getEvents(), hasItem(isA(AwakeEvent.class)));
     }
 
     private List<Event> filterListenerEventsBy(final Class... eventClasses) {

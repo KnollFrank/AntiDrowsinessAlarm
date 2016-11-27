@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.google.common.eventbus.EventBus;
 
 import de.antidrowsinessalarm.PERCLOSCalculator;
+import de.antidrowsinessalarm.event.AwakeEvent;
 import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
 
@@ -28,6 +29,8 @@ public class DrowsyEventProducer extends EventProducer {
             this.postEvent(new DrowsyEvent(nowMillis, perclos));
         } else if(perclos >= LIKELY_DROWSY_THRESHOLD) {
             this.postEvent(new LikelyDrowsyEvent(nowMillis, perclos));
+        } else {
+            this.postEvent(new AwakeEvent(nowMillis, perclos));
         }
     }
 
