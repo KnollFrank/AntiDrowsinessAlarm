@@ -30,6 +30,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -63,6 +64,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
     private TextView eyesInfoView;
+    private ImageView imageView;
 
     //==============================================================================================
     // Activity Methods
@@ -92,6 +94,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         this.mPreview = (CameraSourcePreview) this.findViewById(R.id.preview);
         this.mGraphicOverlay = (GraphicOverlay) this.findViewById(R.id.faceOverlay);
         this.eyesInfoView = (TextView) this.findViewById(R.id.eyesInfoView);
+        this.imageView = (ImageView) this.findViewById(R.id.imageView);
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
@@ -319,9 +322,10 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     FaceTrackerActivity.this.eyesInfoView.setText("" + event);
+                    GraphicFaceTracker.this.mediaPlayer.start();
+                    FaceTrackerActivity.this.imageView.setImageResource(R.drawable.red);
                 }
             });
-            this.mediaPlayer.start();
         }
 
         @Subscribe
@@ -330,9 +334,12 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     FaceTrackerActivity.this.eyesInfoView.setText("" + event);
+                    FaceTrackerActivity.this.imageView.setImageResource(R.drawable.yellow);
                 }
             });
         }
+
+        // TODO: we need an AwakeEvent to subscribe for here and show a green image
 
         /**
          * Start tracking the detected face instance within the face overlay.
