@@ -123,6 +123,30 @@ public class GraphicFaceTrackerTest {
     }
 
     @Test
+    public void shouldCreateASingleEyesOpenedEventForIntermediateIndefiniteEyesState() {
+        // When
+        this.tracker.onUpdate(this.getFaceDetections(0), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(1), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(this.getFaceDetections(2), this.createFaceWithLeftEyeOpenRightEyeClosed());
+        this.tracker.onUpdate(this.getFaceDetections(3), this.createFaceWithEyesOpened());
+
+        // Then
+        assertThat(this.filterEvents(EyesOpenedEvent.class), contains(new EyesOpenedEvent(1)));
+    }
+
+    @Test
+    public void shouldCreateASingleEyesClosedEventForIntermediateIndefiniteEyesState() {
+        // When
+        this.tracker.onUpdate(this.getFaceDetections(0), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(this.getFaceDetections(1), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(this.getFaceDetections(2), this.createFaceWithLeftEyeOpenRightEyeClosed());
+        this.tracker.onUpdate(this.getFaceDetections(3), this.createFaceWithEyesClosed());
+
+        // Then
+        assertThat(this.filterEvents(EyesClosedEvent.class), contains(new EyesClosedEvent(1)));
+    }
+
+    @Test
     public void shouldCreateASingleEyesClosedEvent() {
         // When
         this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesClosed());
@@ -212,6 +236,14 @@ public class GraphicFaceTrackerTest {
         return this.createFace(0.4f, 0.4f);
     }
 
+    private Face createFaceWithEyesOpened() {
+        return this.createFace(0.8f, 0.8f);
+    }
+
+    private Face createFaceWithLeftEyeOpenRightEyeClosed() {
+        return this.createFace(0.8f, 0.4f);
+    }
+
     private Face createFace(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability) {
         final Face face = Mockito.mock(Face.class);
         doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
@@ -219,10 +251,7 @@ public class GraphicFaceTrackerTest {
         return face;
     }
 
-    private Face createFaceWithEyesOpened() {
-        return this.createFace(0.8f, 0.8f);
-    }
-
+    // TODO: remove, EventTest already has one such method. see http://blog.danlew.net/2015/11/02/sharing-code-between-unit-tests-and-instrumentation-tests-on-android/
     static class EventListener {
 
         private final List<Event> events = new ArrayList<Event>();

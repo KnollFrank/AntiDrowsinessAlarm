@@ -203,6 +203,7 @@ public class EventTest {
         assertThat(this.listener.getEvents(), hasItem(isA(AwakeEvent.class)));
     }
 
+    // TODO: replace GraphicFaceTrackerTest.filterEvents by call to tthe following method
     private List<Event> filterListenerEventsBy(final Class... eventClasses) {
         return this
                 .getListenerEvents()

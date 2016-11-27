@@ -2,20 +2,37 @@ package de.antidrowsinessalarm.eventproducer;
 
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.face.Face;
+import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import de.antidrowsinessalarm.event.EyesClosedEvent;
+import de.antidrowsinessalarm.event.EyesOpenedEvent;
 import de.antidrowsinessalarm.event.UpdateEvent;
 
-public class EyesClosedEventProducer extends StateChangeEventProducer {
+public class EyesClosedEventProducer extends EventProducer {
+
+    private Optional<Boolean> eyesOpened = Optional.absent();
 
     public EyesClosedEventProducer(final EventBus eventBus) {
         super(eventBus);
     }
 
-    @Override
-    protected boolean getState(final Face face) {
-        return this.isEyesClosed(face);
+    @Subscribe
+    public void onEyesOpenedEvent(EyesOpenedEvent event) {
+        this.eyesOpened = Optional.of(true);
+    }
+
+    @Subscribe
+    public void onUpdateEvent(final UpdateEvent actualEvent) {
+        if((!this.eyesOpened.isPresent() || this.eyesOpened.get()) && this.isEyesClosed(actualEvent.getFace())) {
+            this.eyesOpened = Optional.of(false);
+            this.postEvent(new EyesClosedEvent(this.getTimestampMillis(actualEvent.getDetections())));
+        }
+    }
+
+    private long getTimestampMillis(Detector.Detections<Face> detections) {
+        return detections.getFrameMetadata().getTimestampMillis();
     }
 
     private boolean isEyesClosed(final Face face) {
@@ -26,14 +43,5 @@ public class EyesClosedEventProducer extends StateChangeEventProducer {
 
     private boolean isDefined(float probability) {
         return probability != Face.UNCOMPUTED_PROBABILITY;
-    }
-
-    @Override
-    protected Object createStateChangeEventFrom(final UpdateEvent event) {
-        return new EyesClosedEvent(this.getTimestampMillis(event.getDetections()));
-    }
-
-    private long getTimestampMillis(final Detector.Detections<Face> detections) {
-        return detections.getFrameMetadata().getTimestampMillis();
     }
 }

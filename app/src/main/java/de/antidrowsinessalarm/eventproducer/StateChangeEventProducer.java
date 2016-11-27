@@ -20,16 +20,16 @@ abstract class StateChangeEventProducer extends EventProducer {
     }
 
     private void maybeProduceStateChangeEvent(final Optional<UpdateEvent> previousEvent, final UpdateEvent actualEvent) {
-        if(!this.hasPreviousState(previousEvent) && this.hasActualState(actualEvent)) {
+        if(!this.hasOppositeState(previousEvent) && this.hasDesiredState(actualEvent)) {
             this.postEvent(this.createStateChangeEventFrom(actualEvent));
         }
     }
 
-    private boolean hasPreviousState(final Optional<UpdateEvent> event) {
+    private boolean hasOppositeState(final Optional<UpdateEvent> event) {
         return event.isPresent() && this.getState(event.get().getFace());
     }
 
-    private boolean hasActualState(final UpdateEvent event) {
+    private boolean hasDesiredState(final UpdateEvent event) {
         return this.getState(event.getFace());
     }
 

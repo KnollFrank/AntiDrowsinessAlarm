@@ -2,30 +2,38 @@ package de.antidrowsinessalarm.eventproducer;
 
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.face.Face;
+import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
+import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.EyesOpenedEvent;
 import de.antidrowsinessalarm.event.UpdateEvent;
 
-public class EyesOpenedEventProducer extends StateChangeEventProducer {
+public class EyesOpenedEventProducer extends EventProducer {
+
+    private Optional<Boolean> eyesClosed = Optional.absent();
 
     public EyesOpenedEventProducer(EventBus eventBus) {
         super(eventBus);
     }
 
-    @Override
-    protected boolean getState(Face face) {
-        return this.isEyesOpen(face);
+    @Subscribe
+    public void onEyesClosedEvent(EyesClosedEvent event) {
+        this.eyesClosed = Optional.of(true);
+    }
+
+    @Subscribe
+    public void onUpdateEvent(final UpdateEvent actualEvent) {
+        if((!this.eyesClosed.isPresent() || this.eyesClosed.get()) && this.isEyesOpen(actualEvent.getFace())) {
+            this.eyesClosed = Optional.of(false);
+            this.postEvent(new EyesOpenedEvent(this.getTimestampMillis(actualEvent.getDetections())));
+        }
     }
 
     private boolean isEyesOpen(Face face) {
         // TODO: make 0.5 configurable
         return face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5;
-    }
-
-    @Override
-    protected Object createStateChangeEventFrom(UpdateEvent event) {
-        return new EyesOpenedEvent(this.getTimestampMillis(event.getDetections()));
     }
 
     private long getTimestampMillis(Detector.Detections<Face> detections) {
