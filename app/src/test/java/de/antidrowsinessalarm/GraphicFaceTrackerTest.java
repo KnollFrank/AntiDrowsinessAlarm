@@ -21,7 +21,6 @@ import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.EyesOpenedEvent;
 import de.antidrowsinessalarm.event.NormalEyeBlinkEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
-import de.antidrowsinessalarm.eventproducer.ConsecutiveUpdateEventsProducer;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventProducer;
 import de.antidrowsinessalarm.eventproducer.EyesClosedEventProducer;
 import de.antidrowsinessalarm.eventproducer.EyesOpenedEventProducer;
@@ -51,7 +50,6 @@ public class GraphicFaceTrackerTest {
         eventBus.register(new SlowEyelidClosureEventProducer(eventBus));
         eventBus.register(new EyesOpenedEventProducer(eventBus));
         eventBus.register(new EyesClosedEventProducer(eventBus));
-        eventBus.register(new ConsecutiveUpdateEventsProducer(eventBus));
 
         this.tracker = new GraphicFaceTracker(eventBus, new DrowsyEventProducer(eventBus, new SlowEyelidClosureEventsProvider(15000)), new SystemClock());
     }
