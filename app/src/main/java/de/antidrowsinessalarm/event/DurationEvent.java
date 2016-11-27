@@ -7,7 +7,7 @@ public abstract class DurationEvent extends Event {
 
     private final long durationMillis;
 
-    // TODO: use data types from Joda-Time for timestampMillis nad durationMillis
+    // TODO: use data types from Joda-Time for timestampMillis and durationMillis
     DurationEvent(final long timestampMillis, final long durationMillis) {
         super(timestampMillis);
         this.durationMillis = durationMillis;

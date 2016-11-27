@@ -25,6 +25,7 @@ public class PERCLOSCalculator {
     }
 
     private long getIntersectionWithTimewindow(final SlowEyelidClosureEvent event, final long timewindowEndMillis) {
+        // TODO: use Joda-Time Interval [startMillis, endMillis] or guava Range
         final long timewindowStartMillis = timewindowEndMillis - this.timeWindowMillis;
 
         final long eventStartMillis = event.getTimestampMillis();
@@ -44,5 +45,4 @@ public class PERCLOSCalculator {
     private long getEndMillis(final SlowEyelidClosureEvent event) {
         return event.getTimestampMillis() + event.getDurationMillis();
     }
-
 }
