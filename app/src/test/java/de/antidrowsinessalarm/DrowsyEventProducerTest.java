@@ -8,11 +8,13 @@ import org.junit.Test;
 import de.antidrowsinessalarm.event.AwakeEvent;
 import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.Event;
+import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventProducer;
 import de.antidrowsinessalarm.eventproducer.SlowEyelidClosureEventsProvider;
 
+import static junit.framework.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -41,6 +43,19 @@ public class DrowsyEventProducerTest {
         this.eventBus.post(new SlowEyelidClosureEvent(100, 600));
         this.eventBus.post(new SlowEyelidClosureEvent(1000, 550));
         double perclos = (600.0 + 550.0) / 2000.0; // = 0.575 > 0.15
+
+        // When
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+
+        // Then
+        assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(2000, perclos)));
+    }
+
+    @Test
+    public void shouldCreateDrowsyEventForEyesClosedTheWholeTime() {
+        // Given
+        this.eventBus.post(new EyesClosedEvent(0));
+        double perclos = 1.0; // > 0.15
 
         // When
         this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
@@ -87,5 +102,20 @@ public class DrowsyEventProducerTest {
         // Then
         assertThat(this.listener.getEvents(), not(hasItem(isA(LikelyDrowsyEvent.class))));
         assertThat(this.listener.getEvents(), not(hasItem(isA(DrowsyEvent.class))));
+    }
+
+    @Test
+    public void shouldCreateASingleDrowsyEvent() {
+        fail("not yet implemented");
+    }
+
+    @Test
+    public void shouldCreateASingleLikelyDrowsyEvent() {
+        fail("not yet implemented");
+    }
+
+    @Test
+    public void shouldCreateASingleAwakeEvent() {
+        fail("not yet implemented");
     }
 }
