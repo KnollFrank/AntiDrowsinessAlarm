@@ -34,7 +34,7 @@ import de.antidrowsinessalarm.event.EyesOpenedEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
 import de.antidrowsinessalarm.event.NormalEyeBlinkEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
-import de.antidrowsinessalarm.eventproducer.ConfigFactory;
+import de.antidrowsinessalarm.eventproducer.DefaultConfigFactory;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -61,11 +61,11 @@ public class EventTest {
         this.appContext = InstrumentationRegistry.getTargetContext();
         this.drowsyEventDetector =
                 new DrowsyEventDetector(
-                        ConfigFactory.getDefaultEyeOpenProbabilityThreshold(),
-                        ConfigFactory.createDefaultConfig(),
+                        DefaultConfigFactory.getEyeOpenProbabilityThreshold(),
+                        DefaultConfigFactory.createConfig(),
                         clock,
-                        ConfigFactory.getDefaultSlowEyelidClosureMinDuration(),
-                        ConfigFactory.getDefaultTimeWindow(),
+                        DefaultConfigFactory.getSlowEyelidClosureMinDuration(),
+                        DefaultConfigFactory.getTimeWindow(),
                         true);
         this.listener = new EventListener();
         this.drowsyEventDetector.getEventBus().register(this.listener);

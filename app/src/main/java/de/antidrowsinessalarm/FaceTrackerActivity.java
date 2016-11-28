@@ -50,7 +50,7 @@ import de.antidrowsinessalarm.camera.GraphicOverlay;
 import de.antidrowsinessalarm.event.AwakeEvent;
 import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
-import de.antidrowsinessalarm.eventproducer.ConfigFactory;
+import de.antidrowsinessalarm.eventproducer.DefaultConfigFactory;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 
 /**
@@ -294,11 +294,11 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         public Tracker<Face> create(Face face) {
             DrowsyEventDetector drowsyEventDetector =
                     new DrowsyEventDetector(
-                            ConfigFactory.getDefaultEyeOpenProbabilityThreshold(),
-                            ConfigFactory.createDefaultConfig(),
+                            DefaultConfigFactory.getEyeOpenProbabilityThreshold(),
+                            DefaultConfigFactory.createConfig(),
                             new SystemClock(),
-                            ConfigFactory.getDefaultSlowEyelidClosureMinDuration(),
-                            ConfigFactory.getDefaultTimeWindow(),
+                            DefaultConfigFactory.getSlowEyelidClosureMinDuration(),
+                            DefaultConfigFactory.getTimeWindow(),
                             true);
 
             final Tracker<Face> tracker = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);

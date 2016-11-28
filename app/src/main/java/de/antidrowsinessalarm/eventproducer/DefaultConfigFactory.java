@@ -2,9 +2,9 @@ package de.antidrowsinessalarm.eventproducer;
 
 import org.joda.time.Duration;
 
-public class ConfigFactory {
+public class DefaultConfigFactory {
 
-    public static DrowsyEventProducer.Config createDefaultConfig() {
+    public static DrowsyEventProducer.Config createConfig() {
         return DrowsyEventProducer.Config.builder()
                 .setDrowsyThreshold(0.15)
                 .setLikelyDrowsyThreshold(0.08)
@@ -12,15 +12,15 @@ public class ConfigFactory {
     }
 
     // TODO: make durationMillis configurable from 300 to 500 milliseconds
-    public static Duration getDefaultSlowEyelidClosureMinDuration() {
+    public static Duration getSlowEyelidClosureMinDuration() {
         return new Duration(500);
     }
 
-    public static float getDefaultEyeOpenProbabilityThreshold() {
+    public static float getEyeOpenProbabilityThreshold() {
         return 0.5f;
     }
 
-    public static Duration getDefaultTimeWindow() {
+    public static Duration getTimeWindow() {
         return new Duration(15000);
     }
 }

@@ -23,7 +23,7 @@ import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.EyesOpenedEvent;
 import de.antidrowsinessalarm.event.NormalEyeBlinkEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
-import de.antidrowsinessalarm.eventproducer.ConfigFactory;
+import de.antidrowsinessalarm.eventproducer.DefaultConfigFactory;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventProducer;
 import de.antidrowsinessalarm.eventproducer.EyesClosedEventProducer;
 import de.antidrowsinessalarm.eventproducer.EyesOpenedEventProducer;
@@ -74,18 +74,18 @@ public class GraphicFaceTrackerTest {
         this.listener = new EventListener();
         final EventBus eventBus = new EventBus();
         eventBus.register(this.listener);
-        eventBus.register(new NormalEyeBlinkEventProducer(ConfigFactory.getDefaultSlowEyelidClosureMinDuration(), eventBus));
-        eventBus.register(new SlowEyelidClosureEventProducer(ConfigFactory.getDefaultSlowEyelidClosureMinDuration(), eventBus));
-        eventBus.register(new EyesOpenedEventProducer(ConfigFactory.getDefaultEyeOpenProbabilityThreshold(), eventBus));
-        eventBus.register(new EyesClosedEventProducer(ConfigFactory.getDefaultEyeOpenProbabilityThreshold(), eventBus));
+        eventBus.register(new NormalEyeBlinkEventProducer(DefaultConfigFactory.getSlowEyelidClosureMinDuration(), eventBus));
+        eventBus.register(new SlowEyelidClosureEventProducer(DefaultConfigFactory.getSlowEyelidClosureMinDuration(), eventBus));
+        eventBus.register(new EyesOpenedEventProducer(DefaultConfigFactory.getEyeOpenProbabilityThreshold(), eventBus));
+        eventBus.register(new EyesClosedEventProducer(DefaultConfigFactory.getEyeOpenProbabilityThreshold(), eventBus));
 
         this.tracker =
                 new GraphicFaceTracker(
                         eventBus,
                         new DrowsyEventProducer(
-                                ConfigFactory.createDefaultConfig(),
+                                DefaultConfigFactory.createConfig(),
                                 eventBus,
-                                new SlowEyelidClosureEventsProvider(ConfigFactory.getDefaultTimeWindow())),
+                                new SlowEyelidClosureEventsProvider(DefaultConfigFactory.getTimeWindow())),
                         new SystemClock());
     }
 

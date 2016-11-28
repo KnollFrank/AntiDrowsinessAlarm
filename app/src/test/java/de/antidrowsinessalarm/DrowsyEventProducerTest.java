@@ -13,7 +13,7 @@ import de.antidrowsinessalarm.event.Event;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 import de.antidrowsinessalarm.event.UpdateEvent;
-import de.antidrowsinessalarm.eventproducer.ConfigFactory;
+import de.antidrowsinessalarm.eventproducer.DefaultConfigFactory;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventProducer;
 
@@ -34,10 +34,10 @@ public class DrowsyEventProducerTest {
     public void setup() {
         DrowsyEventDetector drowsyEventDetector =
                 new DrowsyEventDetector(
-                        ConfigFactory.getDefaultEyeOpenProbabilityThreshold(),
-                        ConfigFactory.createDefaultConfig(),
+                        DefaultConfigFactory.getEyeOpenProbabilityThreshold(),
+                        DefaultConfigFactory.createConfig(),
                         new SystemClock(),
-                        ConfigFactory.getDefaultSlowEyelidClosureMinDuration(),
+                        DefaultConfigFactory.getSlowEyelidClosureMinDuration(),
                         new Duration(2000),
                         false);
         this.listener = new GraphicFaceTrackerTest.EventListener();
