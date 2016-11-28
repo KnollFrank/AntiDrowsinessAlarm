@@ -16,7 +16,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.eventbus.Subscribe;
 
-import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +65,7 @@ public class EventTest {
                         ConfigFactory.createDefaultConfig(),
                         clock,
                         ConfigFactory.getDefaultSlowEyelidClosureMinDuration(),
-                        new Duration(15000),
+                        ConfigFactory.getDefaultTimeWindow(),
                         true);
         this.listener = new EventListener();
         this.drowsyEventDetector.getEventBus().register(this.listener);

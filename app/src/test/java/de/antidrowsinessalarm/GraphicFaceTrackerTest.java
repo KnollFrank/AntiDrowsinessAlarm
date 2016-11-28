@@ -79,7 +79,14 @@ public class GraphicFaceTrackerTest {
         eventBus.register(new EyesOpenedEventProducer(ConfigFactory.getDefaultEyeOpenProbabilityThreshold(), eventBus));
         eventBus.register(new EyesClosedEventProducer(ConfigFactory.getDefaultEyeOpenProbabilityThreshold(), eventBus));
 
-        this.tracker = new GraphicFaceTracker(eventBus, new DrowsyEventProducer(ConfigFactory.createDefaultConfig(), eventBus, new SlowEyelidClosureEventsProvider(new Duration(15000))), new SystemClock());
+        this.tracker =
+                new GraphicFaceTracker(
+                        eventBus,
+                        new DrowsyEventProducer(
+                                ConfigFactory.createDefaultConfig(),
+                                eventBus,
+                                new SlowEyelidClosureEventsProvider(ConfigFactory.getDefaultTimeWindow())),
+                        new SystemClock());
     }
 
     @Test

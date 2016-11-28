@@ -43,8 +43,6 @@ import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.common.eventbus.Subscribe;
 
-import org.joda.time.Duration;
-
 import java.io.IOException;
 
 import de.antidrowsinessalarm.camera.CameraSourcePreview;
@@ -300,7 +298,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                             ConfigFactory.createDefaultConfig(),
                             new SystemClock(),
                             ConfigFactory.getDefaultSlowEyelidClosureMinDuration(),
-                            new Duration(15000),
+                            ConfigFactory.getDefaultTimeWindow(),
                             true);
 
             final Tracker<Face> tracker = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);

@@ -19,4 +19,8 @@ public class ConfigFactory {
     public static float getDefaultEyeOpenProbabilityThreshold() {
         return 0.5f;
     }
+
+    public static Duration getDefaultTimeWindow() {
+        return new Duration(15000);
+    }
 }
