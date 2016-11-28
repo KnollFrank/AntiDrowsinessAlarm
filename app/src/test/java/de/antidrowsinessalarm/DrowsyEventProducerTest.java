@@ -65,14 +65,47 @@ public class DrowsyEventProducerTest {
         assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(2000, perclos)));
     }
 
-    // TODO: we need more tests like shouldCreateDrowsyEventForEyesClosedTheWholeTime()
+    // TODO: test mit IndefiniteEyeState dazwischenmogeln
+
+    @Test
+    public void shouldCreateDrowsyEventForEyesClosedButNotYetOpenedWhenMaybeProducingDrowsyEvent() {
+        // Given
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(0), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(501), GraphicFaceTrackerTest.createFaceWithEyesOpened()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(510), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(2000), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        double perclos = (501.0 + (2000.0 - 510.0)) / 2000.0; // = 0.9955  > 0.15
+
+        // When
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+
+        // Then
+        assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(2000, perclos)));
+    }
+
+    @Test
+    public void shouldCreateDrowsyEventForEyesClosedButNotYetOpenedWhenMaybeProducingDrowsyEvent2() {
+        // Given
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(0), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(501), GraphicFaceTrackerTest.createFaceWithEyesOpened()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(510), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(1000), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(2000), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        double perclos = (501.0 + (2000.0 - 510.0)) / 2000.0; // = 0.9955  > 0.15
+
+        // When
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+
+        // Then
+        assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(2000, perclos)));
+    }
 
     @Test
     public void shouldCreateLikelyDrowsyEvent() {
         // Given
         this.eventBus.post(new SlowEyelidClosureEvent(100, 150));
         this.eventBus.post(new SlowEyelidClosureEvent(1000, 55));
-        double perclos = (150 + 55.0) / 2000.0; // = 0.1025 wich is between 0.08 and 0.15
+        double perclos = (150 + 55.0) / 2000.0; // = 0.1025 which is between 0.08 and 0.15
 
         // When
         this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
