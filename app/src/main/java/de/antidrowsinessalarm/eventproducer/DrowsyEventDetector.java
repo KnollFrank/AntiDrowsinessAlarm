@@ -14,7 +14,7 @@ public class DrowsyEventDetector {
     private final DrowsyEventProducer drowsyEventProducer;
     private final GraphicFaceTracker graphicFaceTracker;
 
-    public DrowsyEventDetector(final float eyeOpenProbabilityThreshold, final DrowsyEventProducer.Config config, final Clock clock, final Duration slowEyelidClosureMinDuration, final Duration timeWindow, final boolean registerEventLogger) {
+    public DrowsyEventDetector(final float eyeOpenProbabilityThreshold, final DrowsyEventProducer.Config config, final Duration slowEyelidClosureMinDuration, final Duration timeWindow, final boolean registerEventLogger, final Clock clock) {
         this.eventBus = new EventBus();
         this.eventBus.register(new EyesOpenedEventProducer(eyeOpenProbabilityThreshold, this.eventBus));
         this.eventBus.register(new EyesClosedEventProducer(eyeOpenProbabilityThreshold, this.eventBus));
