@@ -40,6 +40,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.Is.isA;
+import static org.hamcrest.core.IsNot.not;
 
 @RunWith(AndroidJUnit4.class)
 public class EventTest {
@@ -208,6 +209,29 @@ public class EventTest {
         // Then
         double perclos = (501.0 + (15000.0 - 510.0)) / 15000.0; // = 0.9994 > 0.15
         assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(15000, perclos)));
+    }
+
+    @Test
+    public void shouldCreateNoDrowsyEvent() {
+        // TODO: this test fails. Repair by resetting eyesClosedEvent when eyesOpenedEvent arrives in PendingSlowEyelidClosureEventProducer
+
+        // Given
+        MockedClock clock = new MockedClock();
+        this.setup(clock);
+
+        // When
+        clock.setCurrentTimeMillis(0);
+        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+
+        clock.setCurrentTimeMillis(499);
+        this.detectorConsumesImage(R.drawable.eyes_opened, 499);
+
+        clock.setCurrentTimeMillis(14000);
+        this.detectorConsumesImage(R.drawable.eyes_closed_opened, 14000);
+
+        // Then
+        double perclos = 0.0;
+        assertThat(this.listener.getEvents(), not(hasItem(isA(DrowsyEvent.class))));
     }
 
     @Test
