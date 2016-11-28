@@ -8,7 +8,6 @@ import org.junit.Test;
 import de.antidrowsinessalarm.event.AwakeEvent;
 import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.Event;
-import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 import de.antidrowsinessalarm.event.UpdateEvent;
@@ -54,7 +53,7 @@ public class DrowsyEventProducerTest {
     @Test
     public void shouldCreateDrowsyEventForEyesClosedTheWholeTime() {
         // Given
-        this.eventBus.post(new EyesClosedEvent(0));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(0), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
         this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(2000), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
         double perclos = 1.0; // > 0.15
 
