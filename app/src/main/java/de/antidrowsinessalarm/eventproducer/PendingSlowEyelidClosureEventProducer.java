@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
-import de.antidrowsinessalarm.event.DurationEvent;
 import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.EyesOpenedEvent;
 import de.antidrowsinessalarm.event.PendingSlowEyelidClosureEvent;
@@ -35,17 +34,9 @@ public class PendingSlowEyelidClosureEventProducer extends EventProducer {
         }
 
         final long durationMillis = updateEvent.getTimestampMillis() - this.eyesClosedMillis.get();
-        if(!EyesOpenedEventProducer.isEyesOpen(updateEvent.getFace()) && this.shallCreateEventFor(durationMillis)) {
-            this.postEvent(this.createDurationEvent(this.eyesClosedMillis.get(), durationMillis));
-        }
-    }
-
-    private boolean shallCreateEventFor(long durationMillis) {
         // TODO: make durationMillis configurable from 300 to 500 milliseconds
-        return durationMillis >= 500;
-    }
-
-    private DurationEvent createDurationEvent(long timestampMillis, long durationMillis) {
-        return new PendingSlowEyelidClosureEvent(timestampMillis, durationMillis);
+        if(!EyesOpenedEventProducer.isEyesOpen(updateEvent.getFace()) && durationMillis >= 500) {
+            this.postEvent(new PendingSlowEyelidClosureEvent(this.eyesClosedMillis.get(), durationMillis));
+        }
     }
 }
