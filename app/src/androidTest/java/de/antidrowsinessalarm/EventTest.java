@@ -56,7 +56,7 @@ public class EventTest {
 
     private void setup(Clock clock) {
         this.appContext = InstrumentationRegistry.getTargetContext();
-        this.drowsyEventDetector = new DrowsyEventDetector(clock);
+        this.drowsyEventDetector = new DrowsyEventDetector(clock, 15000, true);
         this.listener = new EventListener();
         this.drowsyEventDetector.getEventBus().register(this.listener);
         this.detector =
@@ -207,7 +207,7 @@ public class EventTest {
     private List<Event> filterListenerEventsBy(final Class... eventClasses) {
         return this
                 .getListenerEvents()
-                .filter(this.isInstanceOfAny(eventClasses))
+                .filter(this.isListenerEventClassContainedIn(eventClasses))
                 .toList();
     }
 
@@ -217,27 +217,23 @@ public class EventTest {
     }
 
     @NonNull
-    private Predicate<Event> isInstanceOfAny(final Class[] eventClasses) {
+    private Predicate<Event> isListenerEventClassContainedIn(final Class[] eventClasses) {
         return new Predicate<Event>() {
 
             @Override
             public boolean apply(@Nullable final Event listenerEvent) {
-                return this.isInstanceOfAny(listenerEvent, eventClasses);
-            }
-
-            private boolean isInstanceOfAny(final @Nullable Event listenerEvent, final Class[] eventClasses) {
                 return FluentIterable
                         .from(eventClasses)
-                        .anyMatch(this.isInstanceOf(listenerEvent));
+                        .anyMatch(this.hasSameClassAs(listenerEvent.getClass()));
             }
 
             @NonNull
-            private Predicate<Class> isInstanceOf(final @Nullable Event listenerEvent) {
+            private Predicate<Class> hasSameClassAs(final @Nullable Class listenerEventClass) {
                 return new Predicate<Class>() {
 
                     @Override
                     public boolean apply(@Nullable final Class eventClass) {
-                        return eventClass.isInstance(listenerEvent);
+                        return eventClass.equals(listenerEventClass);
                     }
                 };
             }

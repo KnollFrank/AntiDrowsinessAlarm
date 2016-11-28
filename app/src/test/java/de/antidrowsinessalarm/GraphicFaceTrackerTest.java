@@ -40,6 +40,27 @@ public class GraphicFaceTrackerTest {
     private EventListener listener;
     private Tracker<Face> tracker;
 
+    static Detector.Detections<Face> getFaceDetections(final long timestampMillis) {
+        final Metadata metaData = Mockito.mock(Metadata.class);
+        doReturn(timestampMillis).when(metaData).getTimestampMillis();
+
+        final Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
+        doReturn(metaData).when(detections).getFrameMetadata();
+
+        return detections;
+    }
+
+    static Face createFaceWithEyesClosed() {
+        return createFace(0.4f, 0.4f);
+    }
+
+    static Face createFace(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability) {
+        final Face face = Mockito.mock(Face.class);
+        doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
+        doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
+        return face;
+    }
+
     @Before
     public void setup() {
         // Given
@@ -66,7 +87,7 @@ public class GraphicFaceTrackerTest {
 
     private void shouldCreateEvent(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability, final Event event) {
         // When
-        this.tracker.onUpdate(this.getFaceDetections(event.getTimestampMillis()), this.createFace(isLeftEyeOpenProbability, isRightEyeOpenProbability));
+        this.tracker.onUpdate(getFaceDetections(event.getTimestampMillis()), createFace(isLeftEyeOpenProbability, isRightEyeOpenProbability));
 
         // Then
         assertThat(this.listener.getEvents(), hasItem(event));
@@ -75,7 +96,7 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldNotCreateEyesClosedEventOnUNCOMPUTED_PROBABILITIES() {
         // When
-        this.tracker.onUpdate(this.getFaceDetections(100), this.createFace(Face.UNCOMPUTED_PROBABILITY, Face.UNCOMPUTED_PROBABILITY));
+        this.tracker.onUpdate(getFaceDetections(100), createFace(Face.UNCOMPUTED_PROBABILITY, Face.UNCOMPUTED_PROBABILITY));
 
         // Then
         assertThat(this.listener.getEvents(), not(hasItem(Matchers.<Event>instanceOf(EyesClosedEvent.class))));
@@ -84,7 +105,7 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldNotCreateEyesOpenedEventOnUNCOMPUTED_PROBABILITIES() {
         // When
-        this.tracker.onUpdate(this.getFaceDetections(100), this.createFace(Face.UNCOMPUTED_PROBABILITY, Face.UNCOMPUTED_PROBABILITY));
+        this.tracker.onUpdate(getFaceDetections(100), createFace(Face.UNCOMPUTED_PROBABILITY, Face.UNCOMPUTED_PROBABILITY));
 
         // Then
         assertThat(this.listener.getEvents(), not(hasItem(Matchers.<Event>instanceOf(EyesOpenedEvent.class))));
@@ -103,8 +124,8 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldCreateNormalEyeBlink() {
         // When
-        this.tracker.onUpdate(this.getFaceDetections(0), this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(499), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(0), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(499), this.createFaceWithEyesOpened());
 
         // Then
         assertThat(this.listener.getEvents(), hasItem(new NormalEyeBlinkEvent(0, 499)));
@@ -113,8 +134,8 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldCreateSlowEyelidClosureEvent() {
         // When
-        this.tracker.onUpdate(this.getFaceDetections(0), this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(501), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(0), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(501), this.createFaceWithEyesOpened());
 
         // Then
         assertThat(this.listener.getEvents(), hasItem(new SlowEyelidClosureEvent(0, 501)));
@@ -123,10 +144,10 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldCreateASingleEyesOpenedEventForIntermediateIndefiniteEyesState() {
         // When
-        this.tracker.onUpdate(this.getFaceDetections(0), this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(1), this.createFaceWithEyesOpened());
-        this.tracker.onUpdate(this.getFaceDetections(2), this.createFaceWithLeftEyeOpenRightEyeClosed());
-        this.tracker.onUpdate(this.getFaceDetections(3), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(0), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(1), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(2), this.createFaceWithLeftEyeOpenRightEyeClosed());
+        this.tracker.onUpdate(getFaceDetections(3), this.createFaceWithEyesOpened());
 
         // Then
         assertThat(this.filterEvents(EyesOpenedEvent.class), contains(new EyesOpenedEvent(1)));
@@ -135,10 +156,10 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldCreateASingleEyesClosedEventForIntermediateIndefiniteEyesState() {
         // When
-        this.tracker.onUpdate(this.getFaceDetections(0), this.createFaceWithEyesOpened());
-        this.tracker.onUpdate(this.getFaceDetections(1), this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(2), this.createFaceWithLeftEyeOpenRightEyeClosed());
-        this.tracker.onUpdate(this.getFaceDetections(3), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(0), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(1), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(2), this.createFaceWithLeftEyeOpenRightEyeClosed());
+        this.tracker.onUpdate(getFaceDetections(3), createFaceWithEyesClosed());
 
         // Then
         assertThat(this.filterEvents(EyesClosedEvent.class), contains(new EyesClosedEvent(1)));
@@ -147,8 +168,8 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldCreateASingleEyesClosedEvent() {
         // When
-        this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(100), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(101), createFaceWithEyesClosed());
 
         // Then
         assertThat(this.filterEvents(EyesClosedEvent.class), contains(new EyesClosedEvent(100)));
@@ -161,8 +182,8 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldCreateASingleEyesOpenedEvent() {
         // When
-        this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesOpened());
-        this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(100), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(101), this.createFaceWithEyesOpened());
 
         // Then
         assertThat(this.filterEvents(EyesOpenedEvent.class), contains(new EyesOpenedEvent(100)));
@@ -172,10 +193,10 @@ public class GraphicFaceTrackerTest {
     public void shouldCreateEvents() {
         // When
         this.tracker.onNewItem(1, this.createFaceWithEyesOpened());
-        this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesOpened());
-        this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(102), this.createFaceWithEyesOpened());
-        this.tracker.onUpdate(this.getFaceDetections(103), this.createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(100), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(101), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(102), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(103), createFaceWithEyesClosed());
 
         // Then
         assertThat(this.listener.getEvents(), hasItems(
@@ -188,11 +209,11 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldCreateEvents2() {
         // When
-        this.tracker.onNewItem(1, this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesOpened());
-        this.tracker.onUpdate(this.getFaceDetections(102), this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(103), this.createFaceWithEyesOpened());
+        this.tracker.onNewItem(1, createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(100), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(101), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(102), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(103), this.createFaceWithEyesOpened());
 
         // Then
         assertThat(this.listener.getEvents(), hasItems(
@@ -205,13 +226,13 @@ public class GraphicFaceTrackerTest {
     @Test
     public void shouldCreateEvents3() {
         // When
-        this.tracker.onNewItem(1, this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(100), this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(101), this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(102), this.createFaceWithEyesOpened());
-        this.tracker.onUpdate(this.getFaceDetections(103), this.createFaceWithEyesOpened());
-        this.tracker.onUpdate(this.getFaceDetections(104), this.createFaceWithEyesClosed());
-        this.tracker.onUpdate(this.getFaceDetections(105), this.createFaceWithEyesClosed());
+        this.tracker.onNewItem(1, createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(100), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(101), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(102), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(103), this.createFaceWithEyesOpened());
+        this.tracker.onUpdate(getFaceDetections(104), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(105), createFaceWithEyesClosed());
 
         // Then
         assertThat(this.listener.getEvents(), hasItems(
@@ -220,33 +241,12 @@ public class GraphicFaceTrackerTest {
                 new EyesClosedEvent(104)));
     }
 
-    private Detector.Detections<Face> getFaceDetections(final long timestampMillis) {
-        final Metadata metaData = Mockito.mock(Metadata.class);
-        doReturn(timestampMillis).when(metaData).getTimestampMillis();
-
-        final Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
-        doReturn(metaData).when(detections).getFrameMetadata();
-
-        return detections;
-    }
-
-    private Face createFaceWithEyesClosed() {
-        return this.createFace(0.4f, 0.4f);
-    }
-
     private Face createFaceWithEyesOpened() {
-        return this.createFace(0.8f, 0.8f);
+        return createFace(0.8f, 0.8f);
     }
 
     private Face createFaceWithLeftEyeOpenRightEyeClosed() {
-        return this.createFace(0.8f, 0.4f);
-    }
-
-    private Face createFace(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability) {
-        final Face face = Mockito.mock(Face.class);
-        doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
-        doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
-        return face;
+        return createFace(0.8f, 0.4f);
     }
 
     // TODO: remove, EventTest already has one such method. see http://blog.danlew.net/2015/11/02/sharing-code-between-unit-tests-and-instrumentation-tests-on-android/

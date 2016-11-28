@@ -11,8 +11,9 @@ import de.antidrowsinessalarm.event.Event;
 import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
+import de.antidrowsinessalarm.event.UpdateEvent;
+import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventProducer;
-import de.antidrowsinessalarm.eventproducer.SlowEyelidClosureEventsProvider;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,11 +30,10 @@ public class DrowsyEventProducerTest {
 
     @Before
     public void setup() {
+        DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(new SystemClock(), 2000, false);
         this.listener = new GraphicFaceTrackerTest.EventListener();
-        this.eventBus = new EventBus();
-        final SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider(2000);
-        this.drowsyEventProducer = new DrowsyEventProducer(this.eventBus, slowEyelidClosureEventsProvider);
-        this.eventBus.register(slowEyelidClosureEventsProvider);
+        this.eventBus = drowsyEventDetector.getEventBus();
+        this.drowsyEventProducer = drowsyEventDetector.getDrowsyEventProducer();
         this.eventBus.register(this.listener);
     }
 
@@ -55,6 +55,7 @@ public class DrowsyEventProducerTest {
     public void shouldCreateDrowsyEventForEyesClosedTheWholeTime() {
         // Given
         this.eventBus.post(new EyesClosedEvent(0));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(2000), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
         double perclos = 1.0; // > 0.15
 
         // When
@@ -63,6 +64,8 @@ public class DrowsyEventProducerTest {
         // Then
         assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(2000, perclos)));
     }
+
+    // TODO: we need more tests like shouldCreateDrowsyEventForEyesClosedTheWholeTime()
 
     @Test
     public void shouldCreateLikelyDrowsyEvent() {

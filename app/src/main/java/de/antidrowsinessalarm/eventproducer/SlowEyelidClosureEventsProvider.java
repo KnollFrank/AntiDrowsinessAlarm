@@ -12,12 +12,14 @@ import com.google.common.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.antidrowsinessalarm.event.PendingSlowEyelidClosureEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 
 public class SlowEyelidClosureEventsProvider {
 
     private final List<SlowEyelidClosureEvent> events = new ArrayList<SlowEyelidClosureEvent>();
     private final long timeWindowMillis;
+    private PendingSlowEyelidClosureEvent pendingEvent;
 
     public SlowEyelidClosureEventsProvider(final long timeWindowMillis) {
         this.timeWindowMillis = timeWindowMillis;
@@ -25,8 +27,18 @@ public class SlowEyelidClosureEventsProvider {
 
     @Subscribe
     public void recordSlowEyelidClosureEvent(final SlowEyelidClosureEvent event) {
+        this.removePendingSlowEyelidClosureEvents();
         this.events.add(event);
         this.removeEventsNotPartlyWithinTimewindow(this.getEndMillis(event));
+    }
+
+    private void removePendingSlowEyelidClosureEvents() {
+        Iterables.removeIf(this.events, new Predicate<SlowEyelidClosureEvent>() {
+            @Override
+            public boolean apply(final SlowEyelidClosureEvent event) {
+                return event instanceof PendingSlowEyelidClosureEvent;
+            }
+        });
     }
 
     private long getEndMillis(final SlowEyelidClosureEvent event) {

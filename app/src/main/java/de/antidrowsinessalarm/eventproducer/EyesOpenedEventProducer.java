@@ -18,6 +18,11 @@ public class EyesOpenedEventProducer extends EventProducer {
         super(eventBus);
     }
 
+    static boolean isEyesOpen(Face face) {
+        // TODO: make 0.5 configurable
+        return face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5;
+    }
+
     @Subscribe
     public void onEyesClosedEvent(EyesClosedEvent event) {
         this.previouslyEyesClosed = Optional.of(true);
@@ -25,7 +30,7 @@ public class EyesOpenedEventProducer extends EventProducer {
 
     @Subscribe
     public void onUpdateEvent(final UpdateEvent actualEvent) {
-        if(this.isPreviouslyEyesClosed() && this.isEyesOpen(actualEvent.getFace())) {
+        if(this.isPreviouslyEyesClosed() && isEyesOpen(actualEvent.getFace())) {
             this.previouslyEyesClosed = Optional.of(false);
             this.postEvent(new EyesOpenedEvent(this.getTimestampMillis(actualEvent.getDetections())));
         }
@@ -33,11 +38,6 @@ public class EyesOpenedEventProducer extends EventProducer {
 
     private boolean isPreviouslyEyesClosed() {
         return !this.previouslyEyesClosed.isPresent() || this.previouslyEyesClosed.get();
-    }
-
-    private boolean isEyesOpen(Face face) {
-        // TODO: make 0.5 configurable
-        return face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5;
     }
 
     private long getTimestampMillis(Detector.Detections<Face> detections) {

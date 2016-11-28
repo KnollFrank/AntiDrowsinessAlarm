@@ -12,15 +12,16 @@ public class DrowsyEventDetector {
     private final DrowsyEventProducer drowsyEventProducer;
     private final GraphicFaceTracker graphicFaceTracker;
 
-    public DrowsyEventDetector(final Clock clock) {
+    public DrowsyEventDetector(final Clock clock, final long timeWindowMillis, final boolean registerEventLogger) {
         this.eventBus = new EventBus();
         this.eventBus.register(new EyesOpenedEventProducer(this.eventBus));
         this.eventBus.register(new EyesClosedEventProducer(this.eventBus));
         this.eventBus.register(new NormalEyeBlinkEventProducer(this.eventBus));
         this.eventBus.register(new SlowEyelidClosureEventProducer(this.eventBus));
-        this.eventBus.register(new EventLogger());
-        // TODO: make timeWindowMillis = 15000 configurable
-        final long timeWindowMillis = 15000;
+        if(registerEventLogger) {
+            this.eventBus.register(new EventLogger());
+        }
+        this.eventBus.register(new PendingSlowEyelidClosureEventProducer(this.eventBus));
         SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider(timeWindowMillis);
         this.eventBus.register(slowEyelidClosureEventsProvider);
 
