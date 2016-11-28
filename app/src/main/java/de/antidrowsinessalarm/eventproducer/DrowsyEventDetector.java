@@ -14,16 +14,16 @@ public class DrowsyEventDetector {
     private final DrowsyEventProducer drowsyEventProducer;
     private final GraphicFaceTracker graphicFaceTracker;
 
-    public DrowsyEventDetector(final DrowsyEventProducer.Config config, final Clock clock, final Duration slowEyelidClosureMinDuration, final Duration timeWindow, final boolean registerEventLogger) {
+    public DrowsyEventDetector(final float eyeOpenProbabilityThreshold, final DrowsyEventProducer.Config config, final Clock clock, final Duration slowEyelidClosureMinDuration, final Duration timeWindow, final boolean registerEventLogger) {
         this.eventBus = new EventBus();
-        this.eventBus.register(new EyesOpenedEventProducer(this.eventBus));
-        this.eventBus.register(new EyesClosedEventProducer(this.eventBus));
+        this.eventBus.register(new EyesOpenedEventProducer(eyeOpenProbabilityThreshold, this.eventBus));
+        this.eventBus.register(new EyesClosedEventProducer(eyeOpenProbabilityThreshold, this.eventBus));
         this.eventBus.register(new NormalEyeBlinkEventProducer(slowEyelidClosureMinDuration, this.eventBus));
         this.eventBus.register(new SlowEyelidClosureEventProducer(slowEyelidClosureMinDuration, this.eventBus));
         if(registerEventLogger) {
             this.eventBus.register(new EventLogger());
         }
-        this.eventBus.register(new PendingSlowEyelidClosureEventProducer(slowEyelidClosureMinDuration, this.eventBus));
+        this.eventBus.register(new PendingSlowEyelidClosureEventProducer(eyeOpenProbabilityThreshold, slowEyelidClosureMinDuration, this.eventBus));
         SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider(timeWindow);
         this.eventBus.register(slowEyelidClosureEventsProvider);
 

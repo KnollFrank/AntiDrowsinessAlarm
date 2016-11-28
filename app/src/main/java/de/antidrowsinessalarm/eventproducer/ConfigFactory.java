@@ -15,4 +15,8 @@ public class ConfigFactory {
     public static Duration getDefaultSlowEyelidClosureMinDuration() {
         return new Duration(500);
     }
+
+    public static float getDefaultEyeOpenProbabilityThreshold() {
+        return 0.5f;
+    }
 }

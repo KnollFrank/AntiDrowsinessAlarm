@@ -13,15 +13,16 @@ import de.antidrowsinessalarm.event.UpdateEvent;
 
 public class EyesOpenedEventProducer extends EventProducer {
 
+    private final float eyeOpenProbabilityThreshold;
     private Optional<Boolean> previouslyEyesClosed = Optional.absent();
 
-    public EyesOpenedEventProducer(EventBus eventBus) {
+    public EyesOpenedEventProducer(final float eyeOpenProbabilityThreshold, final EventBus eventBus) {
         super(eventBus);
+        this.eyeOpenProbabilityThreshold = eyeOpenProbabilityThreshold;
     }
 
-    static boolean isEyesOpen(Face face) {
-        // TODO: make 0.5 configurable
-        return face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5;
+    static boolean isEyesOpen(Face face, final float eyeOpenProbabilityThreshold) {
+        return face.getIsLeftEyeOpenProbability() >= eyeOpenProbabilityThreshold && face.getIsRightEyeOpenProbability() >= eyeOpenProbabilityThreshold;
     }
 
     static Instant getInstantOf(UpdateEvent event) {
@@ -35,7 +36,7 @@ public class EyesOpenedEventProducer extends EventProducer {
 
     @Subscribe
     public void onUpdateEvent(final UpdateEvent actualEvent) {
-        if(this.isPreviouslyEyesClosed() && isEyesOpen(actualEvent.getFace())) {
+        if(this.isPreviouslyEyesClosed() && isEyesOpen(actualEvent.getFace(), this.eyeOpenProbabilityThreshold)) {
             this.previouslyEyesClosed = Optional.of(false);
             this.postEvent(new EyesOpenedEvent(getInstantOf(actualEvent)));
         }

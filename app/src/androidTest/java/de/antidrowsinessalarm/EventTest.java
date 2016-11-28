@@ -60,7 +60,14 @@ public class EventTest {
 
     private void setup(Clock clock) {
         this.appContext = InstrumentationRegistry.getTargetContext();
-        this.drowsyEventDetector = new DrowsyEventDetector(ConfigFactory.createDefaultConfig(), clock, ConfigFactory.getDefaultSlowEyelidClosureMinDuration(), new Duration(15000), true);
+        this.drowsyEventDetector =
+                new DrowsyEventDetector(
+                        ConfigFactory.getDefaultEyeOpenProbabilityThreshold(),
+                        ConfigFactory.createDefaultConfig(),
+                        clock,
+                        ConfigFactory.getDefaultSlowEyelidClosureMinDuration(),
+                        new Duration(15000),
+                        true);
         this.listener = new EventListener();
         this.drowsyEventDetector.getEventBus().register(this.listener);
         this.detector =

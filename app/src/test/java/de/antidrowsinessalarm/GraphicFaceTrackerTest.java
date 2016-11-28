@@ -76,8 +76,8 @@ public class GraphicFaceTrackerTest {
         eventBus.register(this.listener);
         eventBus.register(new NormalEyeBlinkEventProducer(ConfigFactory.getDefaultSlowEyelidClosureMinDuration(), eventBus));
         eventBus.register(new SlowEyelidClosureEventProducer(ConfigFactory.getDefaultSlowEyelidClosureMinDuration(), eventBus));
-        eventBus.register(new EyesOpenedEventProducer(eventBus));
-        eventBus.register(new EyesClosedEventProducer(eventBus));
+        eventBus.register(new EyesOpenedEventProducer(ConfigFactory.getDefaultEyeOpenProbabilityThreshold(), eventBus));
+        eventBus.register(new EyesClosedEventProducer(ConfigFactory.getDefaultEyeOpenProbabilityThreshold(), eventBus));
 
         this.tracker = new GraphicFaceTracker(eventBus, new DrowsyEventProducer(ConfigFactory.createDefaultConfig(), eventBus, new SlowEyelidClosureEventsProvider(new Duration(15000))), new SystemClock());
     }

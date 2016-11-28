@@ -12,10 +12,12 @@ import de.antidrowsinessalarm.event.UpdateEvent;
 
 public class EyesClosedEventProducer extends EventProducer {
 
+    private final float eyeOpenProbabilityThreshold;
     private Optional<Boolean> previouslyEyesOpened = Optional.absent();
 
-    public EyesClosedEventProducer(final EventBus eventBus) {
+    public EyesClosedEventProducer(final float eyeOpenProbabilityThreshold, final EventBus eventBus) {
         super(eventBus);
+        this.eyeOpenProbabilityThreshold = eyeOpenProbabilityThreshold;
     }
 
     @Subscribe
@@ -40,9 +42,8 @@ public class EyesClosedEventProducer extends EventProducer {
     }
 
     private boolean isEyesClosed(final Face face) {
-        // TODO: make 0.5 configurable
-        return this.isDefined(face.getIsLeftEyeOpenProbability()) && face.getIsLeftEyeOpenProbability() < 0.5 &&
-                this.isDefined(face.getIsRightEyeOpenProbability()) && face.getIsRightEyeOpenProbability() < 0.5 ;
+        return this.isDefined(face.getIsLeftEyeOpenProbability()) && face.getIsLeftEyeOpenProbability() < this.eyeOpenProbabilityThreshold &&
+                this.isDefined(face.getIsRightEyeOpenProbability()) && face.getIsRightEyeOpenProbability() < this.eyeOpenProbabilityThreshold;
     }
 
     private boolean isDefined(float probability) {

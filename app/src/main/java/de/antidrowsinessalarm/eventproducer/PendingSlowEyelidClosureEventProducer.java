@@ -17,10 +17,12 @@ import static de.antidrowsinessalarm.eventproducer.SlowEyelidClosureEventProduce
 public class PendingSlowEyelidClosureEventProducer extends EventProducer {
 
     private final Duration slowEyelidClosureMinDuration;
+    private final float eyeOpenProbabilityThreshold;
     private Optional<Instant> eyesClosed = Optional.absent();
 
-    public PendingSlowEyelidClosureEventProducer(final Duration slowEyelidClosureMinDuration, final EventBus eventBus) {
+    public PendingSlowEyelidClosureEventProducer(final float eyeOpenProbabilityThreshold, final Duration slowEyelidClosureMinDuration, final EventBus eventBus) {
         super(eventBus);
+        this.eyeOpenProbabilityThreshold = eyeOpenProbabilityThreshold;
         this.slowEyelidClosureMinDuration = slowEyelidClosureMinDuration;
     }
 
@@ -41,7 +43,7 @@ public class PendingSlowEyelidClosureEventProducer extends EventProducer {
         }
 
         final Duration duration = new Duration(this.eyesClosed.get(), updateEvent.getInstant());
-        if(!EyesOpenedEventProducer.isEyesOpen(updateEvent.getFace()) && isSlowEyelidClosure(duration, this.slowEyelidClosureMinDuration)) {
+        if(!EyesOpenedEventProducer.isEyesOpen(updateEvent.getFace(), this.eyeOpenProbabilityThreshold) && isSlowEyelidClosure(duration, this.slowEyelidClosureMinDuration)) {
             this.postEvent(new PendingSlowEyelidClosureEvent(this.eyesClosed.get(), duration));
         }
     }
