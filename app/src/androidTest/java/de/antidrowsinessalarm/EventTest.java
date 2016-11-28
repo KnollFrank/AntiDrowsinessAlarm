@@ -213,8 +213,6 @@ public class EventTest {
 
     @Test
     public void shouldCreateNoDrowsyEvent() {
-        // TODO: this test fails. Repair by resetting eyesClosedEvent when eyesOpenedEvent arrives in PendingSlowEyelidClosureEventProducer
-
         // Given
         MockedClock clock = new MockedClock();
         this.setup(clock);
