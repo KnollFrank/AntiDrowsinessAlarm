@@ -1,9 +1,11 @@
 package de.antidrowsinessalarm;
 
+import org.joda.time.Instant;
+
 public class SystemClock implements Clock {
 
     @Override
-    public long currentTimeMillis() {
-        return System.currentTimeMillis();
+    public Instant now() {
+        return new Instant();
     }
 }

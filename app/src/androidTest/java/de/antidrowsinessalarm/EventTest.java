@@ -16,6 +16,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.eventbus.Subscribe;
 
+import org.joda.time.Duration;
+import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +59,7 @@ public class EventTest {
 
     private void setup(Clock clock) {
         this.appContext = InstrumentationRegistry.getTargetContext();
-        this.drowsyEventDetector = new DrowsyEventDetector(clock, 15000, true);
+        this.drowsyEventDetector = new DrowsyEventDetector(clock, new Duration(15000), true);
         this.listener = new EventListener();
         this.drowsyEventDetector.getEventBus().register(this.listener);
         this.detector =
@@ -155,13 +157,13 @@ public class EventTest {
         this.setup(clock);
 
         // When
-        clock.setCurrentTimeMillis(0);
+        clock.setNow(new Instant(0));
         this.detectorConsumesImage(R.drawable.eyes_closed, 0);
 
-        clock.setCurrentTimeMillis(5000);
+        clock.setNow(new Instant(5000));
         this.detectorConsumesImage(R.drawable.eyes_opened, 5000);
 
-        clock.setCurrentTimeMillis(5001);
+        clock.setNow(new Instant(5001));
         // dummy image in order to give DrowsyEventProducer a chance to produce a DrowsyEvent
         this.detectorConsumesImage(R.drawable.eyes_closed, 5001);
 
@@ -176,15 +178,15 @@ public class EventTest {
         this.setup(clock);
 
         // When
-        clock.setCurrentTimeMillis(0);
+        clock.setNow(new Instant(0));
         this.detectorConsumesImage(R.drawable.eyes_closed, 0);
 
-        clock.setCurrentTimeMillis(15000);
+        clock.setNow(new Instant(15000));
         this.detectorConsumesImage(R.drawable.eyes_closed, 15000);
 
         // Then
         double perclos = 1.0; // > 0.15
-        assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(15000, perclos)));
+        assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(new Instant(15000), perclos)));
     }
 
     @Test
@@ -194,21 +196,21 @@ public class EventTest {
         this.setup(clock);
 
         // When
-        clock.setCurrentTimeMillis(0);
+        clock.setNow(new Instant(0));
         this.detectorConsumesImage(R.drawable.eyes_closed, 0);
 
-        clock.setCurrentTimeMillis(501);
+        clock.setNow(new Instant(501));
         this.detectorConsumesImage(R.drawable.eyes_opened, 501);
 
-        clock.setCurrentTimeMillis(510);
+        clock.setNow(new Instant(510));
         this.detectorConsumesImage(R.drawable.eyes_closed, 510);
 
-        clock.setCurrentTimeMillis(15000);
+        clock.setNow(new Instant(15000));
         this.detectorConsumesImage(R.drawable.eyes_closed, 15000);
 
         // Then
         double perclos = (501.0 + (15000.0 - 510.0)) / 15000.0; // = 0.9994 > 0.15
-        assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(15000, perclos)));
+        assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(new Instant(15000), perclos)));
     }
 
     @Test
@@ -218,13 +220,13 @@ public class EventTest {
         this.setup(clock);
 
         // When
-        clock.setCurrentTimeMillis(0);
+        clock.setNow(new Instant(0));
         this.detectorConsumesImage(R.drawable.eyes_closed, 0);
 
-        clock.setCurrentTimeMillis(499);
+        clock.setNow(new Instant(499));
         this.detectorConsumesImage(R.drawable.eyes_opened, 499);
 
-        clock.setCurrentTimeMillis(14000);
+        clock.setNow(new Instant(14000));
         this.detectorConsumesImage(R.drawable.eyes_closed_opened, 14000);
 
         // Then
@@ -239,13 +241,13 @@ public class EventTest {
         this.setup(clock);
 
         // When
-        clock.setCurrentTimeMillis(0);
+        clock.setNow(new Instant(0));
         this.detectorConsumesImage(R.drawable.eyes_closed, 0);
 
-        clock.setCurrentTimeMillis(1500);
+        clock.setNow(new Instant(1500));
         this.detectorConsumesImage(R.drawable.eyes_opened, 1500);
 
-        clock.setCurrentTimeMillis(1501);
+        clock.setNow(new Instant(1501));
         // dummy image in order to give DrowsyEventProducer a chance to produce a DrowsyEvent
         this.detectorConsumesImage(R.drawable.eyes_closed, 1501);
 
@@ -260,7 +262,7 @@ public class EventTest {
         this.setup(clock);
 
         // When
-        clock.setCurrentTimeMillis(0);
+        clock.setNow(new Instant(0));
         this.detectorConsumesImage(R.drawable.eyes_opened, 0);
 
         // Then
@@ -334,15 +336,15 @@ public class EventTest {
 
     private static class MockedClock implements Clock {
 
-        private long currentTimeMillis = 0;
+        private Instant now = new Instant(0);
 
         @Override
-        public long currentTimeMillis() {
-            return this.currentTimeMillis;
+        public Instant now() {
+            return this.now;
         }
 
-        public void setCurrentTimeMillis(long currentTimeMillis) {
-            this.currentTimeMillis = currentTimeMillis;
+        public void setNow(final Instant now) {
+            this.now = now;
         }
     }
 

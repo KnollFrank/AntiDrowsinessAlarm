@@ -27,10 +27,10 @@ public class GraphicFaceTracker extends Tracker<Face> {
     @Override
     public void onUpdate(Detector.Detections<Face> detections, Face face) {
         if(this.firstCallToOnUpdate) {
-            this.delta = detections.getFrameMetadata().getTimestampMillis() - this.clock.currentTimeMillis();
+            this.delta = detections.getFrameMetadata().getTimestampMillis() - this.clock.now().getMillis();
             this.firstCallToOnUpdate = false;
         }
         this.eventBus.post(new UpdateEvent(detections, face));
-        this.drowsyEventProducer.maybeProduceDrowsyEvent(this.clock.currentTimeMillis() + this.delta);
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(this.clock.now().plus(this.delta));
     }
 }

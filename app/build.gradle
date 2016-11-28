@@ -26,6 +26,7 @@ dependencies {
     compile 'com.android.support:design:24.2.0'
     compile 'com.google.android.gms:play-services-vision:9.4.0+'
     compile 'com.google.guava:guava:20.0'
+    compile 'joda-time:joda-time:2.9.6'
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'

@@ -3,12 +3,14 @@ package de.antidrowsinessalarm.event;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
+import org.joda.time.Instant;
+
 public abstract class DrowsyEventBase extends Event {
 
     private final double perclos;
 
-    protected DrowsyEventBase(final long timestampMillis, final double perclos) {
-        super(timestampMillis);
+    protected DrowsyEventBase(final Instant instant, final double perclos) {
+        super(instant);
         this.perclos = perclos;
     }
 

@@ -2,6 +2,8 @@ package de.antidrowsinessalarm;
 
 import com.google.common.eventbus.EventBus;
 
+import org.joda.time.Duration;
+import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,7 +31,7 @@ public class DrowsyEventProducerTest {
 
     @Before
     public void setup() {
-        DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(new SystemClock(), 2000, false);
+        DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(new SystemClock(), new Duration(2000), false);
         this.listener = new GraphicFaceTrackerTest.EventListener();
         this.eventBus = drowsyEventDetector.getEventBus();
         this.drowsyEventProducer = drowsyEventDetector.getDrowsyEventProducer();
@@ -39,29 +41,29 @@ public class DrowsyEventProducerTest {
     @Test
     public void shouldCreateDrowsyEvent() {
         // Given
-        this.eventBus.post(new SlowEyelidClosureEvent(100, 600));
-        this.eventBus.post(new SlowEyelidClosureEvent(1000, 550));
+        this.eventBus.post(new SlowEyelidClosureEvent(new Instant(100), new Duration(600)));
+        this.eventBus.post(new SlowEyelidClosureEvent(new Instant(1000), new Duration(550)));
         double perclos = (600.0 + 550.0) / 2000.0; // = 0.575 > 0.15
 
         // When
-        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(2000));
 
         // Then
-        assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(2000, perclos)));
+        assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(new Instant(2000), perclos)));
     }
 
     @Test
     public void shouldCreateDrowsyEventForEyesClosedTheWholeTime() {
         // Given
-        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(0), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
-        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(2000), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(0)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(2000)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
         double perclos = 1.0; // > 0.15
 
         // When
-        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(2000));
 
         // Then
-        assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(2000, perclos)));
+        assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(new Instant(2000), perclos)));
     }
 
     // TODO: test mit IndefiniteEyeState dazwischenmogeln
@@ -69,48 +71,48 @@ public class DrowsyEventProducerTest {
     @Test
     public void shouldCreateDrowsyEventForEyesClosedButNotYetOpenedWhenMaybeProducingDrowsyEvent() {
         // Given
-        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(0), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
-        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(501), GraphicFaceTrackerTest.createFaceWithEyesOpened()));
-        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(510), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
-        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(2000), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(0)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(501)), GraphicFaceTrackerTest.createFaceWithEyesOpened()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(510)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(2000)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
         double perclos = (501.0 + (2000.0 - 510.0)) / 2000.0; // = 0.9955  > 0.15
 
         // When
-        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(2000));
 
         // Then
-        assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(2000, perclos)));
+        assertThat(this.listener.getEvent(), is((Event) new DrowsyEvent(new Instant(2000), perclos)));
     }
 
     @Test
     public void shouldCreateDrowsyEventForEyesClosedButNotYetOpenedWhenMaybeProducingDrowsyEvent2() {
         // Given
-        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(0), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
-        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(501), GraphicFaceTrackerTest.createFaceWithEyesOpened()));
-        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(510), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
-        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(1000), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
-        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(2000), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(0)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(501)), GraphicFaceTrackerTest.createFaceWithEyesOpened()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(510)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(1000)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
+        this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(2000)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
         double perclos = (501.0 + (2000.0 - 510.0)) / 2000.0; // = 0.9955  > 0.15
 
         // When
-        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(2000));
 
         // Then
-        assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(2000, perclos)));
+        assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(new Instant(2000), perclos)));
     }
 
     @Test
     public void shouldCreateLikelyDrowsyEvent() {
         // Given
-        this.eventBus.post(new SlowEyelidClosureEvent(100, 150));
-        this.eventBus.post(new SlowEyelidClosureEvent(1000, 55));
+        this.eventBus.post(new SlowEyelidClosureEvent(new Instant(100), new Duration(150)));
+        this.eventBus.post(new SlowEyelidClosureEvent(new Instant(1000), new Duration(55)));
         double perclos = (150 + 55.0) / 2000.0; // = 0.1025 which is between 0.08 and 0.15
 
         // When
-        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(2000));
 
         // Then
-        assertThat(this.listener.getEvent(), is((Event) new LikelyDrowsyEvent(2000, perclos)));
+        assertThat(this.listener.getEvent(), is((Event) new LikelyDrowsyEvent(new Instant(2000), perclos)));
     }
 
     @Test
@@ -118,21 +120,21 @@ public class DrowsyEventProducerTest {
         // Given
 
         // When
-        this.drowsyEventProducer.maybeProduceDrowsyEvent(2000);
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(2000));
 
         // Then
-        assertThat(this.listener.getEvent(), is((Event) new AwakeEvent(2000, 0)));
+        assertThat(this.listener.getEvent(), is((Event) new AwakeEvent(new Instant(2000), 0)));
     }
 
     @Test
     public void shouldCreateNoDrowsyEvents() {
         // Given
-        this.eventBus.post(new SlowEyelidClosureEvent(100, 150));
-        this.eventBus.post(new SlowEyelidClosureEvent(1000, 55));
+        this.eventBus.post(new SlowEyelidClosureEvent(new Instant(100), new Duration(150)));
+        this.eventBus.post(new SlowEyelidClosureEvent(new Instant(1000), new Duration(55)));
 
         // When
         // given SlowEyelidClosureEvents are not within time window
-        this.drowsyEventProducer.maybeProduceDrowsyEvent(5000);
+        this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(5000));
 
         // Then
         assertThat(this.listener.getEvents(), not(hasItem(isA(LikelyDrowsyEvent.class))));

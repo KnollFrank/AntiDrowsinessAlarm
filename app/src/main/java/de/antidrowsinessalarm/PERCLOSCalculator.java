@@ -1,48 +1,43 @@
 package de.antidrowsinessalarm;
 
+import android.support.annotation.NonNull;
+
+import org.joda.time.Duration;
+import org.joda.time.Instant;
+import org.joda.time.Interval;
+
 import java.util.List;
 
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 
 public class PERCLOSCalculator {
 
-    private final long timeWindowMillis;
+    private final Duration timeWindow;
 
-    public PERCLOSCalculator(final long timeWindowMillis) {
-        this.timeWindowMillis = timeWindowMillis;
+    public PERCLOSCalculator(final Duration timeWindow) {
+        this.timeWindow = timeWindow;
     }
 
-    public double calculatePERCLOS(final List<SlowEyelidClosureEvent> events, final long timewindowEndMillis) {
-        return (double) this.getSumDurationsMillis(events, timewindowEndMillis) / (double) this.timeWindowMillis;
+    public double calculatePERCLOS(final List<SlowEyelidClosureEvent> events, final Instant timewindowEnd) {
+        Duration sumDurations = this.getSumDurations(events, this.getTimeWindowInterval(timewindowEnd));
+        return (double) sumDurations.getMillis() / (double) this.timeWindow.getMillis();
     }
 
-    private long getSumDurationsMillis(final List<SlowEyelidClosureEvent> events, final long timewindowEndMillis) {
-        long sum = 0;
+    @NonNull
+    private Interval getTimeWindowInterval(final Instant timewindowEnd) {
+        return new Interval(this.timeWindow, timewindowEnd);
+    }
+
+    private Duration getSumDurations(final List<SlowEyelidClosureEvent> events, final Interval timeWindowInterval) {
+        Duration summedDuration = new Duration(0);
         for(SlowEyelidClosureEvent event : events) {
-            sum += this.getIntersectionWithTimewindow(event, timewindowEndMillis);
+            summedDuration = summedDuration.plus(this.getIntersectionWithTimewindow(event, timeWindowInterval));
         }
-        return sum;
+        return summedDuration;
     }
 
-    private long getIntersectionWithTimewindow(final SlowEyelidClosureEvent event, final long timewindowEndMillis) {
-        // TODO: use Joda-Time Interval [startMillis, endMillis] or guava Range
-        final long timewindowStartMillis = timewindowEndMillis - this.timeWindowMillis;
-
-        final long eventStartMillis = event.getTimestampMillis();
-        final long eventEndMillis = this.getEndMillis(event);
-
-        boolean hasNoIntersection = eventEndMillis < timewindowStartMillis || eventStartMillis > timewindowEndMillis;
-        if(hasNoIntersection) {
-            return 0;
-        }
-
-        final long intersectionStartMillis = Math.max(eventStartMillis, timewindowStartMillis);
-        final long intersectionEndMillis = Math.min(eventEndMillis, timewindowEndMillis);
-
-        return intersectionEndMillis - intersectionStartMillis;
-    }
-
-    private long getEndMillis(final SlowEyelidClosureEvent event) {
-        return event.getTimestampMillis() + event.getDurationMillis();
+    private Duration getIntersectionWithTimewindow(final SlowEyelidClosureEvent event, final Interval timeWindowInterval) {
+        Interval overlap = timeWindowInterval.overlap(event.getInterval());
+        return overlap != null ? overlap.toDuration() : new Duration(0);
     }
 }

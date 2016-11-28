@@ -3,13 +3,15 @@ package de.antidrowsinessalarm.event;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 
+import org.joda.time.Instant;
+
 public class ConsecutiveUpdateEvents extends Event {
 
     private final Optional<UpdateEvent> previousEvent;
     private final UpdateEvent actualEvent;
 
     public ConsecutiveUpdateEvents(final Optional<UpdateEvent> previousEvent, final UpdateEvent actualEvent) {
-        super(actualEvent.getDetections().getFrameMetadata().getTimestampMillis());
+        super(new Instant(actualEvent.getDetections().getFrameMetadata().getTimestampMillis()));
         this.previousEvent = previousEvent;
         this.actualEvent = actualEvent;
     }

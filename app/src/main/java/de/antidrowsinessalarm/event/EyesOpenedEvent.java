@@ -1,8 +1,10 @@
 package de.antidrowsinessalarm.event;
 
+import org.joda.time.Instant;
+
 public class EyesOpenedEvent extends Event {
 
-    public EyesOpenedEvent(final long timestamp) {
-        super(timestamp);
+    public EyesOpenedEvent(final Instant instant) {
+        super(instant);
     }
 }

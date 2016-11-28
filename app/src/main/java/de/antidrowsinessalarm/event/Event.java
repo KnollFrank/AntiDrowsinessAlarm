@@ -1,30 +1,33 @@
 package de.antidrowsinessalarm.event;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+
+import org.joda.time.Instant;
 
 public abstract class Event {
 
-    private final long timestampMillis;
+    private final Instant instant;
 
-    Event(final long timestampMillis) {
-        this.timestampMillis = timestampMillis;
+    Event(final Instant instant) {
+        this.instant = instant;
     }
 
-    public long getTimestampMillis() {
-        return this.timestampMillis;
+    public Instant getInstant() {
+        return this.instant;
     }
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
+        if(this == o) return true;
         if(o == null || this.getClass() != o.getClass()) return false;
-        final Event event=(Event) o;
-        return this.timestampMillis == event.timestampMillis;
+        final Event event = (Event) o;
+        return Objects.equal(this.instant, event.instant);
     }
 
     @Override
     public int hashCode() {
-        return com.google.common.base.Objects.hashCode(this.timestampMillis);
+        return Objects.hashCode(this.instant);
     }
 
     @Override
@@ -35,6 +38,6 @@ public abstract class Event {
     protected MoreObjects.ToStringHelper getToStringHelper() {
         return MoreObjects
                 .toStringHelper(this)
-                .add("timestampMillis", this.timestampMillis);
+                .add("instant", this.instant);
     }
 }

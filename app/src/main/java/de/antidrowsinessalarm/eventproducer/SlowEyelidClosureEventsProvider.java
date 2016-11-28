@@ -9,6 +9,10 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 import com.google.common.eventbus.Subscribe;
 
+import org.joda.time.Duration;
+import org.joda.time.Instant;
+import org.joda.time.Interval;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,18 +22,18 @@ import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 public class SlowEyelidClosureEventsProvider {
 
     private final List<SlowEyelidClosureEvent> events = new ArrayList<SlowEyelidClosureEvent>();
-    private final long timeWindowMillis;
+    private final Duration timeWindow;
     private PendingSlowEyelidClosureEvent pendingEvent;
 
-    public SlowEyelidClosureEventsProvider(final long timeWindowMillis) {
-        this.timeWindowMillis = timeWindowMillis;
+    public SlowEyelidClosureEventsProvider(final Duration timeWindow) {
+        this.timeWindow = timeWindow;
     }
 
     @Subscribe
     public void recordSlowEyelidClosureEvent(final SlowEyelidClosureEvent event) {
         this.removePendingSlowEyelidClosureEvents();
         this.events.add(event);
-        this.removeEventsNotPartlyWithinTimewindow(this.getEndMillis(event));
+        this.removeEventsNotPartlyWithinTimewindow(this.getEndOf(event));
     }
 
     private void removePendingSlowEyelidClosureEvents() {
@@ -41,12 +45,12 @@ public class SlowEyelidClosureEventsProvider {
         });
     }
 
-    private long getEndMillis(final SlowEyelidClosureEvent event) {
-        return event.getTimestampMillis() + event.getDurationMillis();
+    private Instant getEndOf(final SlowEyelidClosureEvent event) {
+        return event.getInstant().plus(event.getDuration());
     }
 
-    private void removeEventsNotPartlyWithinTimewindow(final long nowMillis) {
-        Iterables.removeIf(this.events, Predicates.not(this.isEventPartlyWithinTimeWindow(nowMillis)));
+    private void removeEventsNotPartlyWithinTimewindow(final Instant now) {
+        Iterables.removeIf(this.events, Predicates.not(this.isEventPartlyWithinTimeWindow(now)));
     }
 
     @VisibleForTesting
@@ -54,26 +58,25 @@ public class SlowEyelidClosureEventsProvider {
         return this.events;
     }
 
-    public long getTimeWindowMillis() {
-        return this.timeWindowMillis;
+    public Duration getTimeWindow() {
+        return this.timeWindow;
     }
 
-    public List<SlowEyelidClosureEvent> getRecordedEventsPartlyWithinTimeWindow(final long timewindowEndMillis) {
+    public List<SlowEyelidClosureEvent> getRecordedEventsPartlyWithinTimeWindow(final Instant timewindowEnd) {
         return FluentIterable
                 .from(this.events)
-                .filter(this.isEventPartlyWithinTimeWindow(timewindowEndMillis))
+                .filter(this.isEventPartlyWithinTimeWindow(timewindowEnd))
                 .toList();
     }
 
     @NonNull
-    private Predicate<SlowEyelidClosureEvent> isEventPartlyWithinTimeWindow(final long timewindowEndMillis) {
-        // TODO: use Joda-Time Interval [startMillis, endMillis] or guava Range
-        final long timewindowStartMillis = timewindowEndMillis - this.timeWindowMillis;
+    private Predicate<SlowEyelidClosureEvent> isEventPartlyWithinTimeWindow(final Instant timewindowEnd) {
+        final Interval timeWindowInterval = new Interval(this.timeWindow, timewindowEnd);
         return new Predicate<SlowEyelidClosureEvent>() {
 
             @Override
             public boolean apply(SlowEyelidClosureEvent event) {
-                return SlowEyelidClosureEventsProvider.this.getEndMillis(event) >= timewindowStartMillis;
+                return timeWindowInterval.overlaps(event.getInterval());
             }
         };
     }

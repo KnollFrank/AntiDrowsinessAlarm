@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.google.common.eventbus.EventBus;
 
+import org.joda.time.Instant;
+
 import de.antidrowsinessalarm.PERCLOSCalculator;
 import de.antidrowsinessalarm.event.AwakeEvent;
 import de.antidrowsinessalarm.event.DrowsyEvent;
@@ -23,23 +25,23 @@ public class DrowsyEventProducer extends EventProducer {
         this.slowEyelidClosureEventsProvider = slowEyelidClosureEventsProvider;
     }
 
-    public void maybeProduceDrowsyEvent(final long nowMillis) {
-        double perclos = this.getPerclos(nowMillis);
+    public void maybeProduceDrowsyEvent(final Instant now) {
+        double perclos = this.getPerclos(now);
         if(perclos >= DROWSY_THRESHOLD) {
-            this.postEvent(new DrowsyEvent(nowMillis, perclos));
+            this.postEvent(new DrowsyEvent(now, perclos));
         } else if(perclos >= LIKELY_DROWSY_THRESHOLD) {
-            this.postEvent(new LikelyDrowsyEvent(nowMillis, perclos));
+            this.postEvent(new LikelyDrowsyEvent(now, perclos));
         } else {
-            this.postEvent(new AwakeEvent(nowMillis, perclos));
+            this.postEvent(new AwakeEvent(now, perclos));
         }
     }
 
-    private double getPerclos(long nowMillis) {
-        return this.getPERCLOSCalculator().calculatePERCLOS(this.slowEyelidClosureEventsProvider.getRecordedEventsPartlyWithinTimeWindow(nowMillis), nowMillis);
+    private double getPerclos(final Instant now) {
+        return this.getPERCLOSCalculator().calculatePERCLOS(this.slowEyelidClosureEventsProvider.getRecordedEventsPartlyWithinTimeWindow(now), now);
     }
 
     @NonNull
     private PERCLOSCalculator getPERCLOSCalculator() {
-        return new PERCLOSCalculator(this.slowEyelidClosureEventsProvider.getTimeWindowMillis());
+        return new PERCLOSCalculator(this.slowEyelidClosureEventsProvider.getTimeWindow());
     }
 }

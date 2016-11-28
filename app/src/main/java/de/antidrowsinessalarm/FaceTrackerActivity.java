@@ -43,6 +43,8 @@ import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.common.eventbus.Subscribe;
 
+import org.joda.time.Duration;
+
 import java.io.IOException;
 
 import de.antidrowsinessalarm.camera.CameraSourcePreview;
@@ -291,7 +293,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
         @Override
         public Tracker<Face> create(Face face) {
-            DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(new SystemClock(), 15000, true);
+            DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(new SystemClock(), new Duration(15000), true);
 
             final Tracker<Face> tracker = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
             drowsyEventDetector.getEventBus().register(tracker);

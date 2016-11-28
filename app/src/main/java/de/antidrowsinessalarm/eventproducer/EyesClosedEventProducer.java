@@ -27,7 +27,7 @@ public class EyesClosedEventProducer extends EventProducer {
     public void onUpdateEvent(final UpdateEvent actualEvent) {
         if(this.isPreviouslyEyesOpened() && this.isEyesClosed(actualEvent.getFace())) {
             this.previouslyEyesOpened = Optional.of(false);
-            this.postEvent(new EyesClosedEvent(this.getTimestampMillis(actualEvent.getDetections())));
+            this.postEvent(new EyesClosedEvent(EyesOpenedEventProducer.getInstantOf(actualEvent)));
         }
     }
 

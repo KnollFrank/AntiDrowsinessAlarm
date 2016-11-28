@@ -1,10 +1,11 @@
 package de.antidrowsinessalarm.eventproducer;
 
-import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
+import org.joda.time.Instant;
 
 import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.EyesOpenedEvent;
@@ -23,6 +24,10 @@ public class EyesOpenedEventProducer extends EventProducer {
         return face.getIsLeftEyeOpenProbability() >= 0.5 && face.getIsRightEyeOpenProbability() >= 0.5;
     }
 
+    static Instant getInstantOf(UpdateEvent event) {
+        return new Instant(event.getDetections().getFrameMetadata().getTimestampMillis());
+    }
+
     @Subscribe
     public void onEyesClosedEvent(EyesClosedEvent event) {
         this.previouslyEyesClosed = Optional.of(true);
@@ -32,15 +37,11 @@ public class EyesOpenedEventProducer extends EventProducer {
     public void onUpdateEvent(final UpdateEvent actualEvent) {
         if(this.isPreviouslyEyesClosed() && isEyesOpen(actualEvent.getFace())) {
             this.previouslyEyesClosed = Optional.of(false);
-            this.postEvent(new EyesOpenedEvent(this.getTimestampMillis(actualEvent.getDetections())));
+            this.postEvent(new EyesOpenedEvent(getInstantOf(actualEvent)));
         }
     }
 
     private boolean isPreviouslyEyesClosed() {
         return !this.previouslyEyesClosed.isPresent() || this.previouslyEyesClosed.get();
-    }
-
-    private long getTimestampMillis(Detector.Detections<Face> detections) {
-        return detections.getFrameMetadata().getTimestampMillis();
     }
 }
