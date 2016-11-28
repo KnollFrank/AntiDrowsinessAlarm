@@ -10,20 +10,20 @@ import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 
 public class SlowEyelidClosureEventProducer extends DurationEventProducer {
 
-    public SlowEyelidClosureEventProducer(final EventBus eventBus) {
+    private final Duration slowEyelidClosureMinDuration;
+
+    public SlowEyelidClosureEventProducer(final Duration slowEyelidClosureMinDuration, final EventBus eventBus) {
         super(eventBus);
+        this.slowEyelidClosureMinDuration = slowEyelidClosureMinDuration;
     }
 
-    static boolean isGreaterOrEqualThanSlowEyelidClosureMinDuration(final Duration duration) {
-        // TODO: make durationMillis configurable from 300 to 500 milliseconds
-        Duration slowEyelidClosureMinDuration = new Duration(500);
+    static boolean isSlowEyelidClosure(final Duration duration, final Duration slowEyelidClosureMinDuration) {
         return duration.isLongerThan(slowEyelidClosureMinDuration) || duration.isEqual(slowEyelidClosureMinDuration);
     }
 
     @Override
     protected boolean shallCreateEventFor(Duration duration) {
-        return isGreaterOrEqualThanSlowEyelidClosureMinDuration(duration);
-
+        return isSlowEyelidClosure(duration, this.slowEyelidClosureMinDuration);
     }
 
     @Override

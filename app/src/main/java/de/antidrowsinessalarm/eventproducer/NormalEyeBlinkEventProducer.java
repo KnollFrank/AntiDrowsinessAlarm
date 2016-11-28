@@ -10,14 +10,20 @@ import de.antidrowsinessalarm.event.NormalEyeBlinkEvent;
 
 public class NormalEyeBlinkEventProducer extends DurationEventProducer {
 
-    public NormalEyeBlinkEventProducer(final EventBus eventBus) {
+    private final Duration slowEyelidClosureMinDuration;
+
+    public NormalEyeBlinkEventProducer(final Duration slowEyelidClosureMinDuration, final EventBus eventBus) {
         super(eventBus);
+        this.slowEyelidClosureMinDuration = slowEyelidClosureMinDuration;
     }
 
     @Override
     protected boolean shallCreateEventFor(Duration duration) {
-        // TODO: make durationMillis configurable from 300 to 500 milliseconds
-        return duration.isShorterThan(new Duration(500));
+        return this.isNormalEyeBlink(duration);
+    }
+
+    private boolean isNormalEyeBlink(final Duration duration) {
+        return duration.isShorterThan(this.slowEyelidClosureMinDuration);
     }
 
     @Override

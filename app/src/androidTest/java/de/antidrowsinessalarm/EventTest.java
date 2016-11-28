@@ -35,6 +35,7 @@ import de.antidrowsinessalarm.event.EyesOpenedEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
 import de.antidrowsinessalarm.event.NormalEyeBlinkEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
+import de.antidrowsinessalarm.eventproducer.ConfigFactory;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -59,7 +60,7 @@ public class EventTest {
 
     private void setup(Clock clock) {
         this.appContext = InstrumentationRegistry.getTargetContext();
-        this.drowsyEventDetector = new DrowsyEventDetector(clock, new Duration(15000), true);
+        this.drowsyEventDetector = new DrowsyEventDetector(clock, ConfigFactory.getDefaultSlowEyelidClosureMinDuration(), new Duration(15000), true);
         this.listener = new EventListener();
         this.drowsyEventDetector.getEventBus().register(this.listener);
         this.detector =
