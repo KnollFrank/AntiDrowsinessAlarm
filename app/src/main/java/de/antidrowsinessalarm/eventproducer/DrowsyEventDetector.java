@@ -27,7 +27,7 @@ public class DrowsyEventDetector {
         SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider(timeWindow);
         this.eventBus.register(slowEyelidClosureEventsProvider);
 
-        this.drowsyEventProducer = new DrowsyEventProducer(this.eventBus, slowEyelidClosureEventsProvider);
+        this.drowsyEventProducer = new DrowsyEventProducer(ConfigFactory.createDefaultConfig(), this.eventBus, slowEyelidClosureEventsProvider);
         this.graphicFaceTracker = new GraphicFaceTracker(this.eventBus, this.drowsyEventProducer, clock);
     }
 
