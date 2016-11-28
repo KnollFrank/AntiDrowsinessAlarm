@@ -174,6 +174,7 @@ public class EventTest {
         MockedClock clock = new MockedClock();
         this.setup(clock);
 
+        // When
         clock.setCurrentTimeMillis(0);
         this.detectorConsumesImage(R.drawable.eyes_closed, 0);
 
@@ -182,6 +183,30 @@ public class EventTest {
 
         // Then
         double perclos = 1.0; // > 0.15
+        assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(15000, perclos)));
+    }
+
+    @Test
+    public void shouldCreateDrowsyEventForEyesClosedButNotYetOpenedWhenMaybeProducingDrowsyEvent() {
+        // Given
+        MockedClock clock = new MockedClock();
+        this.setup(clock);
+
+        // When
+        clock.setCurrentTimeMillis(0);
+        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+
+        clock.setCurrentTimeMillis(501);
+        this.detectorConsumesImage(R.drawable.eyes_opened, 501);
+
+        clock.setCurrentTimeMillis(510);
+        this.detectorConsumesImage(R.drawable.eyes_closed, 510);
+
+        clock.setCurrentTimeMillis(15000);
+        this.detectorConsumesImage(R.drawable.eyes_closed, 15000);
+
+        // Then
+        double perclos = (501.0 + (15000.0 - 510.0)) / 15000.0; // = 0.9994 > 0.15
         assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(15000, perclos)));
     }
 
