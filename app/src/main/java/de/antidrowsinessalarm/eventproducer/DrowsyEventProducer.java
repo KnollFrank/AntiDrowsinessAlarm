@@ -44,8 +44,8 @@ public class DrowsyEventProducer extends EventProducer {
 
     public static class Config {
 
-        private final double drowsyThreshold; // = 0.15;
-        private final double likelyDrowsyThreshold; // = 0.08;
+        private final double drowsyThreshold;
+        private final double likelyDrowsyThreshold;
 
         private Config(final double drowsyThreshold, final double likelyDrowsyThreshold) {
             this.drowsyThreshold = drowsyThreshold;
