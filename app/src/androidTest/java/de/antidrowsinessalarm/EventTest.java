@@ -169,6 +169,23 @@ public class EventTest {
     }
 
     @Test
+    public void shouldCreateDrowsyEventForEyesClosedTheWholeTime() {
+        // Given
+        MockedClock clock = new MockedClock();
+        this.setup(clock);
+
+        clock.setCurrentTimeMillis(0);
+        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+
+        clock.setCurrentTimeMillis(15000);
+        this.detectorConsumesImage(R.drawable.eyes_closed, 15000);
+
+        // Then
+        double perclos = 1.0; // > 0.15
+        assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(15000, perclos)));
+    }
+
+    @Test
     public void shouldCreateLikelyDrowsyEvent() {
         // Given
         MockedClock clock = new MockedClock();
