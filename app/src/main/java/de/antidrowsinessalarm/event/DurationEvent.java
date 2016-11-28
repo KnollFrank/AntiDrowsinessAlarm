@@ -11,7 +11,6 @@ public abstract class DurationEvent extends Event {
 
     private final Duration duration;
 
-    // TODO: use Interval
     DurationEvent(final Instant instant, final Duration duration) {
         super(instant);
         this.duration = duration;
