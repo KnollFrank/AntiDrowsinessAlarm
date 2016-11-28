@@ -32,7 +32,7 @@ public class DrowsyEventProducerTest {
 
     @Before
     public void setup() {
-        DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(new SystemClock(), ConfigFactory.getDefaultSlowEyelidClosureMinDuration(), new Duration(2000), false);
+        DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(ConfigFactory.createDefaultConfig(), new SystemClock(), ConfigFactory.getDefaultSlowEyelidClosureMinDuration(), new Duration(2000), false);
         this.listener = new GraphicFaceTrackerTest.EventListener();
         this.eventBus = drowsyEventDetector.getEventBus();
         this.drowsyEventProducer = drowsyEventDetector.getDrowsyEventProducer();

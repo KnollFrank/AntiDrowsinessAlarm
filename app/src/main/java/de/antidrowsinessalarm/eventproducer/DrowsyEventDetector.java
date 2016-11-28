@@ -14,12 +14,12 @@ public class DrowsyEventDetector {
     private final DrowsyEventProducer drowsyEventProducer;
     private final GraphicFaceTracker graphicFaceTracker;
 
-    public DrowsyEventDetector(final Clock clock, final Duration slowEyelidClosureMinDuration, final Duration timeWindow, final boolean registerEventLogger) {
+    public DrowsyEventDetector(final DrowsyEventProducer.Config config, final Clock clock, final Duration slowEyelidClosureMinDuration, final Duration timeWindow, final boolean registerEventLogger) {
         this.eventBus = new EventBus();
         this.eventBus.register(new EyesOpenedEventProducer(this.eventBus));
         this.eventBus.register(new EyesClosedEventProducer(this.eventBus));
         this.eventBus.register(new NormalEyeBlinkEventProducer(slowEyelidClosureMinDuration, this.eventBus));
-        this.eventBus.register(new SlowEyelidClosureEventProducer(ConfigFactory.getDefaultSlowEyelidClosureMinDuration(), this.eventBus));
+        this.eventBus.register(new SlowEyelidClosureEventProducer(slowEyelidClosureMinDuration, this.eventBus));
         if(registerEventLogger) {
             this.eventBus.register(new EventLogger());
         }
@@ -27,8 +27,7 @@ public class DrowsyEventDetector {
         SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider(timeWindow);
         this.eventBus.register(slowEyelidClosureEventsProvider);
 
-        // TODO: ConfigFactory.createDefaultConfig() als Funktionsparameter übergeben
-        this.drowsyEventProducer = new DrowsyEventProducer(ConfigFactory.createDefaultConfig(), this.eventBus, slowEyelidClosureEventsProvider);
+        this.drowsyEventProducer = new DrowsyEventProducer(config, this.eventBus, slowEyelidClosureEventsProvider);
         this.graphicFaceTracker = new GraphicFaceTracker(this.eventBus, this.drowsyEventProducer, clock);
     }
 
