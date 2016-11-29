@@ -61,10 +61,15 @@ public class EventTest {
         this.appContext = InstrumentationRegistry.getTargetContext();
         this.drowsyEventDetector =
                 new DrowsyEventDetector(
-                        DefaultConfigFactory.getEyeOpenProbabilityThreshold(),
-                        DefaultConfigFactory.createConfig(),
-                        DefaultConfigFactory.getSlowEyelidClosureMinDuration(), DefaultConfigFactory.getTimeWindow(), true, clock
-                );
+                        DrowsyEventDetector.Config
+                                .builder()
+                                .withEyeOpenProbabilityThreshold(DefaultConfigFactory.getEyeOpenProbabilityThreshold())
+                                .withConfig(DefaultConfigFactory.createConfig())
+                                .withSlowEyelidClosureMinDuration(DefaultConfigFactory.getSlowEyelidClosureMinDuration())
+                                .withTimeWindow(DefaultConfigFactory.getTimeWindow())
+                                .build(),
+                        true,
+                        clock);
         this.listener = new EventListener();
         this.drowsyEventDetector.getEventBus().register(this.listener);
         this.detector =

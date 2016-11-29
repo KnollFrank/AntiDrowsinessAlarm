@@ -294,9 +294,15 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         public Tracker<Face> create(Face face) {
             DrowsyEventDetector drowsyEventDetector =
                     new DrowsyEventDetector(
-                            DefaultConfigFactory.getEyeOpenProbabilityThreshold(),
-                            DefaultConfigFactory.createConfig(),
-                            DefaultConfigFactory.getSlowEyelidClosureMinDuration(), DefaultConfigFactory.getTimeWindow(), true, new SystemClock()
+                            DrowsyEventDetector.Config
+                                    .builder()
+                                    .withEyeOpenProbabilityThreshold(DefaultConfigFactory.getEyeOpenProbabilityThreshold())
+                                    .withConfig(DefaultConfigFactory.createConfig())
+                                    .withSlowEyelidClosureMinDuration(DefaultConfigFactory.getSlowEyelidClosureMinDuration())
+                                    .withTimeWindow(DefaultConfigFactory.getTimeWindow())
+                                    .build(),
+                            true,
+                            new SystemClock()
                     );
 
             final Tracker<Face> tracker = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);

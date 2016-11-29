@@ -34,9 +34,15 @@ public class DrowsyEventProducerTest {
     public void setup() {
         DrowsyEventDetector drowsyEventDetector =
                 new DrowsyEventDetector(
-                        DefaultConfigFactory.getEyeOpenProbabilityThreshold(),
-                        DefaultConfigFactory.createConfig(),
-                        DefaultConfigFactory.getSlowEyelidClosureMinDuration(), new Duration(2000), false, new SystemClock()
+                        DrowsyEventDetector.Config
+                                .builder()
+                                .withEyeOpenProbabilityThreshold(DefaultConfigFactory.getEyeOpenProbabilityThreshold())
+                                .withConfig(DefaultConfigFactory.createConfig())
+                                .withSlowEyelidClosureMinDuration(DefaultConfigFactory.getSlowEyelidClosureMinDuration())
+                                .withTimeWindow(new Duration(2000))
+                                .build(),
+                        false,
+                        new SystemClock()
                 );
         this.listener = new GraphicFaceTrackerTest.EventListener();
         this.eventBus = drowsyEventDetector.getEventBus();

@@ -47,9 +47,9 @@ public class DrowsyEventProducer extends EventProducer {
         private final double drowsyThreshold;
         private final double likelyDrowsyThreshold;
 
-        private Config(final double drowsyThreshold, final double likelyDrowsyThreshold) {
-            this.drowsyThreshold = drowsyThreshold;
-            this.likelyDrowsyThreshold = likelyDrowsyThreshold;
+        private Config(final ConfigBuilder builder) {
+            this.drowsyThreshold = builder.drowsyThreshold;
+            this.likelyDrowsyThreshold = builder.likelyDrowsyThreshold;
         }
 
         public static ConfigBuilder builder() {
@@ -69,18 +69,21 @@ public class DrowsyEventProducer extends EventProducer {
             private double drowsyThreshold;
             private double likelyDrowsyThreshold;
 
-            public ConfigBuilder setDrowsyThreshold(final double drowsyThreshold) {
+            private ConfigBuilder() {
+            }
+
+            public ConfigBuilder withDrowsyThreshold(final double drowsyThreshold) {
                 this.drowsyThreshold = drowsyThreshold;
                 return this;
             }
 
-            public ConfigBuilder setLikelyDrowsyThreshold(final double likelyDrowsyThreshold) {
+            public ConfigBuilder withLikelyDrowsyThreshold(final double likelyDrowsyThreshold) {
                 this.likelyDrowsyThreshold = likelyDrowsyThreshold;
                 return this;
             }
 
             public Config build() {
-                return new Config(this.drowsyThreshold, this.likelyDrowsyThreshold);
+                return new Config(this);
             }
         }
     }
