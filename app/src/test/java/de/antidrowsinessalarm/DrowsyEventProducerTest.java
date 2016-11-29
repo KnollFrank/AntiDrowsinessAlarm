@@ -37,7 +37,7 @@ public class DrowsyEventProducerTest {
                         DrowsyEventDetector.Config
                                 .builder()
                                 .withEyeOpenProbabilityThreshold(DefaultConfigFactory.getEyeOpenProbabilityThreshold())
-                                .withConfig(DefaultConfigFactory.createConfig())
+                                .withConfig(DefaultConfigFactory.getConfig())
                                 .withSlowEyelidClosureMinDuration(DefaultConfigFactory.getSlowEyelidClosureMinDuration())
                                 .withTimeWindow(new Duration(2000))
                                 .build(),

@@ -55,7 +55,7 @@ public class EventTest {
                         DrowsyEventDetector.Config
                                 .builder()
                                 .withEyeOpenProbabilityThreshold(DefaultConfigFactory.getEyeOpenProbabilityThreshold())
-                                .withConfig(DefaultConfigFactory.createConfig())
+                                .withConfig(DefaultConfigFactory.getConfig())
                                 .withSlowEyelidClosureMinDuration(DefaultConfigFactory.getSlowEyelidClosureMinDuration())
                                 .withTimeWindow(DefaultConfigFactory.getTimeWindow())
                                 .build(),

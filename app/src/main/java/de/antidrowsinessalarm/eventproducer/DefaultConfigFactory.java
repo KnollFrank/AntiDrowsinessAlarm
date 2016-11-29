@@ -4,7 +4,7 @@ import org.joda.time.Duration;
 
 public class DefaultConfigFactory {
 
-    public static DrowsyEventProducer.Config createConfig() {
+    public static DrowsyEventProducer.Config getConfig() {
         return DrowsyEventProducer.Config
                 .builder()
                 .withDrowsyThreshold(0.15)

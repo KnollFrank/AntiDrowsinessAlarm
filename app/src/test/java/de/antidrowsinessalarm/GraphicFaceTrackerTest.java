@@ -78,7 +78,7 @@ public class GraphicFaceTrackerTest {
                 new GraphicFaceTracker(
                         eventBus,
                         new DrowsyEventProducer(
-                                DefaultConfigFactory.createConfig(),
+                                DefaultConfigFactory.getConfig(),
                                 eventBus,
                                 new SlowEyelidClosureEventsProvider(DefaultConfigFactory.getTimeWindow())),
                         new SystemClock());
