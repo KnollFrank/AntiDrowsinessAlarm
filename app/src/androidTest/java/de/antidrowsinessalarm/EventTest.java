@@ -270,7 +270,6 @@ public class EventTest {
         assertThat(this.eventListener.getEvents(), hasItem(isA(AwakeEvent.class)));
     }
 
-    // TODO: replace GraphicFaceTrackerTest.filterEvents by call to the following method
     private void detectorConsumesImage(final int imageResource, final int millis) {
         this.detector.receiveFrame(this.createFrame(imageResource, millis));
     }
