@@ -12,23 +12,14 @@ import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-import com.google.common.eventbus.Subscribe;
 
 import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import de.antidrowsinessalarm.event.AwakeEvent;
 import de.antidrowsinessalarm.event.DrowsyEvent;
-import de.antidrowsinessalarm.event.Event;
 import de.antidrowsinessalarm.event.EyesClosedEvent;
 import de.antidrowsinessalarm.event.EyesOpenedEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
@@ -48,7 +39,7 @@ import static org.hamcrest.core.IsNot.not;
 public class EventTest {
 
     private Context appContext;
-    private EventListener listener;
+    private EventListener eventListener;
     private DrowsyEventDetector drowsyEventDetector;
     private FaceDetector detector;
 
@@ -70,8 +61,8 @@ public class EventTest {
                                 .build(),
                         true,
                         clock);
-        this.listener = new EventListener();
-        this.drowsyEventDetector.getEventBus().register(this.listener);
+        this.eventListener = new EventListener();
+        this.drowsyEventDetector.getEventBus().register(this.eventListener);
         this.detector =
                 FaceTrackerActivity.createFaceDetector(
                         this.appContext,
@@ -83,8 +74,8 @@ public class EventTest {
         // When
         this.detectorConsumesImage(R.drawable.eyes_opened, 0);
 
-        // Then
-        assertThat(this.filterListenerEventsBy(EyesOpenedEvent.class), contains(instanceOf(EyesOpenedEvent.class)));
+        // Thent
+        assertThat(this.eventListener.filterEventsBy(EyesOpenedEvent.class), contains(instanceOf(EyesOpenedEvent.class)));
     }
 
     @Test
@@ -93,7 +84,7 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_closed, 0);
 
         // Then
-        assertThat(this.filterListenerEventsBy(EyesClosedEvent.class), contains(instanceOf(EyesClosedEvent.class)));
+        assertThat(this.eventListener.filterEventsBy(EyesClosedEvent.class), contains(instanceOf(EyesClosedEvent.class)));
     }
 
     @Test
@@ -104,7 +95,7 @@ public class EventTest {
 
         // Then
         assertThat(
-                this.filterListenerEventsBy(EyesOpenedEvent.class, EyesClosedEvent.class),
+                this.eventListener.filterEventsBy(EyesOpenedEvent.class, EyesClosedEvent.class),
                 contains(
                         instanceOf(EyesOpenedEvent.class),
                         instanceOf(EyesClosedEvent.class)));
@@ -119,7 +110,7 @@ public class EventTest {
 
         // Then
         assertThat(
-                this.filterListenerEventsBy(EyesOpenedEvent.class, EyesClosedEvent.class),
+                this.eventListener.filterEventsBy(EyesOpenedEvent.class, EyesClosedEvent.class),
                 contains(
                         instanceOf(EyesOpenedEvent.class),
                         instanceOf(EyesClosedEvent.class),
@@ -133,7 +124,7 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_opened, 501);
 
         // Then
-        assertThat(this.filterListenerEventsBy(SlowEyelidClosureEvent.class), contains(instanceOf(SlowEyelidClosureEvent.class)));
+        assertThat(this.eventListener.filterEventsBy(SlowEyelidClosureEvent.class), contains(instanceOf(SlowEyelidClosureEvent.class)));
     }
 
     @Test
@@ -143,7 +134,7 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_opened, 499);
 
         // Then
-        assertThat(this.filterListenerEventsBy(NormalEyeBlinkEvent.class), contains(instanceOf(NormalEyeBlinkEvent.class)));
+        assertThat(this.eventListener.filterEventsBy(NormalEyeBlinkEvent.class), contains(instanceOf(NormalEyeBlinkEvent.class)));
     }
 
     @Test
@@ -156,7 +147,7 @@ public class EventTest {
 
         // Then
         assertThat(
-                this.filterListenerEventsBy(SlowEyelidClosureEvent.class, NormalEyeBlinkEvent.class),
+                this.eventListener.filterEventsBy(SlowEyelidClosureEvent.class, NormalEyeBlinkEvent.class),
                 contains(instanceOf(SlowEyelidClosureEvent.class), instanceOf(NormalEyeBlinkEvent.class)));
     }
 
@@ -178,7 +169,7 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_closed, 5001);
 
         // Then
-        assertThat(this.listener.getEvents(), hasItem(isA(DrowsyEvent.class)));
+        assertThat(this.eventListener.getEvents(), hasItem(isA(DrowsyEvent.class)));
     }
 
     @Test
@@ -196,7 +187,7 @@ public class EventTest {
 
         // Then
         double perclos = 1.0; // > 0.15
-        assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(new Instant(15000), perclos)));
+        assertThat(this.eventListener.getEvents(), hasItem(new DrowsyEvent(new Instant(15000), perclos)));
     }
 
     @Test
@@ -220,7 +211,7 @@ public class EventTest {
 
         // Then
         double perclos = (501.0 + (15000.0 - 510.0)) / 15000.0; // = 0.9994 > 0.15
-        assertThat(this.listener.getEvents(), hasItem(new DrowsyEvent(new Instant(15000), perclos)));
+        assertThat(this.eventListener.getEvents(), hasItem(new DrowsyEvent(new Instant(15000), perclos)));
     }
 
     @Test
@@ -241,7 +232,7 @@ public class EventTest {
 
         // Then
         double perclos = 0.0;
-        assertThat(this.listener.getEvents(), not(hasItem(isA(DrowsyEvent.class))));
+        assertThat(this.eventListener.getEvents(), not(hasItem(isA(DrowsyEvent.class))));
     }
 
     @Test
@@ -262,7 +253,7 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_closed, 1501);
 
         // Then
-        assertThat(this.listener.getEvents(), hasItem(isA(LikelyDrowsyEvent.class)));
+        assertThat(this.eventListener.getEvents(), hasItem(isA(LikelyDrowsyEvent.class)));
     }
 
     @Test
@@ -276,46 +267,10 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_opened, 0);
 
         // Then
-        assertThat(this.listener.getEvents(), hasItem(isA(AwakeEvent.class)));
+        assertThat(this.eventListener.getEvents(), hasItem(isA(AwakeEvent.class)));
     }
 
-    // TODO: replace GraphicFaceTrackerTest.filterEvents by call to tthe following method
-    private List<Event> filterListenerEventsBy(final Class... eventClasses) {
-        return this
-                .getListenerEvents()
-                .filter(this.isListenerEventClassContainedIn(eventClasses))
-                .toList();
-    }
-
-    @NonNull
-    private FluentIterable<Event> getListenerEvents() {
-        return FluentIterable.from(this.listener.getEvents());
-    }
-
-    @NonNull
-    private Predicate<Event> isListenerEventClassContainedIn(final Class[] eventClasses) {
-        return new Predicate<Event>() {
-
-            @Override
-            public boolean apply(@Nullable final Event listenerEvent) {
-                return FluentIterable
-                        .from(eventClasses)
-                        .anyMatch(this.hasSameClassAs(listenerEvent.getClass()));
-            }
-
-            @NonNull
-            private Predicate<Class> hasSameClassAs(final @Nullable Class listenerEventClass) {
-                return new Predicate<Class>() {
-
-                    @Override
-                    public boolean apply(@Nullable final Class eventClass) {
-                        return eventClass.equals(listenerEventClass);
-                    }
-                };
-            }
-        };
-    }
-
+    // TODO: replace GraphicFaceTrackerTest.filterEvents by call to the following method
     private void detectorConsumesImage(final int imageResource, final int millis) {
         this.detector.receiveFrame(this.createFrame(imageResource, millis));
     }
@@ -355,24 +310,6 @@ public class EventTest {
 
         public void setNow(final Instant now) {
             this.now = now;
-        }
-    }
-
-    static class EventListener {
-
-        private final List<Event> events = new ArrayList<Event>();
-
-        @Subscribe
-        public void recordEvent(final Event event) {
-            this.events.add(event);
-        }
-
-        Event getEvent() {
-            return !this.events.isEmpty() ? this.events.get(this.events.size() - 1) : null;
-        }
-
-        List<Event> getEvents() {
-            return this.events;
         }
     }
 }

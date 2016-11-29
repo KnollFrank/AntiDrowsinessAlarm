@@ -26,7 +26,7 @@ import static org.hamcrest.core.IsNot.not;
 
 public class DrowsyEventProducerTest {
 
-    private GraphicFaceTrackerTest.EventListener listener;
+    private EventListener listener;
     private EventBus eventBus;
     private DrowsyEventProducer drowsyEventProducer;
 
@@ -44,7 +44,7 @@ public class DrowsyEventProducerTest {
                         false,
                         new SystemClock()
                 );
-        this.listener = new GraphicFaceTrackerTest.EventListener();
+        this.listener = new EventListener();
         this.eventBus = drowsyEventDetector.getEventBus();
         this.drowsyEventProducer = drowsyEventDetector.getDrowsyEventProducer();
         this.eventBus.register(this.listener);

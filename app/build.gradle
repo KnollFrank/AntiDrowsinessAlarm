@@ -20,6 +20,16 @@ android {
     }
 }
 
+android.sourceSets {
+    test {
+        java.srcDirs += "$projectDir/src/testShared/java"
+    }
+
+    androidTest {
+        java.srcDirs += "$projectDir/src/testShared/java"
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:24.2.0'
