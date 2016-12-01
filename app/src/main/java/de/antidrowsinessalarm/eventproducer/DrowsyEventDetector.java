@@ -16,13 +16,13 @@ public class DrowsyEventDetector {
 
     public DrowsyEventDetector(final Config config, final boolean registerEventLogger, final Clock clock) {
         this.eventBus = new EventBus();
+        if(registerEventLogger) {
+            this.eventBus.register(new EventLogger());
+        }
         this.eventBus.register(new EyesOpenedEventProducer(config.getEyeOpenProbabilityThreshold(), this.eventBus));
         this.eventBus.register(new EyesClosedEventProducer(config.getEyeOpenProbabilityThreshold(), this.eventBus));
         this.eventBus.register(new NormalEyeBlinkEventProducer(config.getSlowEyelidClosureMinDuration(), this.eventBus));
         this.eventBus.register(new SlowEyelidClosureEventProducer(config.getSlowEyelidClosureMinDuration(), this.eventBus));
-        if(registerEventLogger) {
-            this.eventBus.register(new EventLogger());
-        }
         this.eventBus.register(new PendingSlowEyelidClosureEventProducer(config.getEyeOpenProbabilityThreshold(), config.getSlowEyelidClosureMinDuration(), this.eventBus));
         SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider(config.getTimeWindow());
         this.eventBus.register(slowEyelidClosureEventsProvider);
