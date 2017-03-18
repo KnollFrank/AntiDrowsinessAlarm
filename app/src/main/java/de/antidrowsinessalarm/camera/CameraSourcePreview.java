@@ -83,6 +83,7 @@ public class CameraSourcePreview extends ViewGroup {
 
     private void startIfReady() throws IOException {
         if(this.mStartRequested && this.mSurfaceAvailable) {
+            //noinspection MissingPermission
             this.mCameraSource.start(this.mSurfaceView.getHolder());
             if(this.mOverlay != null) {
                 Size size=this.mCameraSource.getPreviewSize();
