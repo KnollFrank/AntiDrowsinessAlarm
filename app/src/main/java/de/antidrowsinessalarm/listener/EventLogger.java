@@ -12,7 +12,7 @@ public class EventLogger {
 
     @Subscribe
     public void logEvent(Event event) {
-        if(event instanceof ConsecutiveUpdateEvents || event instanceof UpdateEvent) {
+        if (event instanceof ConsecutiveUpdateEvents || event instanceof UpdateEvent) {
             return;
         }
 

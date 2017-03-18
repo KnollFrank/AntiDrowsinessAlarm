@@ -29,11 +29,11 @@ import java.util.Set;
  * A view which renders a series of custom graphics to be overlayed on top of an associated preview
  * (i.e., the camera preview).  The creator can add graphics objects, update the objects, and remove
  * them, triggering the appropriate drawing and invalidation within the view.<p>
- *
+ * <p>
  * Supports scaling and mirroring of the graphics relative the camera's preview properties.  The
  * idea is that detection items are expressed in terms of a preview size, but need to be scaled up
  * to the full view size, and also mirrored in the case of the front-facing camera.<p>
- *
+ * <p>
  * Associated {@link Graphic} items should use the following methods to convert to view coordinates
  * for the graphics that are drawn:
  * <ol>
@@ -45,7 +45,7 @@ import java.util.Set;
  */
 public class GraphicOverlay extends View {
     private final Object mLock = new Object();
-    private final Set<Graphic> mGraphics=new HashSet<>();
+    private final Set<Graphic> mGraphics = new HashSet<>();
     private int mPreviewWidth;
     private float mWidthScaleFactor = 1.0f;
     private int mPreviewHeight;
@@ -92,9 +92,9 @@ public class GraphicOverlay extends View {
      */
     public void setCameraInfo(int previewWidth, int previewHeight, int facing) {
         synchronized (this.mLock) {
-            this.mPreviewWidth=previewWidth;
-            this.mPreviewHeight=previewHeight;
-            this.mFacing=facing;
+            this.mPreviewWidth = previewWidth;
+            this.mPreviewHeight = previewHeight;
+            this.mFacing = facing;
         }
         this.postInvalidate();
     }
@@ -107,12 +107,12 @@ public class GraphicOverlay extends View {
         super.onDraw(canvas);
 
         synchronized (this.mLock) {
-            if((this.mPreviewWidth != 0) && (this.mPreviewHeight != 0)) {
-                this.mWidthScaleFactor=(float) canvas.getWidth() / (float) this.mPreviewWidth;
-                this.mHeightScaleFactor=(float) canvas.getHeight() / (float) this.mPreviewHeight;
+            if ((this.mPreviewWidth != 0) && (this.mPreviewHeight != 0)) {
+                this.mWidthScaleFactor = (float) canvas.getWidth() / (float) this.mPreviewWidth;
+                this.mHeightScaleFactor = (float) canvas.getHeight() / (float) this.mPreviewHeight;
             }
 
-            for(Graphic graphic : this.mGraphics) {
+            for (Graphic graphic : this.mGraphics) {
                 graphic.draw(canvas);
             }
         }
@@ -127,7 +127,7 @@ public class GraphicOverlay extends View {
         private final GraphicOverlay mOverlay;
 
         public Graphic(final GraphicOverlay overlay) {
-            this.mOverlay=overlay;
+            this.mOverlay = overlay;
         }
 
         /**
@@ -164,7 +164,7 @@ public class GraphicOverlay extends View {
          * system.
          */
         public float translateX(float x) {
-            if(this.mOverlay.mFacing == CameraSource.CAMERA_FACING_FRONT) {
+            if (this.mOverlay.mFacing == CameraSource.CAMERA_FACING_FRONT) {
                 return this.mOverlay.getWidth() - this.scaleX(x);
             } else {
                 return this.scaleX(x);

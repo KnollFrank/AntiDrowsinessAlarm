@@ -16,7 +16,7 @@ public class DrowsyEventDetector {
 
     public DrowsyEventDetector(final Config config, final boolean registerEventLogger, final Clock clock) {
         this.eventBus = new EventBus();
-        if(registerEventLogger) {
+        if (registerEventLogger) {
             this.eventBus.register(new EventLogger());
         }
         this.eventBus.register(new EyesOpenedEventProducer(config.getEyeOpenProbabilityThreshold(), this.eventBus));

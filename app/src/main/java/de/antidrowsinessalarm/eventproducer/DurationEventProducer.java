@@ -27,12 +27,12 @@ abstract class DurationEventProducer extends EventProducer {
 
     @Subscribe
     public void recordEyesOpenedEventAndPostDurationEvent(final EyesOpenedEvent eyesOpenedEvent) {
-        if(!this.eyesClosed.isPresent()) {
+        if (!this.eyesClosed.isPresent()) {
             return;
         }
 
         final Duration duration = new Duration(this.eyesClosed.get(), eyesOpenedEvent.getInstant());
-        if(this.shallCreateEventFor(duration)) {
+        if (this.shallCreateEventFor(duration)) {
             this.postEvent(this.createDurationEvent(new Interval(this.eyesClosed.get(), duration)));
         }
     }

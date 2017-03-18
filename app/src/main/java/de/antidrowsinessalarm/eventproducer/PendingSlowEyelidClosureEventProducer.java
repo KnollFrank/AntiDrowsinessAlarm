@@ -38,12 +38,12 @@ public class PendingSlowEyelidClosureEventProducer extends EventProducer {
 
     @Subscribe
     public void maybePostPendingSlowEyelidClosureEvent(final UpdateEvent updateEvent) {
-        if(!this.eyesClosed.isPresent()) {
+        if (!this.eyesClosed.isPresent()) {
             return;
         }
 
         final Duration duration = new Duration(this.eyesClosed.get(), updateEvent.getInstant());
-        if(!EyesOpenedEventProducer.isEyesOpen(updateEvent.getFace(), this.eyeOpenProbabilityThreshold) && isSlowEyelidClosure(duration, this.slowEyelidClosureMinDuration)) {
+        if (!EyesOpenedEventProducer.isEyesOpen(updateEvent.getFace(), this.eyeOpenProbabilityThreshold) && isSlowEyelidClosure(duration, this.slowEyelidClosureMinDuration)) {
             this.postEvent(new PendingSlowEyelidClosureEvent(this.eyesClosed.get(), duration));
         }
     }

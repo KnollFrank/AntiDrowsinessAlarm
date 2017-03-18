@@ -26,9 +26,9 @@ public abstract class DurationEvent extends Event {
 
     @Override
     public boolean equals(final Object o) {
-        if(this == o) return true;
-        if(o == null || this.getClass() != o.getClass()) return false;
-        if(!super.equals(o)) return false;
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         final DurationEvent that = (DurationEvent) o;
         return Objects.equal(this.duration, that.duration);
     }

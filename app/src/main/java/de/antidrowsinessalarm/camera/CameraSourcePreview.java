@@ -41,11 +41,11 @@ public class CameraSourcePreview extends ViewGroup {
 
     public CameraSourcePreview(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.mContext=context;
-        this.mStartRequested=false;
-        this.mSurfaceAvailable=false;
+        this.mContext = context;
+        this.mStartRequested = false;
+        this.mSurfaceAvailable = false;
 
-        this.mSurfaceView=new SurfaceView(context);
+        this.mSurfaceView = new SurfaceView(context);
         this.mSurfaceView.getHolder().addCallback(new SurfaceCallback());
         this.addView(this.mSurfaceView);
     }
@@ -55,41 +55,41 @@ public class CameraSourcePreview extends ViewGroup {
             this.stop();
         }
 
-        this.mCameraSource=cameraSource;
+        this.mCameraSource = cameraSource;
 
-        if(this.mCameraSource != null) {
-            this.mStartRequested=true;
+        if (this.mCameraSource != null) {
+            this.mStartRequested = true;
             this.startIfReady();
         }
     }
 
     public void start(CameraSource cameraSource, GraphicOverlay overlay) throws IOException {
-        this.mOverlay=overlay;
+        this.mOverlay = overlay;
         this.start(cameraSource);
     }
 
     public void stop() {
-        if(this.mCameraSource != null) {
+        if (this.mCameraSource != null) {
             this.mCameraSource.stop();
         }
     }
 
     public void release() {
-        if(this.mCameraSource != null) {
+        if (this.mCameraSource != null) {
             this.mCameraSource.release();
-            this.mCameraSource=null;
+            this.mCameraSource = null;
         }
     }
 
     private void startIfReady() throws IOException {
-        if(this.mStartRequested && this.mSurfaceAvailable) {
+        if (this.mStartRequested && this.mSurfaceAvailable) {
             //noinspection MissingPermission
             this.mCameraSource.start(this.mSurfaceView.getHolder());
-            if(this.mOverlay != null) {
-                Size size=this.mCameraSource.getPreviewSize();
+            if (this.mOverlay != null) {
+                Size size = this.mCameraSource.getPreviewSize();
                 int min = Math.min(size.getWidth(), size.getHeight());
                 int max = Math.max(size.getWidth(), size.getHeight());
-                if(this.isPortraitMode()) {
+                if (this.isPortraitMode()) {
                     // Swap width and height sizes when in portrait, since it will be rotated by
                     // 90 degrees
                     this.mOverlay.setCameraInfo(min, max, this.mCameraSource.getCameraFacing());
@@ -98,7 +98,7 @@ public class CameraSourcePreview extends ViewGroup {
                 }
                 this.mOverlay.clear();
             }
-            this.mStartRequested=false;
+            this.mStartRequested = false;
         }
     }
 
@@ -106,8 +106,8 @@ public class CameraSourcePreview extends ViewGroup {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int width = 320;
         int height = 240;
-        if(this.mCameraSource != null) {
-            Size size=this.mCameraSource.getPreviewSize();
+        if (this.mCameraSource != null) {
+            Size size = this.mCameraSource.getPreviewSize();
             if (size != null) {
                 width = size.getWidth();
                 height = size.getHeight();
@@ -115,7 +115,7 @@ public class CameraSourcePreview extends ViewGroup {
         }
 
         // Swap width and height sizes when in portrait, since it will be rotated 90 degrees
-        if(this.isPortraitMode()) {
+        if (this.isPortraitMode()) {
             int tmp = width;
             width = height;
             height = tmp;
@@ -126,15 +126,15 @@ public class CameraSourcePreview extends ViewGroup {
 
         // Computes height and width for potentially doing fit width.
         int childWidth = layoutWidth;
-        int childHeight = (int)(((float) layoutWidth / (float) width) * height);
+        int childHeight = (int) (((float) layoutWidth / (float) width) * height);
 
         // If height is too tall using fit width, does fit height instead.
         if (childHeight > layoutHeight) {
             childHeight = layoutHeight;
-            childWidth = (int)(((float) layoutHeight / (float) height) * width);
+            childWidth = (int) (((float) layoutHeight / (float) height) * width);
         }
 
-        for(int i=0; i < this.getChildCount(); ++i) {
+        for (int i = 0; i < this.getChildCount(); ++i) {
             this.getChildAt(i).layout(0, 0, childWidth, childHeight);
         }
 
@@ -146,7 +146,7 @@ public class CameraSourcePreview extends ViewGroup {
     }
 
     private boolean isPortraitMode() {
-        int orientation=this.mContext.getResources().getConfiguration().orientation;
+        int orientation = this.mContext.getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             return false;
         }
@@ -161,7 +161,7 @@ public class CameraSourcePreview extends ViewGroup {
     private class SurfaceCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(SurfaceHolder surface) {
-            CameraSourcePreview.this.mSurfaceAvailable=true;
+            CameraSourcePreview.this.mSurfaceAvailable = true;
             try {
                 CameraSourcePreview.this.startIfReady();
             } catch (IOException e) {
@@ -171,7 +171,7 @@ public class CameraSourcePreview extends ViewGroup {
 
         @Override
         public void surfaceDestroyed(SurfaceHolder surface) {
-            CameraSourcePreview.this.mSurfaceAvailable=false;
+            CameraSourcePreview.this.mSurfaceAvailable = false;
         }
 
         @Override

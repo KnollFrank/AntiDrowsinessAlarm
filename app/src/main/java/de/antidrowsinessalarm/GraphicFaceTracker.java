@@ -27,7 +27,7 @@ public class GraphicFaceTracker extends Tracker<Face> {
     @Override
     public void onUpdate(Detector.Detections<Face> detections, Face face) {
         final Instant clockTime = this.clock.now();
-        if(this.timeConverter == null) {
+        if (this.timeConverter == null) {
             this.timeConverter =
                     ClockTime2FrameTimeConverter.fromClockTimeAndFrameTime(
                             clockTime,

@@ -36,7 +36,7 @@ public class EyesOpenedEventProducer extends EventProducer {
 
     @Subscribe
     public void onUpdateEvent(final UpdateEvent actualEvent) {
-        if(this.isPreviouslyEyesClosed() && isEyesOpen(actualEvent.getFace(), this.eyeOpenProbabilityThreshold)) {
+        if (this.isPreviouslyEyesClosed() && isEyesOpen(actualEvent.getFace(), this.eyeOpenProbabilityThreshold)) {
             this.previouslyEyesClosed = Optional.of(false);
             this.postEvent(new EyesOpenedEvent(getInstantOf(actualEvent)));
         }

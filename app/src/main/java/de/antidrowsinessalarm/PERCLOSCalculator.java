@@ -30,7 +30,7 @@ public class PERCLOSCalculator {
 
     private Duration getSumDurations(final List<SlowEyelidClosureEvent> events, final Interval timeWindowInterval) {
         Duration sumDurations = new Duration(0);
-        for(SlowEyelidClosureEvent event : events) {
+        for (SlowEyelidClosureEvent event : events) {
             sumDurations = sumDurations.plus(this.getIntersectionWithTimewindow(event, timeWindowInterval));
         }
         return sumDurations;

@@ -24,9 +24,9 @@ public class DrowsyEventProducer extends EventProducer {
 
     public void maybeProduceDrowsyEvent(final Instant now) {
         double perclos = this.getPerclos(now);
-        if(perclos >= this.config.getDrowsyThreshold()) {
+        if (perclos >= this.config.getDrowsyThreshold()) {
             this.postEvent(new DrowsyEvent(now, perclos));
-        } else if(perclos >= this.config.getLikelyDrowsyThreshold()) {
+        } else if (perclos >= this.config.getLikelyDrowsyThreshold()) {
             this.postEvent(new LikelyDrowsyEvent(now, perclos));
         } else {
             this.postEvent(new AwakeEvent(now, perclos));
