@@ -32,7 +32,7 @@ public class DrowsyEventProducerTest {
 
     @Before
     public void setup() {
-        DrowsyEventDetector drowsyEventDetector =
+        final DrowsyEventDetector drowsyEventDetector =
                 new DrowsyEventDetector(
                         DrowsyEventDetector.Config
                                 .builder()
@@ -55,7 +55,7 @@ public class DrowsyEventProducerTest {
         // Given
         this.eventBus.post(new SlowEyelidClosureEvent(new Instant(100), new Duration(600)));
         this.eventBus.post(new SlowEyelidClosureEvent(new Instant(1000), new Duration(550)));
-        double perclos = (600.0 + 550.0) / 2000.0; // = 0.575 > 0.15
+        final double perclos = (600.0 + 550.0) / 2000.0; // = 0.575 > 0.15
 
         // When
         this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(2000));
@@ -69,7 +69,7 @@ public class DrowsyEventProducerTest {
         // Given
         this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(0)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
         this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(2000)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
-        double perclos = 1.0; // > 0.15
+        final double perclos = 1.0; // > 0.15
 
         // When
         this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(2000));
@@ -87,7 +87,7 @@ public class DrowsyEventProducerTest {
         this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(501)), GraphicFaceTrackerTest.createFaceWithEyesOpened()));
         this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(510)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
         this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(2000)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
-        double perclos = (501.0 + (2000.0 - 510.0)) / 2000.0; // = 0.9955  > 0.15
+        final double perclos = (501.0 + (2000.0 - 510.0)) / 2000.0; // = 0.9955  > 0.15
 
         // When
         this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(2000));
@@ -104,7 +104,7 @@ public class DrowsyEventProducerTest {
         this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(510)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
         this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(1000)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
         this.eventBus.post(new UpdateEvent(GraphicFaceTrackerTest.getFaceDetections(new Instant(2000)), GraphicFaceTrackerTest.createFaceWithEyesClosed()));
-        double perclos = (501.0 + (2000.0 - 510.0)) / 2000.0; // = 0.9955  > 0.15
+        final double perclos = (501.0 + (2000.0 - 510.0)) / 2000.0; // = 0.9955  > 0.15
 
         // When
         this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(2000));
@@ -118,7 +118,7 @@ public class DrowsyEventProducerTest {
         // Given
         this.eventBus.post(new SlowEyelidClosureEvent(new Instant(100), new Duration(150)));
         this.eventBus.post(new SlowEyelidClosureEvent(new Instant(1000), new Duration(55)));
-        double perclos = (150 + 55.0) / 2000.0; // = 0.1025 which is between 0.08 and 0.15
+        final double perclos = (150 + 55.0) / 2000.0; // = 0.1025 which is between 0.08 and 0.15
 
         // When
         this.drowsyEventProducer.maybeProduceDrowsyEvent(new Instant(2000));
