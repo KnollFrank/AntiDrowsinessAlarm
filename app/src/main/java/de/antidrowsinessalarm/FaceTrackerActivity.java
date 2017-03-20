@@ -21,6 +21,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -106,6 +107,10 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         } else {
             this.requestCameraPermission();
         }
+    }
+
+    public void gotoSettings(View view) {
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     /**
