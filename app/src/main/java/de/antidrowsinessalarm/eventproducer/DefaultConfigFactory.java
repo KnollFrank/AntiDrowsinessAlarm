@@ -14,12 +14,15 @@ public class DefaultConfigFactory {
     }
 
     public DrowsyEventProducer.Config getConfig() {
-        final Double drowsyThreshold = Double.valueOf(sharedPreferences.getString("drowsyThreshold", "0.15"));
         return DrowsyEventProducer.Config
                 .builder()
-                .withDrowsyThreshold(drowsyThreshold)
+                .withDrowsyThreshold(this.getDrowsyThreshold())
                 .withLikelyDrowsyThreshold(0.08)
                 .build();
+    }
+
+    private Double getDrowsyThreshold() {
+        return Double.valueOf(this.sharedPreferences.getString("drowsyThreshold", "0.15"));
     }
 
     // TODO: make durationMillis configurable from 300 to 500 milliseconds
