@@ -55,8 +55,29 @@ public class EventTest {
 
     private void setup(final Clock clock) {
         this.appContext = InstrumentationRegistry.getTargetContext();
-        // TODO: move to inner class or method
-        final SharedPreferences sharedPreferences = new SharedPreferences() {
+        final DefaultConfigFactory configFactory = new DefaultConfigFactory(this.createSharedPreferences());
+        this.drowsyEventDetector =
+                new DrowsyEventDetector(
+                        DrowsyEventDetector.Config
+                                .builder()
+                                .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
+                                .withConfig(configFactory.getConfig())
+                                .withSlowEyelidClosureMinDuration(configFactory.getSlowEyelidClosureMinDuration())
+                                .withTimeWindow(configFactory.getTimeWindow())
+                                .build(),
+                        true,
+                        clock);
+        this.eventListener = new EventListener();
+        this.drowsyEventDetector.getEventBus().register(this.eventListener);
+        this.detector =
+                FaceTrackerActivity.createFaceDetector(
+                        this.appContext,
+                        new MultiProcessor.Builder<>(this.createFactory()).build());
+    }
+
+    @NonNull
+    private SharedPreferences createSharedPreferences() {
+        return new SharedPreferences() {
             @Override
             public Map<String, ?> getAll() {
                 return null;
@@ -118,24 +139,6 @@ public class EventTest {
 
             }
         };
-        final DefaultConfigFactory configFactory = new DefaultConfigFactory(sharedPreferences);
-        this.drowsyEventDetector =
-                new DrowsyEventDetector(
-                        DrowsyEventDetector.Config
-                                .builder()
-                                .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
-                                .withConfig(configFactory.getConfig())
-                                .withSlowEyelidClosureMinDuration(configFactory.getSlowEyelidClosureMinDuration())
-                                .withTimeWindow(configFactory.getTimeWindow())
-                                .build(),
-                        true,
-                        clock);
-        this.eventListener = new EventListener();
-        this.drowsyEventDetector.getEventBus().register(this.eventListener);
-        this.detector =
-                FaceTrackerActivity.createFaceDetector(
-                        this.appContext,
-                        new MultiProcessor.Builder<>(this.createFactory()).build());
     }
 
     @Test
