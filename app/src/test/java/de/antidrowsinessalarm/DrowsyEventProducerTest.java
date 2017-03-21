@@ -1,14 +1,11 @@
 package de.antidrowsinessalarm;
 
-import android.content.SharedPreferences;
-
 import com.google.common.eventbus.EventBus;
 
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import de.antidrowsinessalarm.event.AwakeEvent;
 import de.antidrowsinessalarm.event.DrowsyEvent;
@@ -26,9 +23,6 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.Is.isA;
 import static org.hamcrest.core.IsNot.not;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
 
 public class DrowsyEventProducerTest {
 
@@ -38,10 +32,7 @@ public class DrowsyEventProducerTest {
 
     @Before
     public void setup() {
-        // TODO: DRY
-        final SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
-        when(sharedPreferences.getString(eq("drowsyThreshold"), anyString())).thenReturn("0.15");
-        final DefaultConfigFactory configFactory = new DefaultConfigFactory(sharedPreferences);
+        final DefaultConfigFactory configFactory = new DefaultConfigFactory(SharedPreferencesTestFactory.createSharedPreferences());
         final DrowsyEventDetector drowsyEventDetector =
                 new DrowsyEventDetector(
                         DrowsyEventDetector.Config
