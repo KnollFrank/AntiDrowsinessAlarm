@@ -6,8 +6,14 @@ import org.joda.time.Duration;
 
 public class DefaultConfigFactory {
 
-    // TODO: move SharedPreferences to constructor
-    public DrowsyEventProducer.Config getConfig(final SharedPreferences sharedPreferences) {
+    private final SharedPreferences sharedPreferences;
+
+    // TODO: use Dagger for DI
+    public DefaultConfigFactory(final SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
+    }
+
+    public DrowsyEventProducer.Config getConfig() {
         final Double drowsyThreshold = Double.valueOf(sharedPreferences.getString("drowsyThreshold", "0.15"));
         return DrowsyEventProducer.Config
                 .builder()

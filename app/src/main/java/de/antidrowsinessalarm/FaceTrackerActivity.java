@@ -305,13 +305,13 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
         @Override
         public Tracker<Face> create(final Face face) {
-            final DefaultConfigFactory configFactory = new DefaultConfigFactory();
+            final DefaultConfigFactory configFactory = new DefaultConfigFactory(PreferenceManager.getDefaultSharedPreferences(context));
             final DrowsyEventDetector drowsyEventDetector =
                     new DrowsyEventDetector(
                             DrowsyEventDetector.Config
                                     .builder()
                                     .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
-                                    .withConfig(configFactory.getConfig(PreferenceManager.getDefaultSharedPreferences(context)))
+                                    .withConfig(configFactory.getConfig())
                                     .withSlowEyelidClosureMinDuration(configFactory.getSlowEyelidClosureMinDuration())
                                     .withTimeWindow(configFactory.getTimeWindow())
                                     .build(),

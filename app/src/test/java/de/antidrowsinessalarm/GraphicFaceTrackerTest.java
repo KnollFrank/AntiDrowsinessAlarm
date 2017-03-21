@@ -74,20 +74,20 @@ public class GraphicFaceTrackerTest {
         this.eventListener = new EventListener();
         final EventBus eventBus = new EventBus();
         eventBus.register(this.eventListener);
-        final DefaultConfigFactory configFactory = new DefaultConfigFactory();
+        // TODO: DRY
+        final SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
+        when(sharedPreferences.getString(eq("drowsyThreshold"), anyString())).thenReturn("0.15");
+        final DefaultConfigFactory configFactory = new DefaultConfigFactory(sharedPreferences);
         eventBus.register(new NormalEyeBlinkEventProducer(configFactory.getSlowEyelidClosureMinDuration(), eventBus));
         eventBus.register(new SlowEyelidClosureEventProducer(configFactory.getSlowEyelidClosureMinDuration(), eventBus));
         eventBus.register(new EyesOpenedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
         eventBus.register(new EyesClosedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
 
-        // TODO: DRY
-        final SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
-        when(sharedPreferences.getString(eq("drowsyThreshold"), anyString())).thenReturn("0.15");
         this.tracker =
                 new GraphicFaceTracker(
                         eventBus,
                         new DrowsyEventProducer(
-                                configFactory.getConfig(sharedPreferences),
+                                configFactory.getConfig(),
                                 eventBus,
                                 new SlowEyelidClosureEventsProvider(configFactory.getTimeWindow())),
                         new SystemClock());
