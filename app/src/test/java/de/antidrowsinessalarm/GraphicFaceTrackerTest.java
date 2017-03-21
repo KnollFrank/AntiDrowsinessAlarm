@@ -74,10 +74,11 @@ public class GraphicFaceTrackerTest {
         this.eventListener = new EventListener();
         final EventBus eventBus = new EventBus();
         eventBus.register(this.eventListener);
-        eventBus.register(new NormalEyeBlinkEventProducer(DefaultConfigFactory.getSlowEyelidClosureMinDuration(), eventBus));
-        eventBus.register(new SlowEyelidClosureEventProducer(DefaultConfigFactory.getSlowEyelidClosureMinDuration(), eventBus));
-        eventBus.register(new EyesOpenedEventProducer(DefaultConfigFactory.getEyeOpenProbabilityThreshold(), eventBus));
-        eventBus.register(new EyesClosedEventProducer(DefaultConfigFactory.getEyeOpenProbabilityThreshold(), eventBus));
+        final DefaultConfigFactory configFactory = new DefaultConfigFactory();
+        eventBus.register(new NormalEyeBlinkEventProducer(configFactory.getSlowEyelidClosureMinDuration(), eventBus));
+        eventBus.register(new SlowEyelidClosureEventProducer(configFactory.getSlowEyelidClosureMinDuration(), eventBus));
+        eventBus.register(new EyesOpenedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
+        eventBus.register(new EyesClosedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
 
         // TODO: DRY
         final SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
@@ -86,9 +87,9 @@ public class GraphicFaceTrackerTest {
                 new GraphicFaceTracker(
                         eventBus,
                         new DrowsyEventProducer(
-                                DefaultConfigFactory.getConfig(sharedPreferences),
+                                configFactory.getConfig(sharedPreferences),
                                 eventBus,
-                                new SlowEyelidClosureEventsProvider(DefaultConfigFactory.getTimeWindow())),
+                                new SlowEyelidClosureEventsProvider(configFactory.getTimeWindow())),
                         new SystemClock());
     }
 

@@ -75,7 +75,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     //==============================================================================================
 
     public static FaceDetector createFaceDetector(final Context context, final Detector.Processor<Face> processor) {
-        FaceDetector detector =
+        final FaceDetector detector =
                 new FaceDetector
                         .Builder(context)
                         .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
@@ -91,7 +91,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      * Initializes the UI and initiates the creation of a face detector.
      */
     @Override
-    public void onCreate(Bundle icicle) {
+    public void onCreate(final Bundle icicle) {
         super.onCreate(icicle);
         this.setContentView(R.layout.main);
 
@@ -102,7 +102,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
-        int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        final int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (rc == PackageManager.PERMISSION_GRANTED) {
             this.createCameraSource();
         } else {
@@ -110,7 +110,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         }
     }
 
-    public void gotoSettings(View view) {
+    public void gotoSettings(final View view) {
         this.startActivity(new Intent(this, SettingsActivity.class));
     }
 
@@ -132,9 +132,9 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
         final Activity thisActivity = this;
 
-        View.OnClickListener listener = new View.OnClickListener() {
+        final View.OnClickListener listener = new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 ActivityCompat.requestPermissions(thisActivity, permissions,
                         RC_HANDLE_CAMERA_PERM);
             }
@@ -153,8 +153,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      */
     private void createCameraSource() {
 
-        Context context = this.getApplicationContext();
-        FaceDetector detector =
+        final Context context = this.getApplicationContext();
+        final FaceDetector detector =
                 createFaceDetector(
                         context,
                         new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory(this)).build());
@@ -226,7 +226,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      * @see #requestPermissions(String[], int)
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
         if (requestCode != RC_HANDLE_CAMERA_PERM) {
             Log.d(TAG, "Got unexpected permission result: " + requestCode);
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -243,13 +243,13 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         Log.e(TAG, "Permission not granted: results len = " + grantResults.length +
                 " Result code = " + (grantResults.length > 0 ? grantResults[0] : "(empty)"));
 
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        final DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            public void onClick(final DialogInterface dialog, final int id) {
                 FaceTrackerActivity.this.finish();
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Face Tracker sample")
                 .setMessage(R.string.no_camera_permission)
                 .setPositiveButton(R.string.ok, listener)
@@ -268,10 +268,10 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private void startCameraSource() {
 
         // check that the device has play services available.
-        int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
+        final int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
                 this.getApplicationContext());
         if (code != ConnectionResult.SUCCESS) {
-            Dialog dlg =
+            final Dialog dlg =
                     GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
             dlg.show();
         }
@@ -279,7 +279,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         if (this.mCameraSource != null) {
             try {
                 this.mPreview.start(this.mCameraSource, this.mGraphicOverlay);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 Log.e(TAG, "Unable to start camera source.", e);
                 this.mCameraSource.release();
                 this.mCameraSource = null;
@@ -299,20 +299,21 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
         private final Context context;
 
-        public GraphicFaceTrackerFactory(Context context) {
+        public GraphicFaceTrackerFactory(final Context context) {
             this.context = context;
         }
 
         @Override
-        public Tracker<Face> create(Face face) {
-            DrowsyEventDetector drowsyEventDetector =
+        public Tracker<Face> create(final Face face) {
+            final DefaultConfigFactory configFactory = new DefaultConfigFactory();
+            final DrowsyEventDetector drowsyEventDetector =
                     new DrowsyEventDetector(
                             DrowsyEventDetector.Config
                                     .builder()
-                                    .withEyeOpenProbabilityThreshold(DefaultConfigFactory.getEyeOpenProbabilityThreshold())
-                                    .withConfig(DefaultConfigFactory.getConfig(PreferenceManager.getDefaultSharedPreferences(context)))
-                                    .withSlowEyelidClosureMinDuration(DefaultConfigFactory.getSlowEyelidClosureMinDuration())
-                                    .withTimeWindow(DefaultConfigFactory.getTimeWindow())
+                                    .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
+                                    .withConfig(configFactory.getConfig(PreferenceManager.getDefaultSharedPreferences(context)))
+                                    .withSlowEyelidClosureMinDuration(configFactory.getSlowEyelidClosureMinDuration())
+                                    .withTimeWindow(configFactory.getTimeWindow())
                                     .build(),
                             true,
                             new SystemClock()
@@ -336,7 +337,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         private final FaceGraphic mFaceGraphic;
         private final MediaPlayer mediaPlayer;
 
-        GraphicFaceTracker(GraphicOverlay overlay) {
+        GraphicFaceTracker(final GraphicOverlay overlay) {
             this.mOverlay = overlay;
             this.mFaceGraphic = new FaceGraphic(overlay);
             this.mediaPlayer = MediaPlayer.create(FaceTrackerActivity.this.getApplicationContext(), R.raw.hupe);
@@ -380,7 +381,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          * Start tracking the detected face instance within the face overlay.
          */
         @Override
-        public void onNewItem(int faceId, Face item) {
+        public void onNewItem(final int faceId, final Face item) {
             Log.i(TAG, "onNewItem called");
             this.mFaceGraphic.setId(faceId);
         }
@@ -389,7 +390,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          * Update the position/characteristics of the face within the overlay.
          */
         @Override
-        public void onUpdate(FaceDetector.Detections<Face> detectionResults, final Face face) {
+        public void onUpdate(final FaceDetector.Detections<Face> detectionResults, final Face face) {
             Log.i(TAG, "onUpdate called");
             this.mOverlay.add(this.mFaceGraphic);
             this.mFaceGraphic.updateFace(face);
@@ -401,7 +402,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
          * view).
          */
         @Override
-        public void onMissing(FaceDetector.Detections<Face> detectionResults) {
+        public void onMissing(final FaceDetector.Detections<Face> detectionResults) {
             this.mOverlay.remove(this.mFaceGraphic);
         }
 

@@ -41,13 +41,14 @@ public class DrowsyEventProducerTest {
         // TODO: DRY
         final SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         when(sharedPreferences.getString(eq("drowsyThreshold"), anyString())).thenReturn("0.15");
+        final DefaultConfigFactory configFactory = new DefaultConfigFactory();
         final DrowsyEventDetector drowsyEventDetector =
                 new DrowsyEventDetector(
                         DrowsyEventDetector.Config
                                 .builder()
-                                .withEyeOpenProbabilityThreshold(DefaultConfigFactory.getEyeOpenProbabilityThreshold())
-                                .withConfig(DefaultConfigFactory.getConfig(sharedPreferences))
-                                .withSlowEyelidClosureMinDuration(DefaultConfigFactory.getSlowEyelidClosureMinDuration())
+                                .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
+                                .withConfig(configFactory.getConfig(sharedPreferences))
+                                .withSlowEyelidClosureMinDuration(configFactory.getSlowEyelidClosureMinDuration())
                                 .withTimeWindow(new Duration(2000))
                                 .build(),
                         false,

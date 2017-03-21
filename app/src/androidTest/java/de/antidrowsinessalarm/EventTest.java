@@ -56,7 +56,7 @@ public class EventTest {
 
     private void setup(final Clock clock) {
         this.appContext = InstrumentationRegistry.getTargetContext();
-        // TODO: move to inner class or methode
+        // TODO: move to inner class or method
         final SharedPreferences sharedPreferences = new SharedPreferences() {
             @Override
             public Map<String, ?> getAll() {
