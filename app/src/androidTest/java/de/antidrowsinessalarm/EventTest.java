@@ -1,9 +1,12 @@
 package de.antidrowsinessalarm;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -17,6 +20,9 @@ import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Map;
+import java.util.Set;
 
 import de.antidrowsinessalarm.event.AwakeEvent;
 import de.antidrowsinessalarm.event.DrowsyEvent;
@@ -48,14 +54,77 @@ public class EventTest {
         this.setup(new SystemClock());
     }
 
-    private void setup(Clock clock) {
+    private void setup(final Clock clock) {
         this.appContext = InstrumentationRegistry.getTargetContext();
+        // TODO: move to inner class or methode
+        final SharedPreferences sharedPreferences = new SharedPreferences() {
+            @Override
+            public Map<String, ?> getAll() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public String getString(String key, @Nullable String defValue) {
+                switch (key) {
+                    case "drowsyThreshold":
+                        return "0.15";
+                }
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Set<String> getStringSet(String key, @Nullable Set<String> defValues) {
+                return null;
+            }
+
+            @Override
+            public int getInt(String key, int defValue) {
+                return 0;
+            }
+
+            @Override
+            public long getLong(String key, long defValue) {
+                return 0;
+            }
+
+            @Override
+            public float getFloat(String key, float defValue) {
+                return 0;
+            }
+
+            @Override
+            public boolean getBoolean(String key, boolean defValue) {
+                return false;
+            }
+
+            @Override
+            public boolean contains(String key) {
+                return false;
+            }
+
+            @Override
+            public Editor edit() {
+                return null;
+            }
+
+            @Override
+            public void registerOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+
+            }
+
+            @Override
+            public void unregisterOnSharedPreferenceChangeListener(OnSharedPreferenceChangeListener listener) {
+
+            }
+        };
         this.drowsyEventDetector =
                 new DrowsyEventDetector(
                         DrowsyEventDetector.Config
                                 .builder()
                                 .withEyeOpenProbabilityThreshold(DefaultConfigFactory.getEyeOpenProbabilityThreshold())
-                                .withConfig(DefaultConfigFactory.getConfig())
+                                .withConfig(DefaultConfigFactory.getConfig(PreferenceManager.getDefaultSharedPreferences(this.appContext)))
                                 .withSlowEyelidClosureMinDuration(DefaultConfigFactory.getSlowEyelidClosureMinDuration())
                                 .withTimeWindow(DefaultConfigFactory.getTimeWindow())
                                 .build(),
@@ -154,7 +223,7 @@ public class EventTest {
     @Test
     public void shouldCreateDrowsyEvent() {
         // Given
-        MockedClock clock = new MockedClock();
+        final MockedClock clock = new MockedClock();
         this.setup(clock);
 
         // When
@@ -175,7 +244,7 @@ public class EventTest {
     @Test
     public void shouldCreateDrowsyEventForEyesClosedTheWholeTime() {
         // Given
-        MockedClock clock = new MockedClock();
+        final MockedClock clock = new MockedClock();
         this.setup(clock);
 
         // When
@@ -186,14 +255,14 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_closed, 15000);
 
         // Then
-        double perclos = 1.0; // > 0.15
+        final double perclos = 1.0; // > 0.15
         assertThat(this.eventListener.getEvents(), hasItem(new DrowsyEvent(new Instant(15000), perclos)));
     }
 
     @Test
     public void shouldCreateDrowsyEventForEyesClosedButNotYetOpenedWhenMaybeProducingDrowsyEvent() {
         // Given
-        MockedClock clock = new MockedClock();
+        final MockedClock clock = new MockedClock();
         this.setup(clock);
 
         // When
@@ -210,14 +279,14 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_closed, 15000);
 
         // Then
-        double perclos = (501.0 + (15000.0 - 510.0)) / 15000.0; // = 0.9994 > 0.15
+        final double perclos = (501.0 + (15000.0 - 510.0)) / 15000.0; // = 0.9994 > 0.15
         assertThat(this.eventListener.getEvents(), hasItem(new DrowsyEvent(new Instant(15000), perclos)));
     }
 
     @Test
     public void shouldCreateNoDrowsyEvent() {
         // Given
-        MockedClock clock = new MockedClock();
+        final MockedClock clock = new MockedClock();
         this.setup(clock);
 
         // When
@@ -231,14 +300,14 @@ public class EventTest {
         this.detectorConsumesImage(R.drawable.eyes_closed_opened, 14000);
 
         // Then
-        double perclos = 0.0;
+        final double perclos = 0.0;
         assertThat(this.eventListener.getEvents(), not(hasItem(isA(DrowsyEvent.class))));
     }
 
     @Test
     public void shouldCreateLikelyDrowsyEvent() {
         // Given
-        MockedClock clock = new MockedClock();
+        final MockedClock clock = new MockedClock();
         this.setup(clock);
 
         // When
@@ -259,7 +328,7 @@ public class EventTest {
     @Test
     public void shouldCreateAwakeEvent() {
         // Given
-        MockedClock clock = new MockedClock();
+        final MockedClock clock = new MockedClock();
         this.setup(clock);
 
         // When
@@ -275,7 +344,7 @@ public class EventTest {
     }
 
     private Frame createFrame(final int imageResource, final int millis) {
-        Bitmap bitmap = this.getBitmap(imageResource);
+        final Bitmap bitmap = this.getBitmap(imageResource);
         return new Frame
                 .Builder()
                 .setBitmap(bitmap)

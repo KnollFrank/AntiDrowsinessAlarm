@@ -1,5 +1,7 @@
 package de.antidrowsinessalarm;
 
+import android.content.SharedPreferences;
+
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame.Metadata;
 import com.google.android.gms.vision.Tracker;
@@ -31,7 +33,10 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsNot.not;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 public class GraphicFaceTrackerTest {
 
@@ -74,11 +79,14 @@ public class GraphicFaceTrackerTest {
         eventBus.register(new EyesOpenedEventProducer(DefaultConfigFactory.getEyeOpenProbabilityThreshold(), eventBus));
         eventBus.register(new EyesClosedEventProducer(DefaultConfigFactory.getEyeOpenProbabilityThreshold(), eventBus));
 
+        // TODO: DRY
+        final SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
+        when(sharedPreferences.getString(eq("drowsyThreshold"), anyString())).thenReturn("0.15");
         this.tracker =
                 new GraphicFaceTracker(
                         eventBus,
                         new DrowsyEventProducer(
-                                DefaultConfigFactory.getConfig(),
+                                DefaultConfigFactory.getConfig(sharedPreferences),
                                 eventBus,
                                 new SlowEyelidClosureEventsProvider(DefaultConfigFactory.getTimeWindow())),
                         new SystemClock());

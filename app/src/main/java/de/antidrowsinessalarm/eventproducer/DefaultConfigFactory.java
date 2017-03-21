@@ -1,13 +1,17 @@
 package de.antidrowsinessalarm.eventproducer;
 
+import android.content.SharedPreferences;
+
 import org.joda.time.Duration;
 
 public class DefaultConfigFactory {
 
-    public static DrowsyEventProducer.Config getConfig() {
+    // TODO: move SharedPreferences to constructor
+    public static DrowsyEventProducer.Config getConfig(final SharedPreferences sharedPreferences) {
+        final Double drowsyThreshold = Double.valueOf(sharedPreferences.getString("drowsyThreshold", "0.15"));
         return DrowsyEventProducer.Config
                 .builder()
-                .withDrowsyThreshold(0.15)
+                .withDrowsyThreshold(drowsyThreshold)
                 .withLikelyDrowsyThreshold(0.08)
                 .build();
     }

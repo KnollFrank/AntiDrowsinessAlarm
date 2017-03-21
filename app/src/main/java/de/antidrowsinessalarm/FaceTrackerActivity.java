@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -110,7 +111,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     }
 
     public void gotoSettings(View view) {
-        startActivity(new Intent(this, SettingsActivity.class));
+        this.startActivity(new Intent(this, SettingsActivity.class));
     }
 
     /**
@@ -156,7 +157,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         FaceDetector detector =
                 createFaceDetector(
                         context,
-                        new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory()).build());
+                        new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory(this)).build());
 
         if (!detector.isOperational()) {
             // Note: The first time that an app using face API is installed on a device, GMS will
@@ -295,6 +296,13 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      * uses this factory to create face trackers as needed -- one for each individual.
      */
     private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
+
+        private final Context context;
+
+        public GraphicFaceTrackerFactory(Context context) {
+            this.context = context;
+        }
+
         @Override
         public Tracker<Face> create(Face face) {
             DrowsyEventDetector drowsyEventDetector =
@@ -302,7 +310,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                             DrowsyEventDetector.Config
                                     .builder()
                                     .withEyeOpenProbabilityThreshold(DefaultConfigFactory.getEyeOpenProbabilityThreshold())
-                                    .withConfig(DefaultConfigFactory.getConfig())
+                                    .withConfig(DefaultConfigFactory.getConfig(PreferenceManager.getDefaultSharedPreferences(context)))
                                     .withSlowEyelidClosureMinDuration(DefaultConfigFactory.getSlowEyelidClosureMinDuration())
                                     .withTimeWindow(DefaultConfigFactory.getTimeWindow())
                                     .build(),
