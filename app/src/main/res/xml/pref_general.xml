@@ -39,6 +39,13 @@
         android:summary="eyeOpenProbabilityThreshold"
         android:title="eyeOpenProbabilityThreshold" />
 
+    <EditTextPreference
+        android:defaultValue="0.08"
+        android:inputType="numberDecimal"
+        android:key="likelyDrowsyThreshold"
+        android:summary="likelyDrowsyThreshold"
+        android:title="likelyDrowsyThreshold" />
+
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->

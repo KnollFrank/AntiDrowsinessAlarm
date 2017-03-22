@@ -93,6 +93,8 @@ public class EventTest {
                         return "500";
                     case "eyeOpenProbabilityThreshold":
                         return "0.5";
+                    case "likelyDrowsyThreshold":
+                        return "0.08";
                 }
                 return null;
             }

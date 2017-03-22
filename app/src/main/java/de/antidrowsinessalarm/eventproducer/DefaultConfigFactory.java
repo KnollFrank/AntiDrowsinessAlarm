@@ -17,8 +17,13 @@ public class DefaultConfigFactory {
         return DrowsyEventProducer.Config
                 .builder()
                 .withDrowsyThreshold(this.getDrowsyThreshold())
-                .withLikelyDrowsyThreshold(0.08)
+                .withLikelyDrowsyThreshold(this.getLikelyDrowsyThreshold())
                 .build();
+    }
+
+    // TODO: es muß immer gelten: likelyDrowsyThreshold <= drowsyThreshold, und das muß in den Preferencecs auch nur so einstelllbar sein.
+    private Double getLikelyDrowsyThreshold() {
+        return Double.valueOf(this.sharedPreferences.getString("likelyDrowsyThreshold", "0.08"));
     }
 
     private Double getDrowsyThreshold() {

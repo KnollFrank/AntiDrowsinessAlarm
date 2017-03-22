@@ -182,6 +182,7 @@ public class SettingsActivity extends PreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("drowsyThreshold"));
             bindPreferenceSummaryToValue(findPreference("slowEyelidClosureMinDuration"));
             bindPreferenceSummaryToValue(findPreference("eyeOpenProbabilityThreshold"));
+            bindPreferenceSummaryToValue(findPreference("likelyDrowsyThreshold"));
         }
 
         @Override
