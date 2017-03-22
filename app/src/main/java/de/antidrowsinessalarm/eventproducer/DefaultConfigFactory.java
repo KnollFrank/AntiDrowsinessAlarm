@@ -27,7 +27,7 @@ public class DefaultConfigFactory {
 
     // TODO: make durationMillis configurable from 300 to 500 milliseconds
     public Duration getSlowEyelidClosureMinDuration() {
-        return new Duration(500);
+        return new Duration(Long.valueOf(this.sharedPreferences.getString("slowEyelidClosureMinDuration", "500")));
     }
 
     public float getEyeOpenProbabilityThreshold() {
