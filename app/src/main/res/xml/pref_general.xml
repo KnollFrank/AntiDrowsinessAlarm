@@ -46,6 +46,13 @@
         android:summary="likelyDrowsyThreshold"
         android:title="likelyDrowsyThreshold" />
 
+    <EditTextPreference
+        android:defaultValue="15000"
+        android:inputType="numberDecimal"
+        android:key="timeWindow"
+        android:summary="timeWindow"
+        android:title="timeWindow" />
+
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->

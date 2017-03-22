@@ -16,6 +16,7 @@ class SharedPreferencesTestFactory {
         when(sharedPreferences.getString(eq("slowEyelidClosureMinDuration"), anyString())).thenReturn("500");
         when(sharedPreferences.getString(eq("eyeOpenProbabilityThreshold"), anyString())).thenReturn("0.5");
         when(sharedPreferences.getString(eq("likelyDrowsyThreshold"), anyString())).thenReturn("0.08");
+        when(sharedPreferences.getString(eq("timeWindow"), anyString())).thenReturn("15000");
         return sharedPreferences;
     }
 }

@@ -95,6 +95,8 @@ public class EventTest {
                         return "0.5";
                     case "likelyDrowsyThreshold":
                         return "0.08";
+                    case "timeWindow":
+                        return "15000";
                 }
                 return null;
             }

@@ -41,6 +41,6 @@ public class DefaultConfigFactory {
     }
 
     public Duration getTimeWindow() {
-        return new Duration(15000);
+        return new Duration(Long.valueOf(this.sharedPreferences.getString("timeWindow", "15000")));
     }
 }
