@@ -30,8 +30,9 @@ public class DefaultConfigFactory {
         return new Duration(Long.valueOf(this.sharedPreferences.getString("slowEyelidClosureMinDuration", "500")));
     }
 
+    // TODO: constrain to 0 <= eyeOpenProbabilityThreshold <= 1
     public float getEyeOpenProbabilityThreshold() {
-        return 0.5f;
+        return Float.valueOf(this.sharedPreferences.getString("eyeOpenProbabilityThreshold", "0.5"));
     }
 
     public Duration getTimeWindow() {

@@ -89,6 +89,10 @@ public class EventTest {
                 switch (key) {
                     case "drowsyThreshold":
                         return "0.15";
+                    case "slowEyelidClosureMinDuration":
+                        return "500";
+                    case "eyeOpenProbabilityThreshold":
+                        return "0.5";
                 }
                 return null;
             }

@@ -13,6 +13,8 @@ class SharedPreferencesTestFactory {
     public static SharedPreferences createSharedPreferences() {
         final SharedPreferences sharedPreferences = Mockito.mock(SharedPreferences.class);
         when(sharedPreferences.getString(eq("drowsyThreshold"), anyString())).thenReturn("0.15");
+        when(sharedPreferences.getString(eq("slowEyelidClosureMinDuration"), anyString())).thenReturn("500");
+        when(sharedPreferences.getString(eq("eyeOpenProbabilityThreshold"), anyString())).thenReturn("0.5");
         return sharedPreferences;
     }
 }
