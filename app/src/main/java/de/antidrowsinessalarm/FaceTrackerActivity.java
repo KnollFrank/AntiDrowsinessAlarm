@@ -308,7 +308,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
         @Override
         public Tracker<Face> create(final Face face) {
-            final DefaultConfigFactory configFactory = new DefaultConfigFactory(PreferenceManager.getDefaultSharedPreferences(context));
+            final DefaultConfigFactory configFactory = new DefaultConfigFactory(PreferenceManager.getDefaultSharedPreferences(this.context));
             DrowsyEventDetector.Config config = DrowsyEventDetector.Config
                     .builder()
                     .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
@@ -317,7 +317,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                     .withTimeWindow(configFactory.getTimeWindow())
                     .build();
             Log.i(TAG, "" + config);
-            configView.setText("" + config);
+            FaceTrackerActivity.this.configView.setText("" + config);
             final DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(config, true, new SystemClock());
 
             final Tracker<Face> tracker = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
