@@ -69,6 +69,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private GraphicOverlay mGraphicOverlay;
     private TextView eyesInfoView;
     private ImageView imageView;
+    private TextView configView;
 
     //==============================================================================================
     // Activity Methods
@@ -98,6 +99,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         this.mPreview = (CameraSourcePreview) this.findViewById(R.id.preview);
         this.mGraphicOverlay = (GraphicOverlay) this.findViewById(R.id.faceOverlay);
         this.eyesInfoView = (TextView) this.findViewById(R.id.eyesInfoView);
+        this.configView = (TextView) this.findViewById(R.id.configView);
         this.imageView = (ImageView) this.findViewById(R.id.imageView);
 
         // Check for the camera permission before accessing the camera.  If the
@@ -185,6 +187,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        this.createCameraSource();
         this.startCameraSource();
     }
 
@@ -306,18 +309,16 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         @Override
         public Tracker<Face> create(final Face face) {
             final DefaultConfigFactory configFactory = new DefaultConfigFactory(PreferenceManager.getDefaultSharedPreferences(context));
-            final DrowsyEventDetector drowsyEventDetector =
-                    new DrowsyEventDetector(
-                            DrowsyEventDetector.Config
-                                    .builder()
-                                    .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
-                                    .withConfig(configFactory.getConfig())
-                                    .withSlowEyelidClosureMinDuration(configFactory.getSlowEyelidClosureMinDuration())
-                                    .withTimeWindow(configFactory.getTimeWindow())
-                                    .build(),
-                            true,
-                            new SystemClock()
-                    );
+            DrowsyEventDetector.Config config = DrowsyEventDetector.Config
+                    .builder()
+                    .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
+                    .withConfig(configFactory.getConfig())
+                    .withSlowEyelidClosureMinDuration(configFactory.getSlowEyelidClosureMinDuration())
+                    .withTimeWindow(configFactory.getTimeWindow())
+                    .build();
+            Log.i(TAG, "" + config);
+            configView.setText("" + config);
+            final DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(config, true, new SystemClock());
 
             final Tracker<Face> tracker = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
             drowsyEventDetector.getEventBus().register(tracker);

@@ -2,6 +2,7 @@ package de.antidrowsinessalarm.eventproducer;
 
 import android.support.annotation.NonNull;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.eventbus.EventBus;
 
 import org.joda.time.Instant;
@@ -62,6 +63,14 @@ public class DrowsyEventProducer extends EventProducer {
 
         public double getLikelyDrowsyThreshold() {
             return this.likelyDrowsyThreshold;
+        }
+
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper(this)
+                    .add("drowsyThreshold", drowsyThreshold)
+                    .add("likelyDrowsyThreshold", likelyDrowsyThreshold)
+                    .toString();
         }
 
         public static class ConfigBuilder {

@@ -1,5 +1,6 @@
 package de.antidrowsinessalarm.eventproducer;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.eventbus.EventBus;
 
 import org.joda.time.Duration;
@@ -75,6 +76,16 @@ public class DrowsyEventDetector {
 
         public Duration getTimeWindow() {
             return this.timeWindow;
+        }
+
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper(this)
+                    .add("eyeOpenProbabilityThreshold", eyeOpenProbabilityThreshold)
+                    .add("config", config)
+                    .add("slowEyelidClosureMinDuration", slowEyelidClosureMinDuration)
+                    .add("timeWindow", timeWindow)
+                    .toString();
         }
 
         public static class ConfigBuilder {
