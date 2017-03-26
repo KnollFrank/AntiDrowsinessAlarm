@@ -72,7 +72,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private GraphicOverlay mGraphicOverlay;
     private TextView eyesInfoView;
     private ImageView imageView;
-    private TextView configView;
 
     //==============================================================================================
     // Activity Methods
@@ -104,7 +103,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         this.mPreview = (CameraSourcePreview) this.findViewById(R.id.preview);
         this.mGraphicOverlay = (GraphicOverlay) this.findViewById(R.id.faceOverlay);
         this.eyesInfoView = (TextView) this.findViewById(R.id.eyesInfoView);
-        this.configView = (TextView) this.findViewById(R.id.configView);
         this.imageView = (ImageView) this.findViewById(R.id.imageView);
 
         // Check for the camera permission before accessing the camera.  If the
@@ -205,6 +203,9 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        if (mCameraSource != null) {
+            this.mCameraSource.release();
+        }
         this.createCameraSource();
         this.startCameraSource();
     }
@@ -335,7 +336,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                     .withTimeWindow(configFactory.getTimeWindow())
                     .build();
             Log.i(TAG, "" + config);
-            FaceTrackerActivity.this.configView.setText("" + config);
             final DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(config, true, new SystemClock());
 
             final Tracker<Face> tracker = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
