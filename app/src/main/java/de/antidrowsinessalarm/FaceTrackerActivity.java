@@ -30,7 +30,10 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -95,6 +98,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     public void onCreate(final Bundle icicle) {
         super.onCreate(icicle);
         this.setContentView(R.layout.main);
+        final Toolbar myToolbar = (Toolbar) this.findViewById(R.id.my_toolbar);
+        this.setSupportActionBar(myToolbar);
 
         this.mPreview = (CameraSourcePreview) this.findViewById(R.id.preview);
         this.mGraphicOverlay = (GraphicOverlay) this.findViewById(R.id.faceOverlay);
@@ -112,8 +117,21 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         }
     }
 
-    public void gotoSettings(final View view) {
-        this.startActivity(new Intent(this, SettingsActivity.class));
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        this.getMenuInflater().inflate(R.menu.toolbarmenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                this.startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
