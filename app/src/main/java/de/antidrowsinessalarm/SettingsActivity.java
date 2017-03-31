@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -39,7 +40,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(final Preference preference, final Object value) {
             final String stringValue = value.toString();
@@ -111,7 +112,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         // Trigger the listener immediately with the preference's
         // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+        sBindPreferenceSummaryToValueListener.onPreferenceChange(
+                preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
                         .getString(preference.getKey(), ""));
@@ -181,6 +183,37 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(this.findPreference("eyeOpenProbabilityThreshold"));
             bindPreferenceSummaryToValue(this.findPreference("likelyDrowsyThreshold"));
             bindPreferenceSummaryToValue(this.findPreference("timeWindow"));
+
+            final Preference resetButton = this.findPreference("reset");
+            resetButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+                @Override
+                public boolean onPreferenceClick(final Preference preference) {
+                    final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(preference.getContext());
+                    this.clearPreferences(preferences, preference.getContext());
+                    this.updatePreferenceSummaries(preferences);
+                    return true;
+                }
+
+                private void clearPreferences(final SharedPreferences preferences, final Context context) {
+                    preferences.edit().clear().commit();
+                    PreferenceManager.setDefaultValues(context, R.xml.pref_general, true);
+                }
+
+                private void updatePreferenceSummaries(SharedPreferences preferences) {
+                    this.updatePreferenceSummary(preferences, "drowsyThreshold");
+                    this.updatePreferenceSummary(preferences, "slowEyelidClosureMinDuration");
+                    this.updatePreferenceSummary(preferences, "eyeOpenProbabilityThreshold");
+                    this.updatePreferenceSummary(preferences, "likelyDrowsyThreshold");
+                    this.updatePreferenceSummary(preferences, "timeWindow");
+                }
+
+                private void updatePreferenceSummary(final SharedPreferences preferences, final String key) {
+                    sBindPreferenceSummaryToValueListener.onPreferenceChange(
+                            GeneralPreferenceFragment.this.findPreference(key),
+                            preferences.getString(key, ""));
+                }
+            });
         }
 
         @Override

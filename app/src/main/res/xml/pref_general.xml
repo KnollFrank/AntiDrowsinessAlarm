@@ -37,4 +37,9 @@
         android:summary="timeWindow"
         android:title="timeWindow" />
 
+    <Preference
+        android:key="reset"
+        android:summary="reset to defaults"
+        android:title="reset to defaults" />
+
 </PreferenceScreen>
