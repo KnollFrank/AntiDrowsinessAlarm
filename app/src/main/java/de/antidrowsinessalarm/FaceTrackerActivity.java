@@ -62,6 +62,8 @@ import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
  * Activity for the face tracker app.  This app detects faces with the rear facing camera, and draws
  * overlay graphics to indicate the position, size, and ID of each face.
  */
+// TODO: brauchen Ampel, die anzeigt, wie lange die Anwendung bereits unbrauchbar ist, also z.B. das Gesicht des Fahrers oder seine Augen nicht verfolgen bzw. erkennen konnte und infolgedessen keinen möglicherweise notwendigen Schläfrigkeitsalarm auslösen konnte.
+// TOOO: die Anwendung soll sich in den Hintegrund schalten können, und sich im Falle von erkannter Schläfrigkeit des Fahrers in den Vordergrund schalten können, bzw. lediglich einen Alarmton abgeben und ein rotes Signal über der gerade aktiven Anwendung einblenden.
 public final class FaceTrackerActivity extends AppCompatActivity {
     private static final String TAG = "CompositeFaceTracker";
     private static final int RC_HANDLE_GMS = 9001;
@@ -325,6 +327,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             this.context = context;
         }
 
+        // TODO: after the driver's face is lost and recognized again, the drowsiness detection shall not loose the information gained before loosing the driver's face.
         @Override
         public Tracker<Face> create(final Face face) {
             final DefaultConfigFactory configFactory = new DefaultConfigFactory(PreferenceManager.getDefaultSharedPreferences(this.context));
