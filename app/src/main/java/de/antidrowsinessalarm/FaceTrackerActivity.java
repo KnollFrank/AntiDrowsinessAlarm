@@ -37,9 +37,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.MultiProcessor;
-import com.google.android.gms.vision.face.FaceDetector;
 
 import java.io.IOException;
 
@@ -54,11 +51,11 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private static final int RC_HANDLE_GMS = 9001;
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
-    private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
     private TextView eyesInfoView;
     private ImageView imageView;
+    private CameraSourceHandler cameraSourceHandler;
 
     @Override
     public void onCreate(final Bundle icicle) {
@@ -71,10 +68,11 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         this.mGraphicOverlay = (GraphicOverlay) this.findViewById(R.id.faceOverlay);
         this.eyesInfoView = (TextView) this.findViewById(R.id.eyesInfoView);
         this.imageView = (ImageView) this.findViewById(R.id.imageView);
+        this.cameraSourceHandler = new CameraSourceHandler(this);
 
         final int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (rc == PackageManager.PERMISSION_GRANTED) {
-            this.createCameraSource();
+            this.cameraSourceHandler.createCameraSource();
         } else {
             this.requestCameraPermission();
         }
@@ -135,37 +133,12 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void createCameraSource() {
-        final FaceDetector detector =
-                FaceDetectorFactory.createFaceDetector(
-                        this.getApplicationContext(),
-                        new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory(this)).build());
-
-        if (!detector.isOperational()) {
-            Log.w(TAG, "Face detector dependencies are not yet available.");
-        }
-
-        this.mCameraSource =
-                new CameraSource.Builder(this.getApplicationContext(), detector)
-                        .setRequestedPreviewSize(640, 480)
-                        .setFacing(CameraSource.CAMERA_FACING_FRONT)
-                        .setRequestedFps(30.0f)
-                        .build();
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-
-        this.releaseCamera();
-        this.createCameraSource();
+        this.cameraSourceHandler.releaseCamera();
+        this.cameraSourceHandler.createCameraSource();
         this.startCameraSource();
-    }
-
-    private void releaseCamera() {
-        if (this.mCameraSource != null) {
-            this.mCameraSource.release();
-        }
     }
 
     @Override
@@ -177,7 +150,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.releaseCamera();
+        this.cameraSourceHandler.releaseCamera();
     }
 
     @Override
@@ -190,7 +163,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Camera permission granted - initialize the camera source");
-            this.createCameraSource();
+            this.cameraSourceHandler.createCameraSource();
             return;
         }
 
@@ -217,13 +190,12 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             dlg.show();
         }
 
-        if (this.mCameraSource != null) {
+        if (this.cameraSourceHandler.getCameraSource() != null) {
             try {
-                this.mPreview.start(this.mCameraSource, this.mGraphicOverlay);
+                this.mPreview.start(this.cameraSourceHandler.getCameraSource(), this.mGraphicOverlay);
             } catch (final IOException e) {
                 Log.e(TAG, "Unable to start camera source.", e);
-                this.mCameraSource.release();
-                this.mCameraSource = null;
+                this.cameraSourceHandler.releaseCamera();
             }
         }
     }
