@@ -15,23 +15,15 @@
  */
 package de.antidrowsinessalarm;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -49,13 +41,12 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
     private static final String TAG = "CompositeFaceTracker";
     private static final int RC_HANDLE_GMS = 9001;
-    // permission request codes need to be < 256
-    private static final int RC_HANDLE_CAMERA_PERM = 2;
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
     private TextView eyesInfoView;
     private ImageView imageView;
     private CameraSourceHandler cameraSourceHandler;
+    private CameraPermissionHandler cameraPermissionHandler;
 
     @Override
     public void onCreate(final Bundle icicle) {
@@ -69,13 +60,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         this.eyesInfoView = (TextView) this.findViewById(R.id.eyesInfoView);
         this.imageView = (ImageView) this.findViewById(R.id.imageView);
         this.cameraSourceHandler = new CameraSourceHandler(this);
-
-        final int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        if (rc == PackageManager.PERMISSION_GRANTED) {
-            this.cameraSourceHandler.createCameraSource();
-        } else {
-            this.requestCameraPermission();
-        }
+        this.cameraPermissionHandler = new CameraPermissionHandler(this, this.cameraSourceHandler);
+        this.cameraPermissionHandler.createCameraSourceOrRequestCameraPermission();
     }
 
     public GraphicOverlay getmGraphicOverlay() {
@@ -90,6 +76,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         return this.imageView;
     }
 
+    // TODO: introduce OptionsMenuHandler
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         this.getMenuInflater().inflate(R.menu.toolbarmenu, menu);
@@ -105,32 +92,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void requestCameraPermission() {
-        Log.w(TAG, "Camera permission is not granted. Requesting permission");
-
-        final String[] permissions = new String[]{Manifest.permission.CAMERA};
-
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-            ActivityCompat.requestPermissions(this, permissions, RC_HANDLE_CAMERA_PERM);
-            return;
-        }
-
-        final Activity thisActivity = this;
-
-        final View.OnClickListener listener = new View.OnClickListener() {
-
-            @Override
-            public void onClick(final View view) {
-                ActivityCompat.requestPermissions(thisActivity, permissions, RC_HANDLE_CAMERA_PERM);
-            }
-        };
-
-        Snackbar.make(this.mGraphicOverlay, R.string.permission_camera_rationale,
-                Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.ok, listener)
-                .show();
     }
 
     @Override
@@ -155,32 +116,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
-        if (requestCode != RC_HANDLE_CAMERA_PERM) {
-            Log.d(TAG, "Got unexpected permission result: " + requestCode);
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            return;
-        }
-
-        if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Camera permission granted - initialize the camera source");
-            this.cameraSourceHandler.createCameraSource();
-            return;
-        }
-
-        Log.e(TAG, "Permission not granted: results len = " + grantResults.length +
-                " Result code = " + (grantResults.length > 0 ? grantResults[0] : "(empty)"));
-
-        final DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            public void onClick(final DialogInterface dialog, final int id) {
-                FaceTrackerActivity.this.finish();
-            }
-        };
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Face Tracker sample")
-                .setMessage(R.string.no_camera_permission)
-                .setPositiveButton(R.string.ok, listener)
-                .show();
+        this.cameraPermissionHandler.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void startCameraSource() {
