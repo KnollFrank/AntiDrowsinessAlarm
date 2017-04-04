@@ -29,6 +29,7 @@ import com.google.android.gms.vision.CameraSource;
 import java.io.IOException;
 
 public class CameraSourcePreview extends ViewGroup {
+
     private static final String TAG = "CameraSourcePreview";
 
     private final Context mContext;

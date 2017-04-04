@@ -71,7 +71,7 @@ public class EventTest {
         this.eventListener = new EventListener();
         this.drowsyEventDetector.getEventBus().register(this.eventListener);
         this.detector =
-                FaceTrackerActivity.createFaceDetector(
+                FaceDetectorFactory.createFaceDetector(
                         this.appContext,
                         new MultiProcessor.Builder<>(this.createFactory()).build());
     }

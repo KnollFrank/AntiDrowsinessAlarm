@@ -11,10 +11,6 @@ import de.antidrowsinessalarm.eventproducer.DefaultConfigFactory;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetectorConfig;
 
-/**
- * Factory for creating a face tracker to be associated with a new face.  The multiprocessor
- * uses this factory to create face trackers as needed -- one for each individual.
- */
 class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
 
     private static final String TAG = "FaceTrackerFactory";
