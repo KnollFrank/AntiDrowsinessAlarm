@@ -175,11 +175,9 @@ public final class FaceTrackerActivity extends AppCompatActivity {
      * at long distances.
      */
     private void createCameraSource() {
-
-        final Context context = this.getApplicationContext();
         final FaceDetector detector =
                 createFaceDetector(
-                        context,
+                        this.getApplicationContext(),
                         new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory(this)).build());
 
         if (!detector.isOperational()) {
@@ -194,7 +192,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
             Log.w(TAG, "Face detector dependencies are not yet available.");
         }
 
-        this.mCameraSource = new CameraSource.Builder(context, detector)
+        this.mCameraSource = new CameraSource.Builder(this.getApplicationContext(), detector)
                 .setRequestedPreviewSize(640, 480)
                 .setFacing(CameraSource.CAMERA_FACING_FRONT)
                 .setRequestedFps(30.0f)
