@@ -11,15 +11,15 @@ public class DrowsyEventDetectorConfig {
     private final Duration slowEyelidClosureMinDuration;
     private final Duration timeWindow;
 
-    private DrowsyEventDetectorConfig(ConfigBuilder builder) {
-        this.eyeOpenProbabilityThreshold = builder.eyeOpenProbabilityThreshold;
-        this.config = builder.config;
-        this.slowEyelidClosureMinDuration = builder.slowEyelidClosureMinDuration;
-        this.timeWindow = builder.timeWindow;
+    DrowsyEventDetectorConfig(DrowsyEventDetectorConfigBuilder builder) {
+        this.eyeOpenProbabilityThreshold = builder.getEyeOpenProbabilityThreshold();
+        this.config = builder.getConfig();
+        this.slowEyelidClosureMinDuration = builder.getSlowEyelidClosureMinDuration();
+        this.timeWindow = builder.getTimeWindow();
     }
 
-    public static ConfigBuilder builder() {
-        return new ConfigBuilder();
+    public static DrowsyEventDetectorConfigBuilder builder() {
+        return new DrowsyEventDetectorConfigBuilder();
     }
 
     public float getEyeOpenProbabilityThreshold() {
@@ -48,38 +48,4 @@ public class DrowsyEventDetectorConfig {
                 .toString();
     }
 
-    public static class ConfigBuilder {
-
-        private float eyeOpenProbabilityThreshold;
-        private DrowsyEventProducer.Config config;
-        private Duration slowEyelidClosureMinDuration;
-        private Duration timeWindow;
-
-        private ConfigBuilder() {
-        }
-
-        public ConfigBuilder withEyeOpenProbabilityThreshold(final float eyeOpenProbabilityThreshold) {
-            this.eyeOpenProbabilityThreshold = eyeOpenProbabilityThreshold;
-            return this;
-        }
-
-        public ConfigBuilder withConfig(final DrowsyEventProducer.Config config) {
-            this.config = config;
-            return this;
-        }
-
-        public ConfigBuilder withSlowEyelidClosureMinDuration(final Duration slowEyelidClosureMinDuration) {
-            this.slowEyelidClosureMinDuration = slowEyelidClosureMinDuration;
-            return this;
-        }
-
-        public ConfigBuilder withTimeWindow(final Duration timeWindow) {
-            this.timeWindow = timeWindow;
-            return this;
-        }
-
-        public DrowsyEventDetectorConfig build() {
-            return new DrowsyEventDetectorConfig(this);
-        }
-    }
 }
