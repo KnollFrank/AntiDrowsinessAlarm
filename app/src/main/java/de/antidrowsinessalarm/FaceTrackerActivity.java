@@ -15,22 +15,15 @@
  */
 package de.antidrowsinessalarm;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-
-import java.io.IOException;
 
 import de.antidrowsinessalarm.camera.CameraSourcePreview;
 import de.antidrowsinessalarm.camera.GraphicOverlay;
@@ -40,7 +33,7 @@ import de.antidrowsinessalarm.camera.GraphicOverlay;
 public final class FaceTrackerActivity extends AppCompatActivity {
 
     private static final String TAG = "CompositeFaceTracker";
-    private static final int RC_HANDLE_GMS = 9001;
+
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
     private TextView eyesInfoView;
@@ -76,7 +69,10 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         return this.imageView;
     }
 
-    // TODO: introduce OptionsMenuHandler
+    public CameraSourcePreview getmPreview() {
+        return this.mPreview;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         this.getMenuInflater().inflate(R.menu.toolbarmenu, menu);
@@ -97,9 +93,9 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        this.cameraSourceHandler.releaseCamera();
+        this.cameraSourceHandler.releaseCameraSource();
         this.cameraSourceHandler.createCameraSource();
-        this.startCameraSource();
+        this.cameraSourceHandler.startCameraSource();
     }
 
     @Override
@@ -111,28 +107,11 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        this.cameraSourceHandler.releaseCamera();
+        this.cameraSourceHandler.releaseCameraSource();
     }
 
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
         this.cameraPermissionHandler.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    private void startCameraSource() {
-        final int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this.getApplicationContext());
-        if (code != ConnectionResult.SUCCESS) {
-            final Dialog dlg = GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
-            dlg.show();
-        }
-
-        if (this.cameraSourceHandler.getCameraSource() != null) {
-            try {
-                this.mPreview.start(this.cameraSourceHandler.getCameraSource(), this.mGraphicOverlay);
-            } catch (final IOException e) {
-                Log.e(TAG, "Unable to start camera source.", e);
-                this.cameraSourceHandler.releaseCamera();
-            }
-        }
     }
 }
