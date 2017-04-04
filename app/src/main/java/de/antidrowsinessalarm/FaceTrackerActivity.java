@@ -34,8 +34,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
     private static final String TAG = "CompositeFaceTracker";
 
-    private CameraSourcePreview mPreview;
-    private GraphicOverlay mGraphicOverlay;
+    private CameraSourcePreview preview;
+    private GraphicOverlay graphicOverlay;
     private TextView eyesInfoView;
     private ImageView imageView;
     private CameraSourceHandler cameraSourceHandler;
@@ -48,8 +48,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         final Toolbar myToolbar = (Toolbar) this.findViewById(R.id.my_toolbar);
         this.setSupportActionBar(myToolbar);
 
-        this.mPreview = (CameraSourcePreview) this.findViewById(R.id.preview);
-        this.mGraphicOverlay = (GraphicOverlay) this.findViewById(R.id.faceOverlay);
+        this.preview = (CameraSourcePreview) this.findViewById(R.id.preview);
+        this.graphicOverlay = (GraphicOverlay) this.findViewById(R.id.faceOverlay);
         this.eyesInfoView = (TextView) this.findViewById(R.id.eyesInfoView);
         this.imageView = (ImageView) this.findViewById(R.id.imageView);
         this.cameraSourceHandler = new CameraSourceHandler(this);
@@ -57,8 +57,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         this.cameraPermissionHandler.createCameraSourceOrRequestCameraPermission();
     }
 
-    public GraphicOverlay getmGraphicOverlay() {
-        return this.mGraphicOverlay;
+    public GraphicOverlay getGraphicOverlay() {
+        return this.graphicOverlay;
     }
 
     public TextView getEyesInfoView() {
@@ -69,8 +69,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         return this.imageView;
     }
 
-    public CameraSourcePreview getmPreview() {
-        return this.mPreview;
+    public CameraSourcePreview getPreview() {
+        return this.preview;
     }
 
     @Override
@@ -101,7 +101,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        this.mPreview.stop();
+        this.preview.stop();
     }
 
     @Override

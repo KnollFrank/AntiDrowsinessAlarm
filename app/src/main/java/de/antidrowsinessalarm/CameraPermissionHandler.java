@@ -52,7 +52,7 @@ class CameraPermissionHandler {
             }
         };
 
-        Snackbar.make(this.faceTrackerActivity.getmGraphicOverlay(), R.string.permission_camera_rationale,
+        Snackbar.make(this.faceTrackerActivity.getGraphicOverlay(), R.string.permission_camera_rationale,
                 Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.ok, listener)
                 .show();

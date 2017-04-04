@@ -32,74 +32,73 @@ public class CameraSourcePreview extends ViewGroup {
 
     private static final String TAG = "CameraSourcePreview";
 
-    private final Context mContext;
+    private final Context context;
     private final SurfaceView mSurfaceView;
-    private boolean mStartRequested;
-    private boolean mSurfaceAvailable;
-    private CameraSource mCameraSource;
-
-    private GraphicOverlay mOverlay;
+    private boolean startRequested;
+    private boolean surfaceAvailable;
+    private CameraSource cameraSource;
+    private GraphicOverlay overlay;
 
     public CameraSourcePreview(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.mContext = context;
-        this.mStartRequested = false;
-        this.mSurfaceAvailable = false;
+        this.context = context;
+        this.startRequested = false;
+        this.surfaceAvailable = false;
 
         this.mSurfaceView = new SurfaceView(context);
         this.mSurfaceView.getHolder().addCallback(new SurfaceCallback());
         this.addView(this.mSurfaceView);
     }
 
-    public void start(CameraSource cameraSource) throws IOException {
+    public void start(final CameraSource cameraSource) throws IOException {
         if (cameraSource == null) {
             this.stop();
         }
 
-        this.mCameraSource = cameraSource;
+        this.cameraSource = cameraSource;
 
-        if (this.mCameraSource != null) {
-            this.mStartRequested = true;
+        if (this.cameraSource != null) {
+            this.startRequested = true;
             this.startIfReady();
         }
     }
 
     public void start(CameraSource cameraSource, GraphicOverlay overlay) throws IOException {
-        this.mOverlay = overlay;
+        this.overlay = overlay;
         this.start(cameraSource);
     }
 
     public void stop() {
-        if (this.mCameraSource != null) {
-            this.mCameraSource.stop();
+        if (this.cameraSource != null) {
+            this.cameraSource.stop();
         }
     }
 
     public void release() {
-        if (this.mCameraSource != null) {
-            this.mCameraSource.release();
-            this.mCameraSource = null;
+        if (this.cameraSource != null) {
+            this.cameraSource.release();
+            this.cameraSource = null;
         }
     }
 
     private void startIfReady() throws IOException {
-        if (this.mStartRequested && this.mSurfaceAvailable) {
+        if (this.startRequested && this.surfaceAvailable) {
             //noinspection MissingPermission
-            this.mCameraSource.start(this.mSurfaceView.getHolder());
-            if (this.mOverlay != null) {
-                Size size = this.mCameraSource.getPreviewSize();
+            this.cameraSource.start(this.mSurfaceView.getHolder());
+            if (this.overlay != null) {
+                Size size = this.cameraSource.getPreviewSize();
                 int min = Math.min(size.getWidth(), size.getHeight());
                 int max = Math.max(size.getWidth(), size.getHeight());
                 if (this.isPortraitMode()) {
                     // Swap width and height sizes when in portrait, since it will be rotated by
                     // 90 degrees
-                    this.mOverlay.setCameraInfo(min, max, this.mCameraSource.getCameraFacing());
+                    this.overlay.setCameraInfo(min, max, this.cameraSource.getCameraFacing());
                 } else {
-                    this.mOverlay.setCameraInfo(max, min, this.mCameraSource.getCameraFacing());
+                    this.overlay.setCameraInfo(max, min, this.cameraSource.getCameraFacing());
                 }
-                this.mOverlay.clear();
+                this.overlay.clear();
             }
-            this.mStartRequested = false;
+            this.startRequested = false;
         }
     }
 
@@ -107,8 +106,8 @@ public class CameraSourcePreview extends ViewGroup {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int width = 320;
         int height = 240;
-        if (this.mCameraSource != null) {
-            Size size = this.mCameraSource.getPreviewSize();
+        if (this.cameraSource != null) {
+            Size size = this.cameraSource.getPreviewSize();
             if (size != null) {
                 width = size.getWidth();
                 height = size.getHeight();
@@ -147,7 +146,7 @@ public class CameraSourcePreview extends ViewGroup {
     }
 
     private boolean isPortraitMode() {
-        int orientation = this.mContext.getResources().getConfiguration().orientation;
+        int orientation = this.context.getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             return false;
         }
@@ -162,7 +161,7 @@ public class CameraSourcePreview extends ViewGroup {
     private class SurfaceCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(SurfaceHolder surface) {
-            CameraSourcePreview.this.mSurfaceAvailable = true;
+            CameraSourcePreview.this.surfaceAvailable = true;
             try {
                 CameraSourcePreview.this.startIfReady();
             } catch (IOException e) {
@@ -172,7 +171,7 @@ public class CameraSourcePreview extends ViewGroup {
 
         @Override
         public void surfaceDestroyed(SurfaceHolder surface) {
-            CameraSourcePreview.this.mSurfaceAvailable = false;
+            CameraSourcePreview.this.surfaceAvailable = false;
         }
 
         @Override

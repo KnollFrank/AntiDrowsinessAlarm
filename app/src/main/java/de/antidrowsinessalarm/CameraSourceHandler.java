@@ -58,13 +58,13 @@ class CameraSourceHandler {
     public void startCameraSource() {
         final int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this.faceTrackerActivity.getApplicationContext());
         if (code != ConnectionResult.SUCCESS) {
-            final Dialog dlg = GoogleApiAvailability.getInstance().getErrorDialog(faceTrackerActivity, code, RC_HANDLE_GMS);
+            final Dialog dlg = GoogleApiAvailability.getInstance().getErrorDialog(this.faceTrackerActivity, code, RC_HANDLE_GMS);
             dlg.show();
         }
 
         if (this.getCameraSource() != null) {
             try {
-                this.faceTrackerActivity.getmPreview().start(this.getCameraSource(), this.faceTrackerActivity.getmGraphicOverlay());
+                this.faceTrackerActivity.getPreview().start(this.getCameraSource(), this.faceTrackerActivity.getGraphicOverlay());
             } catch (final IOException e) {
                 Log.e(TAG, "Unable to start camera source.", e);
                 this.releaseCameraSource();

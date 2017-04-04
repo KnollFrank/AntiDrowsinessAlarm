@@ -25,7 +25,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
     private final FaceTrackerActivity faceTrackerActivity;
 
     DisplayingGraphicFaceTracker(final FaceTrackerActivity faceTrackerActivity) {
-        this.mFaceGraphic = new FaceGraphic(faceTrackerActivity.getmGraphicOverlay());
+        this.mFaceGraphic = new FaceGraphic(faceTrackerActivity.getGraphicOverlay());
         this.faceTrackerActivity = faceTrackerActivity;
         this.mediaPlayer = MediaPlayer.create(faceTrackerActivity.getApplicationContext(), R.raw.hupe);
     }
@@ -79,7 +79,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
     @Override
     public void onUpdate(final FaceDetector.Detections<Face> detectionResults, final Face face) {
         Log.i(TAG, "onUpdate called");
-        this.faceTrackerActivity.getmGraphicOverlay().add(this.mFaceGraphic);
+        this.faceTrackerActivity.getGraphicOverlay().add(this.mFaceGraphic);
         this.mFaceGraphic.updateFace(face);
     }
 
@@ -90,7 +90,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
      */
     @Override
     public void onMissing(final FaceDetector.Detections<Face> detectionResults) {
-        this.faceTrackerActivity.getmGraphicOverlay().remove(this.mFaceGraphic);
+        this.faceTrackerActivity.getGraphicOverlay().remove(this.mFaceGraphic);
     }
 
     /**
@@ -99,7 +99,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
      */
     @Override
     public void onDone() {
-        this.faceTrackerActivity.getmGraphicOverlay().remove(this.mFaceGraphic);
+        this.faceTrackerActivity.getGraphicOverlay().remove(this.mFaceGraphic);
         this.mediaPlayer.release();
     }
 }
