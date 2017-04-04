@@ -10,7 +10,7 @@ import org.joda.time.Instant;
 import de.antidrowsinessalarm.event.UpdateEvent;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventProducer;
 
-public class GraphicFaceTracker extends Tracker<Face> {
+public class EventProducingGraphicFaceTracker extends Tracker<Face> {
 
     private final EventBus eventBus;
     private final DrowsyEventProducer drowsyEventProducer;
@@ -18,7 +18,7 @@ public class GraphicFaceTracker extends Tracker<Face> {
 
     private ClockTime2FrameTimeConverter timeConverter;
 
-    public GraphicFaceTracker(final EventBus eventBus, final DrowsyEventProducer drowsyEventProducer, final Clock clock) {
+    public EventProducingGraphicFaceTracker(final EventBus eventBus, final DrowsyEventProducer drowsyEventProducer, final Clock clock) {
         this.eventBus = eventBus;
         this.drowsyEventProducer = drowsyEventProducer;
         this.clock = clock;

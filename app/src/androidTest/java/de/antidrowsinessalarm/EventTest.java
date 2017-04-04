@@ -374,7 +374,7 @@ public class EventTest {
 
             @Override
             public Tracker<Face> create(final Face face) {
-                return EventTest.this.drowsyEventDetector.getGraphicFaceTracker();
+                return EventTest.this.drowsyEventDetector.getEventProducingGraphicFaceTracker();
             }
         };
     }

@@ -33,7 +33,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Mockito.doReturn;
 
-public class GraphicFaceTrackerTest {
+public class EventProducingGraphicFaceTrackerTest {
 
     private EventListener eventListener;
     private Tracker<Face> tracker;
@@ -76,7 +76,7 @@ public class GraphicFaceTrackerTest {
         eventBus.register(new EyesClosedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
 
         this.tracker =
-                new GraphicFaceTracker(
+                new EventProducingGraphicFaceTracker(
                         eventBus,
                         new DrowsyEventProducer(
                                 configFactory.getConfig(),

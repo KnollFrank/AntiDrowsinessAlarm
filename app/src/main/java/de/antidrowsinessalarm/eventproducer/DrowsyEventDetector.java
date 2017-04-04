@@ -3,14 +3,14 @@ package de.antidrowsinessalarm.eventproducer;
 import com.google.common.eventbus.EventBus;
 
 import de.antidrowsinessalarm.Clock;
-import de.antidrowsinessalarm.GraphicFaceTracker;
+import de.antidrowsinessalarm.EventProducingGraphicFaceTracker;
 import de.antidrowsinessalarm.listener.EventLogger;
 
 public class DrowsyEventDetector {
 
     private final EventBus eventBus;
     private final DrowsyEventProducer drowsyEventProducer;
-    private final GraphicFaceTracker graphicFaceTracker;
+    private final EventProducingGraphicFaceTracker eventProducingGraphicFaceTracker;
 
     public DrowsyEventDetector(final DrowsyEventDetectorConfig drowsyEventDetectorConfig, final boolean registerEventLogger, final Clock clock) {
         this.eventBus = new EventBus();
@@ -22,23 +22,22 @@ public class DrowsyEventDetector {
         this.eventBus.register(new NormalEyeBlinkEventProducer(drowsyEventDetectorConfig.getSlowEyelidClosureMinDuration(), this.eventBus));
         this.eventBus.register(new SlowEyelidClosureEventProducer(drowsyEventDetectorConfig.getSlowEyelidClosureMinDuration(), this.eventBus));
         this.eventBus.register(new PendingSlowEyelidClosureEventProducer(drowsyEventDetectorConfig.getEyeOpenProbabilityThreshold(), drowsyEventDetectorConfig.getSlowEyelidClosureMinDuration(), this.eventBus));
-        SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider(drowsyEventDetectorConfig.getTimeWindow());
+        final SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider(drowsyEventDetectorConfig.getTimeWindow());
         this.eventBus.register(slowEyelidClosureEventsProvider);
 
         this.drowsyEventProducer = new DrowsyEventProducer(drowsyEventDetectorConfig.getConfig(), this.eventBus, slowEyelidClosureEventsProvider);
-        this.graphicFaceTracker = new GraphicFaceTracker(this.eventBus, this.drowsyEventProducer, clock);
+        this.eventProducingGraphicFaceTracker = new EventProducingGraphicFaceTracker(this.eventBus, this.drowsyEventProducer, clock);
     }
 
     public EventBus getEventBus() {
         return this.eventBus;
     }
 
-    public GraphicFaceTracker getGraphicFaceTracker() {
-        return this.graphicFaceTracker;
+    public EventProducingGraphicFaceTracker getEventProducingGraphicFaceTracker() {
+        return this.eventProducingGraphicFaceTracker;
     }
 
     public DrowsyEventProducer getDrowsyEventProducer() {
         return this.drowsyEventProducer;
     }
-
 }

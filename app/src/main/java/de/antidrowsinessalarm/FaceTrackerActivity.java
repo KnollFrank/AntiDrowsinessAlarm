@@ -23,9 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -43,21 +41,13 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.MultiProcessor;
-import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
-import com.google.common.eventbus.Subscribe;
 
 import java.io.IOException;
 
 import de.antidrowsinessalarm.camera.CameraSourcePreview;
 import de.antidrowsinessalarm.camera.GraphicOverlay;
-import de.antidrowsinessalarm.event.AwakeEvent;
-import de.antidrowsinessalarm.event.DrowsyEvent;
-import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
-import de.antidrowsinessalarm.eventproducer.DefaultConfigFactory;
-import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
-import de.antidrowsinessalarm.eventproducer.DrowsyEventDetectorConfig;
 
 /**
  * Activity for the face tracker app. This app detects faces with the rear facing camera, and draws
@@ -116,6 +106,18 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         } else {
             this.requestCameraPermission();
         }
+    }
+
+    public GraphicOverlay getmGraphicOverlay() {
+        return this.mGraphicOverlay;
+    }
+
+    public TextView getEyesInfoView() {
+        return this.eyesInfoView;
+    }
+
+    public ImageView getImageView() {
+        return this.imageView;
     }
 
     @Override
@@ -206,7 +208,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (mCameraSource != null) {
+        if (this.mCameraSource != null) {
             this.mCameraSource.release();
         }
         this.createCameraSource();
@@ -309,134 +311,6 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 this.mCameraSource.release();
                 this.mCameraSource = null;
             }
-        }
-    }
-
-    //==============================================================================================
-    // Graphic Face Tracker
-    //==============================================================================================
-
-    /**
-     * Factory for creating a face tracker to be associated with a new face.  The multiprocessor
-     * uses this factory to create face trackers as needed -- one for each individual.
-     */
-    private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
-
-        private final Context context;
-
-        public GraphicFaceTrackerFactory(final Context context) {
-            this.context = context;
-        }
-
-        // TODO: after the driver's face is lost and recognized again, the drowsiness detection shall not loose the information gained before loosing the driver's face.
-        @Override
-        public Tracker<Face> create(final Face face) {
-            final DefaultConfigFactory configFactory = new DefaultConfigFactory(PreferenceManager.getDefaultSharedPreferences(this.context));
-            DrowsyEventDetectorConfig drowsyEventDetectorConfig = DrowsyEventDetectorConfig
-                    .builder()
-                    .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
-                    .withConfig(configFactory.getConfig())
-                    .withSlowEyelidClosureMinDuration(configFactory.getSlowEyelidClosureMinDuration())
-                    .withTimeWindow(configFactory.getTimeWindow())
-                    .build();
-            Log.i(TAG, "" + drowsyEventDetectorConfig);
-            final DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(drowsyEventDetectorConfig, true, new SystemClock());
-
-            final Tracker<Face> tracker = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
-            drowsyEventDetector.getEventBus().register(tracker);
-
-            return new CompositeFaceTracker(drowsyEventDetector.getGraphicFaceTracker(), tracker);
-        }
-    }
-
-    /**
-     * Face tracker for each detected individual. This maintains a face graphic within the app's
-     * associated face overlay.
-     */
-    private class GraphicFaceTracker extends Tracker<Face> {
-        private static final String TAG = "GraphicFaceTracker";
-
-        private final GraphicOverlay mOverlay;
-        private final FaceGraphic mFaceGraphic;
-        private final MediaPlayer mediaPlayer;
-
-        GraphicFaceTracker(final GraphicOverlay overlay) {
-            this.mOverlay = overlay;
-            this.mFaceGraphic = new FaceGraphic(overlay);
-            this.mediaPlayer = MediaPlayer.create(FaceTrackerActivity.this.getApplicationContext(), R.raw.hupe);
-        }
-
-        @Subscribe
-        public void onDrowsyEvent(final DrowsyEvent event) {
-            FaceTrackerActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    FaceTrackerActivity.this.eyesInfoView.setText("" + event);
-                    FaceTrackerActivity.this.imageView.setImageResource(R.drawable.red);
-                    GraphicFaceTracker.this.mediaPlayer.start();
-                }
-            });
-        }
-
-        @Subscribe
-        public void onLikelyDrowsyEvent(final LikelyDrowsyEvent event) {
-            FaceTrackerActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    FaceTrackerActivity.this.eyesInfoView.setText("" + event);
-                    FaceTrackerActivity.this.imageView.setImageResource(R.drawable.yellow);
-                }
-            });
-        }
-
-        @Subscribe
-        public void onAwakeEvent(final AwakeEvent event) {
-            FaceTrackerActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    FaceTrackerActivity.this.eyesInfoView.setText("" + event);
-                    FaceTrackerActivity.this.imageView.setImageResource(R.drawable.green);
-                }
-            });
-        }
-
-        /**
-         * Start tracking the detected face instance within the face overlay.
-         */
-        @Override
-        public void onNewItem(final int faceId, final Face item) {
-            Log.i(TAG, "onNewItem called");
-            this.mFaceGraphic.setId(faceId);
-        }
-
-        /**
-         * Update the position/characteristics of the face within the overlay.
-         */
-        @Override
-        public void onUpdate(final FaceDetector.Detections<Face> detectionResults, final Face face) {
-            Log.i(TAG, "onUpdate called");
-            this.mOverlay.add(this.mFaceGraphic);
-            this.mFaceGraphic.updateFace(face);
-        }
-
-        /**
-         * Hide the graphic when the corresponding face was not detected.  This can happen for
-         * intermediate frames temporarily (e.g., if the face was momentarily blocked from
-         * view).
-         */
-        @Override
-        public void onMissing(final FaceDetector.Detections<Face> detectionResults) {
-            this.mOverlay.remove(this.mFaceGraphic);
-        }
-
-        /**
-         * Called when the face is assumed to be gone for good. Remove the graphic annotation from
-         * the overlay.
-         */
-        @Override
-        public void onDone() {
-            this.mOverlay.remove(this.mFaceGraphic);
-            this.mediaPlayer.release();
         }
     }
 }
