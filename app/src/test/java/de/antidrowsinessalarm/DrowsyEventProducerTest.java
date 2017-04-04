@@ -15,6 +15,7 @@ import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 import de.antidrowsinessalarm.event.UpdateEvent;
 import de.antidrowsinessalarm.eventproducer.DefaultConfigFactory;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
+import de.antidrowsinessalarm.eventproducer.DrowsyEventDetectorConfig;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventProducer;
 
 import static junit.framework.Assert.fail;
@@ -35,7 +36,7 @@ public class DrowsyEventProducerTest {
         final DefaultConfigFactory configFactory = new DefaultConfigFactory(SharedPreferencesTestFactory.createSharedPreferences());
         final DrowsyEventDetector drowsyEventDetector =
                 new DrowsyEventDetector(
-                        DrowsyEventDetector.Config
+                        DrowsyEventDetectorConfig
                                 .builder()
                                 .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
                                 .withConfig(configFactory.getConfig())

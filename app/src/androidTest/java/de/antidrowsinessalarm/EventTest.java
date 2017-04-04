@@ -32,6 +32,7 @@ import de.antidrowsinessalarm.event.NormalEyeBlinkEvent;
 import de.antidrowsinessalarm.event.SlowEyelidClosureEvent;
 import de.antidrowsinessalarm.eventproducer.DefaultConfigFactory;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
+import de.antidrowsinessalarm.eventproducer.DrowsyEventDetectorConfig;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -58,7 +59,7 @@ public class EventTest {
         final DefaultConfigFactory configFactory = new DefaultConfigFactory(this.createSharedPreferences());
         this.drowsyEventDetector =
                 new DrowsyEventDetector(
-                        DrowsyEventDetector.Config
+                        DrowsyEventDetectorConfig
                                 .builder()
                                 .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
                                 .withConfig(configFactory.getConfig())

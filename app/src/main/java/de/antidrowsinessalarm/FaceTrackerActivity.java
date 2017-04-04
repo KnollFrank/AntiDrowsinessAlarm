@@ -57,9 +57,10 @@ import de.antidrowsinessalarm.event.DrowsyEvent;
 import de.antidrowsinessalarm.event.LikelyDrowsyEvent;
 import de.antidrowsinessalarm.eventproducer.DefaultConfigFactory;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
+import de.antidrowsinessalarm.eventproducer.DrowsyEventDetectorConfig;
 
 /**
- * Activity for the face tracker app.  This app detects faces with the rear facing camera, and draws
+ * Activity for the face tracker app. This app detects faces with the rear facing camera, and draws
  * overlay graphics to indicate the position, size, and ID of each face.
  */
 // TODO: brauchen Ampel, die anzeigt, wie lange die Anwendung bereits unbrauchbar ist, also z.B. das Gesicht des Fahrers oder seine Augen nicht verfolgen bzw. erkennen konnte und infolgedessen keinen möglicherweise notwendigen Schläfrigkeitsalarm auslösen konnte.
@@ -331,15 +332,15 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         @Override
         public Tracker<Face> create(final Face face) {
             final DefaultConfigFactory configFactory = new DefaultConfigFactory(PreferenceManager.getDefaultSharedPreferences(this.context));
-            DrowsyEventDetector.Config config = DrowsyEventDetector.Config
+            DrowsyEventDetectorConfig drowsyEventDetectorConfig = DrowsyEventDetectorConfig
                     .builder()
                     .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
                     .withConfig(configFactory.getConfig())
                     .withSlowEyelidClosureMinDuration(configFactory.getSlowEyelidClosureMinDuration())
                     .withTimeWindow(configFactory.getTimeWindow())
                     .build();
-            Log.i(TAG, "" + config);
-            final DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(config, true, new SystemClock());
+            Log.i(TAG, "" + drowsyEventDetectorConfig);
+            final DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(drowsyEventDetectorConfig, true, new SystemClock());
 
             final Tracker<Face> tracker = new GraphicFaceTracker(FaceTrackerActivity.this.mGraphicOverlay);
             drowsyEventDetector.getEventBus().register(tracker);
