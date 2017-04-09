@@ -90,6 +90,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
      */
     @Override
     public void onMissing(final FaceDetector.Detections<Face> detectionResults) {
+        Log.i(TAG, "onMissing called");
         this.faceTrackerActivity.getGraphicOverlay().remove(this.faceGraphic);
     }
 
@@ -99,6 +100,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
      */
     @Override
     public void onDone() {
+        Log.i(TAG, "onDone called");
         this.faceTrackerActivity.getGraphicOverlay().remove(this.faceGraphic);
         this.mediaPlayer.release();
     }
