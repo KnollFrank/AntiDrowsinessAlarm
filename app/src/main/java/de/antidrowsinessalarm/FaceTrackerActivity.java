@@ -32,7 +32,7 @@ import de.antidrowsinessalarm.camera.GraphicOverlay;
 // TOOO: die Anwendung soll sich in den Hintegrund schalten können, und sich im Falle von erkannter Schläfrigkeit des Fahrers in den Vordergrund schalten können, bzw. lediglich einen Alarmton abgeben und ein rotes Signal über der gerade aktiven Anwendung einblenden.
 public final class FaceTrackerActivity extends AppCompatActivity {
 
-    private static final String TAG = "CompositeFaceTracker";
+    private static final String TAG = "FaceTrackerActivity";
 
     private CameraSourcePreview preview;
     private GraphicOverlay graphicOverlay;

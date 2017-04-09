@@ -21,7 +21,6 @@ class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
         this.faceTrackerActivity = faceTrackerActivity;
     }
 
-    // TODO: after the driver's face is lost and recognized again, the drowsiness detection shall not loose the information gained before loosing the driver's face.
     @Override
     public Tracker<Face> create(final Face face) {
         final DefaultConfigFactory configFactory = new DefaultConfigFactory(PreferenceManager.getDefaultSharedPreferences(this.faceTrackerActivity));
