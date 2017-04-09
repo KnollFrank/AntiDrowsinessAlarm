@@ -20,12 +20,12 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
 
     private static final String TAG = "FaceTracker";
 
-    private final FaceGraphic mFaceGraphic;
+    private final FaceGraphic faceGraphic;
     private final MediaPlayer mediaPlayer;
     private final FaceTrackerActivity faceTrackerActivity;
 
     DisplayingGraphicFaceTracker(final FaceTrackerActivity faceTrackerActivity) {
-        this.mFaceGraphic = new FaceGraphic(faceTrackerActivity.getGraphicOverlay());
+        this.faceGraphic = new FaceGraphic(faceTrackerActivity.getGraphicOverlay());
         this.faceTrackerActivity = faceTrackerActivity;
         this.mediaPlayer = MediaPlayer.create(faceTrackerActivity.getApplicationContext(), R.raw.hupe);
     }
@@ -70,7 +70,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
     @Override
     public void onNewItem(final int faceId, final Face item) {
         Log.i(TAG, "onNewItem called");
-        this.mFaceGraphic.setId(faceId);
+        this.faceGraphic.setId(faceId);
     }
 
     /**
@@ -79,8 +79,8 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
     @Override
     public void onUpdate(final FaceDetector.Detections<Face> detectionResults, final Face face) {
         Log.i(TAG, "onUpdate called");
-        this.faceTrackerActivity.getGraphicOverlay().add(this.mFaceGraphic);
-        this.mFaceGraphic.updateFace(face);
+        this.faceTrackerActivity.getGraphicOverlay().add(this.faceGraphic);
+        this.faceGraphic.updateFace(face);
     }
 
     /**
@@ -90,7 +90,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
      */
     @Override
     public void onMissing(final FaceDetector.Detections<Face> detectionResults) {
-        this.faceTrackerActivity.getGraphicOverlay().remove(this.mFaceGraphic);
+        this.faceTrackerActivity.getGraphicOverlay().remove(this.faceGraphic);
     }
 
     /**
@@ -99,7 +99,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
      */
     @Override
     public void onDone() {
-        this.faceTrackerActivity.getGraphicOverlay().remove(this.mFaceGraphic);
+        this.faceTrackerActivity.getGraphicOverlay().remove(this.faceGraphic);
         this.mediaPlayer.release();
     }
 }
