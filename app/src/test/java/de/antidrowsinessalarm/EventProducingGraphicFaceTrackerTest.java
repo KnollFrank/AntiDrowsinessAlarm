@@ -1,9 +1,13 @@
 package de.antidrowsinessalarm;
 
+import android.graphics.PointF;
+import android.support.annotation.NonNull;
+
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame.Metadata;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.Landmark;
 import com.google.common.eventbus.EventBus;
 
 import org.hamcrest.Matchers;
@@ -12,6 +16,9 @@ import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import de.antidrowsinessalarm.event.Event;
 import de.antidrowsinessalarm.event.EyesClosedEvent;
@@ -27,7 +34,9 @@ import de.antidrowsinessalarm.eventproducer.SlowEyelidClosureEventProducer;
 import de.antidrowsinessalarm.eventproducer.SlowEyelidClosureEventsProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsNot.not;
@@ -54,6 +63,7 @@ public class EventProducingGraphicFaceTrackerTest {
 
     static Face createFace(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability) {
         final Face face = Mockito.mock(Face.class);
+        doReturn(Arrays.asList(createLandmark(Landmark.LEFT_EYE), createLandmark(Landmark.RIGHT_EYE))).when(face).getLandmarks();
         doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
         doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
         return face;
@@ -70,6 +80,7 @@ public class EventProducingGraphicFaceTrackerTest {
         final EventBus eventBus = new EventBus();
         eventBus.register(this.eventListener);
         final DefaultConfigFactory configFactory = new DefaultConfigFactory(SharedPreferencesTestFactory.createSharedPreferences());
+        // TODO: DRY with DrowsyEventDetector
         eventBus.register(new NormalEyeBlinkEventProducer(configFactory.getSlowEyelidClosureMinDuration(), eventBus));
         eventBus.register(new SlowEyelidClosureEventProducer(configFactory.getSlowEyelidClosureMinDuration(), eventBus));
         eventBus.register(new EyesOpenedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
@@ -247,8 +258,48 @@ public class EventProducingGraphicFaceTrackerTest {
                 new EyesClosedEvent(new Instant(104))));
     }
 
+    @Test
+    public void shouldCreateNoEventWhenNeitherLEFT_EYENorRIGHT_EYEWasDetected() {
+        // When
+        final Face face = Mockito.mock(Face.class);
+        doReturn(Collections.emptyList()).when(face).getLandmarks();
+
+        this.tracker.onUpdate(getFaceDetections(new Instant(100)), face);
+
+        // Then
+        assertThat(this.eventListener.getEvents(), is(empty()));
+    }
+
+    @Test
+    public void shouldCreateNoEventWhenLEFT_EYENWasNotDetected() {
+        // When
+        final Face face = Mockito.mock(Face.class);
+        doReturn(Arrays.asList(this.createLandmark(Landmark.RIGHT_EYE))).when(face).getLandmarks();
+
+        this.tracker.onUpdate(getFaceDetections(new Instant(100)), face);
+
+        // Then
+        assertThat(this.eventListener.getEvents(), is(empty()));
+    }
+
+    @Test
+    public void shouldCreateNoEventWhenRIGHT_EYENWasNotDetected() {
+        // When
+        final Face face = Mockito.mock(Face.class);
+        doReturn(Arrays.asList(this.createLandmark(Landmark.LEFT_EYE))).when(face).getLandmarks();
+
+        this.tracker.onUpdate(getFaceDetections(new Instant(100)), face);
+
+        // Then
+        assertThat(this.eventListener.getEvents(), is(empty()));
+    }
+
+    @NonNull
+    private static Landmark createLandmark(int type) {
+        return new Landmark(new PointF(1, 1), type);
+    }
+
     private Face createFaceWithLeftEyeOpenRightEyeClosed() {
         return createFace(0.8f, 0.4f);
     }
-
 }
