@@ -25,6 +25,7 @@ public class EyesOpenedEventProducer extends EventProducer {
         return face.getIsLeftEyeOpenProbability() >= eyeOpenProbabilityThreshold && face.getIsRightEyeOpenProbability() >= eyeOpenProbabilityThreshold;
     }
 
+    // TODO: move to EventHelper class
     static Instant getInstantOf(UpdateEvent event) {
         return new Instant(event.getDetections().getFrameMetadata().getTimestampMillis());
     }

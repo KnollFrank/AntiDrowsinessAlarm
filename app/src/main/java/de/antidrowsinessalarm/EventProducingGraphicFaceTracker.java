@@ -26,6 +26,10 @@ public class EventProducingGraphicFaceTracker extends Tracker<Face> {
 
     @Override
     public void onUpdate(Detector.Detections<Face> detections, Face face) {
+        // TODO: nur dann fortfahren, wenn face.getLandmarks() sowohl das linke als auch das rechte Auge erkennt.
+        // Ansonsten soll der aktuelle onUpdate-Event einfach nicht berücksichtigt werden.
+        // Falls über einen in den Settings zu konfigurierenden Zeitraum beide Augen nicht erkannt werden,
+        // soll DrowsyDriverAlarm außer Betrieb gesetzt werden.
         final Instant clockTime = this.clock.now();
         if (this.timeConverter == null) {
             this.timeConverter =

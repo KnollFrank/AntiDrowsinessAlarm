@@ -37,10 +37,8 @@ public class EyesClosedEventProducer extends EventProducer {
         return !this.previouslyEyesOpened.isPresent() || this.previouslyEyesOpened.get();
     }
 
-    private long getTimestampMillis(Detector.Detections<Face> detections) {
-        return detections.getFrameMetadata().getTimestampMillis();
-    }
-
+    // TODO: verwende face.getLandmarks(), um festzustellen, ob beide Augen als Landmarks erkannt wurden.
+    // Falls nicht, ist der DrowsyDriverAlarm außer Betrieb zu setzen.
     private boolean isEyesClosed(final Face face) {
         return this.isDefined(face.getIsLeftEyeOpenProbability()) && face.getIsLeftEyeOpenProbability() < this.eyeOpenProbabilityThreshold &&
                 this.isDefined(face.getIsRightEyeOpenProbability()) && face.getIsRightEyeOpenProbability() < this.eyeOpenProbabilityThreshold;

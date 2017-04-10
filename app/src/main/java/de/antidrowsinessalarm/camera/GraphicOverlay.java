@@ -44,15 +44,15 @@ import java.util.Set;
  * </ol>
  */
 public class GraphicOverlay extends View {
-    private final Object mLock = new Object();
-    private final Set<Graphic> mGraphics = new HashSet<>();
-    private int mPreviewWidth;
-    private float mWidthScaleFactor = 1.0f;
-    private int mPreviewHeight;
-    private float mHeightScaleFactor = 1.0f;
-    private int mFacing = CameraSource.CAMERA_FACING_BACK;
+    private final Object lock = new Object();
+    private final Set<Graphic> graphics = new HashSet<>();
+    private int previewWidth;
+    private float widthScaleFactor = 1.0f;
+    private int previewHeight;
+    private float heightScaleFactor = 1.0f;
+    private int facing = CameraSource.CAMERA_FACING_BACK;
 
-    public GraphicOverlay(Context context, AttributeSet attrs) {
+    public GraphicOverlay(final Context context, final AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -60,8 +60,8 @@ public class GraphicOverlay extends View {
      * Removes all graphics from the overlay.
      */
     public void clear() {
-        synchronized (this.mLock) {
-            this.mGraphics.clear();
+        synchronized (this.lock) {
+            this.graphics.clear();
         }
         this.postInvalidate();
     }
@@ -69,9 +69,9 @@ public class GraphicOverlay extends View {
     /**
      * Adds a graphic to the overlay.
      */
-    public void add(Graphic graphic) {
-        synchronized (this.mLock) {
-            this.mGraphics.add(graphic);
+    public void add(final Graphic graphic) {
+        synchronized (this.lock) {
+            this.graphics.add(graphic);
         }
         this.postInvalidate();
     }
@@ -79,9 +79,9 @@ public class GraphicOverlay extends View {
     /**
      * Removes a graphic from the overlay.
      */
-    public void remove(Graphic graphic) {
-        synchronized (this.mLock) {
-            this.mGraphics.remove(graphic);
+    public void remove(final Graphic graphic) {
+        synchronized (this.lock) {
+            this.graphics.remove(graphic);
         }
         this.postInvalidate();
     }
@@ -90,11 +90,11 @@ public class GraphicOverlay extends View {
      * Sets the camera attributes for size and facing direction, which informs how to transform
      * image coordinates later.
      */
-    public void setCameraInfo(int previewWidth, int previewHeight, int facing) {
-        synchronized (this.mLock) {
-            this.mPreviewWidth = previewWidth;
-            this.mPreviewHeight = previewHeight;
-            this.mFacing = facing;
+    public void setCameraInfo(final int previewWidth, final int previewHeight, final int facing) {
+        synchronized (this.lock) {
+            this.previewWidth = previewWidth;
+            this.previewHeight = previewHeight;
+            this.facing = facing;
         }
         this.postInvalidate();
     }
@@ -103,16 +103,16 @@ public class GraphicOverlay extends View {
      * Draws the overlay with its associated graphic objects.
      */
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
 
-        synchronized (this.mLock) {
-            if ((this.mPreviewWidth != 0) && (this.mPreviewHeight != 0)) {
-                this.mWidthScaleFactor = (float) canvas.getWidth() / (float) this.mPreviewWidth;
-                this.mHeightScaleFactor = (float) canvas.getHeight() / (float) this.mPreviewHeight;
+        synchronized (this.lock) {
+            if ((this.previewWidth != 0) && (this.previewHeight != 0)) {
+                this.widthScaleFactor = (float) canvas.getWidth() / (float) this.previewWidth;
+                this.heightScaleFactor = (float) canvas.getHeight() / (float) this.previewHeight;
             }
 
-            for (Graphic graphic : this.mGraphics) {
+            for (final Graphic graphic : this.graphics) {
                 graphic.draw(canvas);
             }
         }
@@ -148,23 +148,23 @@ public class GraphicOverlay extends View {
          * Adjusts a horizontal value of the supplied value from the preview scale to the view
          * scale.
          */
-        public float scaleX(float horizontal) {
-            return horizontal * this.mOverlay.mWidthScaleFactor;
+        public float scaleX(final float horizontal) {
+            return horizontal * this.mOverlay.widthScaleFactor;
         }
 
         /**
          * Adjusts a vertical value of the supplied value from the preview scale to the view scale.
          */
-        public float scaleY(float vertical) {
-            return vertical * this.mOverlay.mHeightScaleFactor;
+        public float scaleY(final float vertical) {
+            return vertical * this.mOverlay.heightScaleFactor;
         }
 
         /**
          * Adjusts the x coordinate from the preview's coordinate system to the view coordinate
          * system.
          */
-        public float translateX(float x) {
-            if (this.mOverlay.mFacing == CameraSource.CAMERA_FACING_FRONT) {
+        public float translateX(final float x) {
+            if (this.mOverlay.facing == CameraSource.CAMERA_FACING_FRONT) {
                 return this.mOverlay.getWidth() - this.scaleX(x);
             } else {
                 return this.scaleX(x);
@@ -175,7 +175,7 @@ public class GraphicOverlay extends View {
          * Adjusts the y coordinate from the preview's coordinate system to the view coordinate
          * system.
          */
-        public float translateY(float y) {
+        public float translateY(final float y) {
             return this.scaleY(y);
         }
 
