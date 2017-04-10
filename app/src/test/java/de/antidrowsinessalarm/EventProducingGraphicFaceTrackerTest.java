@@ -19,6 +19,7 @@ import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import de.antidrowsinessalarm.event.Event;
 import de.antidrowsinessalarm.event.EyesClosedEvent;
@@ -259,35 +260,27 @@ public class EventProducingGraphicFaceTrackerTest {
     }
 
     @Test
-    public void shouldCreateNoEventWhenNeitherLEFT_EYENorRIGHT_EYEWasDetected() {
-        // When
-        final Face face = Mockito.mock(Face.class);
-        doReturn(Collections.emptyList()).when(face).getLandmarks();
-
-        this.tracker.onUpdate(getFaceDetections(new Instant(100)), face);
-
-        // Then
-        assertThat(this.eventListener.getEvents(), is(empty()));
+    public void shouldCreateNoEventsWhenNeitherLEFT_EYENorRIGHT_EYEWasDetected() {
+        this.shouldCreateNoEventsForFaceWithLandmarks(Collections.<Landmark> emptyList());
     }
 
     @Test
-    public void shouldCreateNoEventWhenLEFT_EYENWasNotDetected() {
-        // When
-        final Face face = Mockito.mock(Face.class);
-        doReturn(Arrays.asList(this.createLandmark(Landmark.RIGHT_EYE))).when(face).getLandmarks();
+    public void shouldCreateNoEventsWhenLEFT_EYENWasNotDetected() {
+        this.shouldCreateNoEventsForFaceWithLandmarks(Arrays.asList(createLandmark(Landmark.RIGHT_EYE)));
 
-        this.tracker.onUpdate(getFaceDetections(new Instant(100)), face);
-
-        // Then
-        assertThat(this.eventListener.getEvents(), is(empty()));
     }
 
     @Test
-    public void shouldCreateNoEventWhenRIGHT_EYENWasNotDetected() {
-        // When
-        final Face face = Mockito.mock(Face.class);
-        doReturn(Arrays.asList(this.createLandmark(Landmark.LEFT_EYE))).when(face).getLandmarks();
+    public void shouldCreateNoEventsWhenRIGHT_EYENWasNotDetected() {
+        this.shouldCreateNoEventsForFaceWithLandmarks(Arrays.asList(createLandmark(Landmark.LEFT_EYE)));
+    }
 
+    private void shouldCreateNoEventsForFaceWithLandmarks(final List<Landmark> landmarks) {
+        // Given
+        final Face face = Mockito.mock(Face.class);
+        doReturn(landmarks).when(face).getLandmarks();
+
+        // When
         this.tracker.onUpdate(getFaceDetections(new Instant(100)), face);
 
         // Then
@@ -295,7 +288,7 @@ public class EventProducingGraphicFaceTrackerTest {
     }
 
     @NonNull
-    private static Landmark createLandmark(int type) {
+    private static Landmark createLandmark(final int type) {
         return new Landmark(new PointF(1, 1), type);
     }
 
