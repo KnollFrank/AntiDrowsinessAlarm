@@ -38,7 +38,7 @@ public class EventProducingGraphicFaceTracker extends Tracker<Face> {
         // Falls über einen in den Settings zu konfigurierenden Zeitraum beide Augen nicht erkannt werden,
         // soll DrowsyDriverAlarm außer Betrieb gesetzt werden.
         // TODO: use RetroLambda (https://github.com/orfjackal/retrolambda)
-        if(!this.recognizedBothEyes(face)) {
+        if (!this.areBothEyesRecognized(face)) {
             return;
         }
 
@@ -53,7 +53,7 @@ public class EventProducingGraphicFaceTracker extends Tracker<Face> {
         this.drowsyEventProducer.maybeProduceDrowsyEvent(this.timeConverter.convertToFrameTime(clockTime));
     }
 
-    private boolean recognizedBothEyes(Face face) {
+    private boolean areBothEyesRecognized(Face face) {
         return this.getLandmarkTypes(face.getLandmarks()).containsAll(Arrays.asList(Landmark.LEFT_EYE, Landmark.RIGHT_EYE));
     }
 
