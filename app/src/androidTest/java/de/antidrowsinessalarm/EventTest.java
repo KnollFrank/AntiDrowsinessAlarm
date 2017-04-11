@@ -140,12 +140,10 @@ public class EventTest {
 
             @Override
             public void registerOnSharedPreferenceChangeListener(final OnSharedPreferenceChangeListener listener) {
-
             }
 
             @Override
             public void unregisterOnSharedPreferenceChangeListener(final OnSharedPreferenceChangeListener listener) {
-
             }
         };
     }
@@ -229,7 +227,9 @@ public class EventTest {
         // Then
         assertThat(
                 this.eventListener.filterEventsBy(SlowEyelidClosureEvent.class, NormalEyeBlinkEvent.class),
-                contains(instanceOf(SlowEyelidClosureEvent.class), instanceOf(NormalEyeBlinkEvent.class)));
+                contains(
+                        instanceOf(SlowEyelidClosureEvent.class),
+                        instanceOf(NormalEyeBlinkEvent.class)));
     }
 
     @Test
@@ -351,11 +351,14 @@ public class EventTest {
         assertThat(this.eventListener.getEvents(), hasItem(isA(AwakeEvent.class)));
     }
 
-    private void detectorConsumesImage(final int imageResource, final int millis) {
+    // TODO: Test schreiben: Kamera sieht Gesicht + Augen, Gesicht abwenden und wider der Kamera zuwenden. Die durch das Abwenden
+    // entstandene "Pause" soll einfach ignoriert werden.
+
+    private void detectorConsumesImage(final int imageResource, final long millis) {
         this.detector.receiveFrame(this.createFrame(imageResource, millis));
     }
 
-    private Frame createFrame(final int imageResource, final int millis) {
+    private Frame createFrame(final int imageResource, final long millis) {
         final Bitmap bitmap = this.getBitmap(imageResource);
         return new Frame
                 .Builder()
