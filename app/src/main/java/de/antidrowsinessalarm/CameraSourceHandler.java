@@ -6,8 +6,8 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.CameraSource;
-import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.face.FaceDetector;
+import com.google.android.gms.vision.face.LargestFaceFocusingProcessor;
 
 import java.io.IOException;
 
@@ -25,10 +25,17 @@ class CameraSourceHandler {
     }
 
     public void createCameraSource() {
-        final FaceDetector detector = this.createFaceDetector();
+        final FaceDetector detector = FaceDetectorFactory.createFaceDetector(this.faceTrackerActivity.getApplicationContext());
         if (!detector.isOperational()) {
             Log.w(TAG, "Face detector dependencies are not yet available.");
         }
+
+        final LargestFaceFocusingProcessor processor =
+                new LargestFaceFocusingProcessor.Builder(
+                        detector,
+                        new GraphicFaceTrackerFactory(this.faceTrackerActivity).createFaceTracker())
+                .build();
+        detector.setProcessor(processor);
 
         this.cameraSource =
                 new CameraSource.Builder(this.faceTrackerActivity.getApplicationContext(), detector)
@@ -36,12 +43,6 @@ class CameraSourceHandler {
                         .setFacing(CameraSource.CAMERA_FACING_FRONT)
                         .setRequestedFps(30.0f)
                         .build();
-    }
-
-    private FaceDetector createFaceDetector() {
-        return FaceDetectorFactory.createFaceDetector(
-                this.faceTrackerActivity.getApplicationContext(),
-                new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory(this.faceTrackerActivity)).build());
     }
 
     public CameraSource getCameraSource() {

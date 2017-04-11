@@ -35,8 +35,8 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
         this.faceTrackerActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                faceTrackerActivity.getEyesInfoView().setText("" + event);
-                faceTrackerActivity.getImageView().setImageResource(R.drawable.red);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getEyesInfoView().setText("" + event);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.red);
                 DisplayingGraphicFaceTracker.this.mediaPlayer.start();
             }
         });
@@ -47,8 +47,8 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
         this.faceTrackerActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                faceTrackerActivity.getEyesInfoView().setText("" + event);
-                faceTrackerActivity.getImageView().setImageResource(R.drawable.yellow);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getEyesInfoView().setText("" + event);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.yellow);
             }
         });
     }
@@ -58,8 +58,8 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
         this.faceTrackerActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                faceTrackerActivity.getEyesInfoView().setText("" + event);
-                faceTrackerActivity.getImageView().setImageResource(R.drawable.green);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getEyesInfoView().setText("" + event);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.green);
             }
         });
     }
@@ -102,6 +102,6 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
     public void onDone() {
         Log.i(TAG, "onDone called");
         this.faceTrackerActivity.getGraphicOverlay().remove(this.faceGraphic);
-        this.mediaPlayer.release();
+        // this.mediaPlayer.release();
     }
 }

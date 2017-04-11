@@ -70,10 +70,9 @@ public class EventTest {
                         clock);
         this.eventListener = new EventListener();
         this.drowsyEventDetector.getEventBus().register(this.eventListener);
-        this.detector =
-                FaceDetectorFactory.createFaceDetector(
-                        this.appContext,
-                        new MultiProcessor.Builder<>(this.createFactory()).build());
+        this.detector = FaceDetectorFactory.createFaceDetector(this.appContext);
+        // using LargestFaceFocusingProcessor instead of MultiProcessor like in production code leads to an exception on device while running test
+        this.detector.setProcessor(new MultiProcessor.Builder<>(this.createFactory()).build());
     }
 
     @NonNull
@@ -353,6 +352,28 @@ public class EventTest {
 
     // TODO: Test schreiben: Kamera sieht Gesicht + Augen, Gesicht abwenden und wider der Kamera zuwenden. Die durch das Abwenden
     // entstandene "Pause" soll einfach ignoriert werden.
+//    @Test
+//    public void shouldCreateAwakeEvent2() {
+//        // Given
+//        final MockedClock clock = new MockedClock();
+//        this.setup(clock);
+//
+//        // When
+//        clock.setNow(new Instant(0));
+//        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+//
+//        clock.setNow(new Instant(1500));
+//        this.detectorConsumesImage(R.drawable.eyes_opened, 1500);
+//
+//        clock.setNow(new Instant(1000));
+//        this.detectorConsumesImage(R.drawable.face_not_visible, 1000);
+//
+//        clock.setNow(new Instant(2000));
+//        this.detectorConsumesImage(R.drawable.eyes_opened, 2000);
+//
+//        // Then
+//        assertThat(this.eventListener.getEvents(), hasItem(isA(AwakeEvent.class)));
+//    }
 
     private void detectorConsumesImage(final int imageResource, final long millis) {
         this.detector.receiveFrame(this.createFrame(imageResource, millis));

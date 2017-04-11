@@ -1,9 +1,9 @@
 package de.antidrowsinessalarm;
 
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 
@@ -11,7 +11,7 @@ import de.antidrowsinessalarm.eventproducer.DefaultConfigFactory;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetector;
 import de.antidrowsinessalarm.eventproducer.DrowsyEventDetectorConfig;
 
-class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
+class GraphicFaceTrackerFactory {
 
     private static final String TAG = "FaceTrackerFactory";
 
@@ -21,8 +21,8 @@ class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
         this.faceTrackerActivity = faceTrackerActivity;
     }
 
-    @Override
-    public Tracker<Face> create(final Face face) {
+    @NonNull
+    public Tracker<Face> createFaceTracker() {
         final DefaultConfigFactory configFactory = new DefaultConfigFactory(PreferenceManager.getDefaultSharedPreferences(this.faceTrackerActivity));
         DrowsyEventDetectorConfig drowsyEventDetectorConfig = DrowsyEventDetectorConfig
                 .builder()
