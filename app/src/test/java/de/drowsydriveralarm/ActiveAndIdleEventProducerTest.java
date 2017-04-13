@@ -1,0 +1,64 @@
+package de.drowsydriveralarm;
+
+import com.google.android.gms.vision.Tracker;
+import com.google.android.gms.vision.face.Face;
+import com.google.common.eventbus.EventBus;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import de.drowsydriveralarm.event.AppActiveEvent;
+import de.drowsydriveralarm.eventproducer.ActiveAndIdleEventProducer;
+import de.drowsydriveralarm.eventproducer.DefaultConfigFactory;
+import de.drowsydriveralarm.eventproducer.DrowsyEventProducer;
+import de.drowsydriveralarm.eventproducer.EyesClosedEventProducer;
+import de.drowsydriveralarm.eventproducer.EyesOpenedEventProducer;
+import de.drowsydriveralarm.eventproducer.NormalEyeBlinkEventProducer;
+import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventProducer;
+import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventsProvider;
+
+import static de.drowsydriveralarm.EventProducingGraphicFaceTrackerTest.createFaceWithEyesClosed;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.core.Is.isA;
+
+public class ActiveAndIdleEventProducerTest {
+
+    private EventListener eventListener;
+    private Tracker<Face> tracker;
+
+    @Before
+    public void setup() {
+        // Given
+        this.eventListener = new EventListener();
+        final EventBus eventBus = new EventBus();
+        eventBus.register(this.eventListener);
+        final DefaultConfigFactory configFactory = new DefaultConfigFactory(SharedPreferencesTestFactory.createSharedPreferences());
+        // TODO: DRY with DrowsyEventDetector
+        eventBus.register(new NormalEyeBlinkEventProducer(configFactory.getSlowEyelidClosureMinDuration(), eventBus));
+        eventBus.register(new SlowEyelidClosureEventProducer(configFactory.getSlowEyelidClosureMinDuration(), eventBus));
+        eventBus.register(new EyesOpenedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
+        eventBus.register(new EyesClosedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
+        eventBus.register(new ActiveAndIdleEventProducer(eventBus));
+
+        this.tracker =
+                new CompositeFaceTracker(
+                        new ActiveAndIdleEventProducer(eventBus),
+                        new EventProducingGraphicFaceTracker(
+                                eventBus,
+                                new DrowsyEventProducer(
+                                        configFactory.getConfig(),
+                                        eventBus,
+                                        new SlowEyelidClosureEventsProvider(configFactory.getTimeWindow())),
+                                new SystemClock()));
+    }
+
+    @Test
+    public void shouldCreateActiveAndIdleEvents() {
+        // When
+        this.tracker.onNewItem(1, createFaceWithEyesClosed());
+
+        // Then
+        assertThat(this.eventListener.getEvents(), hasItem(isA(AppActiveEvent.class)));
+    }
+}
