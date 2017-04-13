@@ -23,31 +23,53 @@ public class FaceTrackingActiveAndIdleEventProducer extends Tracker<Face> {
 
     @Override
     public void onNewItem(final int i, final Face face) {
-        this.active = Optional.of(true);
-        this.eventBus.post(new AppActiveEvent(this.clock.now()));
+        if(this.isUnknown() || this.isIdle()) {
+            this.setActive();
+            this.eventBus.post(new AppActiveEvent(this.clock.now()));
+        }
     }
 
     @Override
     public void onUpdate(final Detector.Detections<Face> detections, final Face face) {
-        if (!this.active.isPresent() || !this.active.get()) {
-            this.active = Optional.of(true);
+        if (this.isUnknown() || this.isIdle()) {
+            this.setActive();
             this.eventBus.post(new AppActiveEvent(this.clock.now()));
         }
     }
 
     @Override
     public void onMissing(final Detector.Detections<Face> detections) {
-        if (!this.active.isPresent() || this.active.get()) {
-            this.active = Optional.of(false);
+        if (this.isUnknown() || this.isActive()) {
+            this.setIdle();
             this.eventBus.post(new AppIdleEvent(this.clock.now()));
         }
     }
 
     @Override
     public void onDone() {
-        if (!this.active.isPresent() || this.active.get()) {
-            this.active = Optional.of(false);
+        if (this.isUnknown() || this.isActive()) {
+            this.setIdle();
             this.eventBus.post(new AppIdleEvent(this.clock.now()));
         }
+    }
+
+    private boolean isUnknown() {
+        return !this.active.isPresent();
+    }
+
+    private Boolean isActive() {
+        return this.active.get();
+    }
+
+    private void setActive() {
+        this.active = Optional.of(true);
+    }
+
+    private boolean isIdle() {
+        return !this.isActive();
+    }
+
+    private void setIdle() {
+        this.active = Optional.of(false);
     }
 }
