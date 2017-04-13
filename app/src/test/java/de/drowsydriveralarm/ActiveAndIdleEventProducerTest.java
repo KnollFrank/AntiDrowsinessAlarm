@@ -57,7 +57,7 @@ public class ActiveAndIdleEventProducerTest {
     }
 
     @Test
-    public void shouldCreateAppActiveEvent() {
+    public void shouldCreateAppActiveEvent_onNewItem() {
         // When
         this.tracker.onNewItem(1, createFaceWithEyesClosed());
 
@@ -66,10 +66,18 @@ public class ActiveAndIdleEventProducerTest {
     }
 
     @Test
-    public void shouldCreateAppIdleEvent() {
+    public void shouldCreateAppIdleEvent_onMissing() {
         // When
-        this.tracker.onNewItem(1, createFaceWithEyesClosed());
         this.tracker.onMissing(getFaceDetections(new Instant(501)));
+
+        // Then
+        assertThat(this.eventListener.getEvents(), hasItem(isA(AppIdleEvent.class)));
+    }
+
+    @Test
+    public void shouldCreateAppIdleEvent_onDone() {
+        // When
+        this.tracker.onDone();
 
         // Then
         assertThat(this.eventListener.getEvents(), hasItem(isA(AppIdleEvent.class)));
