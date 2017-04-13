@@ -150,7 +150,7 @@ public class EventTest {
     @Test
     public void testOpen() {
         // When
-        this.detectorConsumesImage(R.drawable.eyes_opened, 0);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 0);
 
         // Thent
         assertThat(this.eventListener.filterEventsBy(EyesOpenedEvent.class), contains(instanceOf(EyesOpenedEvent.class)));
@@ -159,7 +159,7 @@ public class EventTest {
     @Test
     public void testClose() {
         // When
-        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 0);
 
         // Then
         assertThat(this.eventListener.filterEventsBy(EyesClosedEvent.class), contains(instanceOf(EyesClosedEvent.class)));
@@ -168,8 +168,8 @@ public class EventTest {
     @Test
     public void testOpenClose() {
         // When
-        this.detectorConsumesImage(R.drawable.eyes_opened, 0);
-        this.detectorConsumesImage(R.drawable.eyes_closed, 1000);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 0);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 1000);
 
         // Then
         assertThat(
@@ -182,9 +182,9 @@ public class EventTest {
     @Test
     public void testOpenCloseOpen() {
         // When
-        this.detectorConsumesImage(R.drawable.eyes_opened, 0);
-        this.detectorConsumesImage(R.drawable.eyes_closed, 1000);
-        this.detectorConsumesImage(R.drawable.eyes_opened, 2000);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 0);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 1000);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 2000);
 
         // Then
         assertThat(
@@ -198,8 +198,8 @@ public class EventTest {
     @Test
     public void shouldCreateSlowEyelidClosureEvent() {
         // When
-        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
-        this.detectorConsumesImage(R.drawable.eyes_opened, 501);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 0);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 501);
 
         // Then
         assertThat(this.eventListener.filterEventsBy(SlowEyelidClosureEvent.class), contains(instanceOf(SlowEyelidClosureEvent.class)));
@@ -208,8 +208,8 @@ public class EventTest {
     @Test
     public void shouldCreateNormalEyeBlinkEvent() {
         // When
-        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
-        this.detectorConsumesImage(R.drawable.eyes_opened, 499);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 0);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 499);
 
         // Then
         assertThat(this.eventListener.filterEventsBy(NormalEyeBlinkEvent.class), contains(instanceOf(NormalEyeBlinkEvent.class)));
@@ -218,10 +218,10 @@ public class EventTest {
     @Test
     public void shouldCreateSlowEyelidClosureEventAndNormalEyeBlinkEvent() {
         // When
-        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
-        this.detectorConsumesImage(R.drawable.eyes_opened, 501);
-        this.detectorConsumesImage(R.drawable.eyes_closed, 600);
-        this.detectorConsumesImage(R.drawable.eyes_opened, 600 + 499);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 0);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 501);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 600);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 600 + 499);
 
         // Then
         assertThat(
@@ -239,14 +239,14 @@ public class EventTest {
 
         // When
         clock.setNow(new Instant(0));
-        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 0);
 
         clock.setNow(new Instant(5000));
-        this.detectorConsumesImage(R.drawable.eyes_opened, 5000);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 5000);
 
         clock.setNow(new Instant(5001));
         // dummy image in order to give DrowsyEventProducer a chance to produce a DrowsyEvent
-        this.detectorConsumesImage(R.drawable.eyes_closed, 5001);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 5001);
 
         // Then
         assertThat(this.eventListener.getEvents(), hasItem(isA(DrowsyEvent.class)));
@@ -260,10 +260,10 @@ public class EventTest {
 
         // When
         clock.setNow(new Instant(0));
-        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 0);
 
         clock.setNow(new Instant(15000));
-        this.detectorConsumesImage(R.drawable.eyes_closed, 15000);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 15000);
 
         // Then
         final double perclos = 1.0; // > 0.15
@@ -278,16 +278,16 @@ public class EventTest {
 
         // When
         clock.setNow(new Instant(0));
-        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 0);
 
         clock.setNow(new Instant(501));
-        this.detectorConsumesImage(R.drawable.eyes_opened, 501);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 501);
 
         clock.setNow(new Instant(510));
-        this.detectorConsumesImage(R.drawable.eyes_closed, 510);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 510);
 
         clock.setNow(new Instant(15000));
-        this.detectorConsumesImage(R.drawable.eyes_closed, 15000);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 15000);
 
         // Then
         final double perclos = (501.0 + (15000.0 - 510.0)) / 15000.0; // = 0.9994 > 0.15
@@ -302,13 +302,13 @@ public class EventTest {
 
         // When
         clock.setNow(new Instant(0));
-        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 0);
 
         clock.setNow(new Instant(499));
-        this.detectorConsumesImage(R.drawable.eyes_opened, 499);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 499);
 
         clock.setNow(new Instant(14000));
-        this.detectorConsumesImage(R.drawable.eyes_closed_opened, 14000);
+        this.detectorReceivesImage(R.drawable.eyes_closed_opened, 14000);
 
         // Then
         final double perclos = 0.0;
@@ -323,14 +323,14 @@ public class EventTest {
 
         // When
         clock.setNow(new Instant(0));
-        this.detectorConsumesImage(R.drawable.eyes_closed, 0);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 0);
 
         clock.setNow(new Instant(1500));
-        this.detectorConsumesImage(R.drawable.eyes_opened, 1500);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 1500);
 
         clock.setNow(new Instant(1501));
         // dummy image in order to give DrowsyEventProducer a chance to produce a DrowsyEvent
-        this.detectorConsumesImage(R.drawable.eyes_closed, 1501);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 1501);
 
         // Then
         assertThat(this.eventListener.getEvents(), hasItem(isA(LikelyDrowsyEvent.class)));
@@ -344,7 +344,7 @@ public class EventTest {
 
         // When
         clock.setNow(new Instant(0));
-        this.detectorConsumesImage(R.drawable.eyes_opened, 0);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 0);
 
         // Then
         assertThat(this.eventListener.getEvents(), hasItem(isA(AwakeEvent.class)));
@@ -355,9 +355,9 @@ public class EventTest {
     @Test
     public void shouldNotLooseEventsWhenLoosingFace() {
         // When
-        this.detectorConsumesImage(R.drawable.eyes_opened, 0);
-        this.detectorConsumesImage(R.drawable.face_not_visible, 1000);
-        this.detectorConsumesImage(R.drawable.eyes_closed, 2000);
+        this.detectorReceivesImage(R.drawable.eyes_opened, 0);
+        this.detectorReceivesImage(R.drawable.face_not_visible, 1000);
+        this.detectorReceivesImage(R.drawable.eyes_closed, 2000);
 
         // Then
         assertThat(
@@ -368,7 +368,7 @@ public class EventTest {
 
     }
 
-    private void detectorConsumesImage(final int imageResource, final long millis) {
+    private void detectorReceivesImage(final int imageResource, final long millis) {
         this.detector.receiveFrame(this.createFrame(imageResource, millis));
     }
 
