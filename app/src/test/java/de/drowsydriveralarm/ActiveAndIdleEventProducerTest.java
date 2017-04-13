@@ -97,8 +97,6 @@ public class ActiveAndIdleEventProducerTest {
         assertThat(this.eventListener.getEvents(), hasItem(isA(AppIdleEvent.class)));
     }
 
-    // folgende dazwischen befindliche onMissing Ereignisse kommen vor, falls man einen Teil der Kamera zudeckt, so dass das ganze Gesicht
-    // momentan nicht erkannt werden kann, aber nach dem Wiederaufdecken der Kamera das Gesicht mit onUpdate wieder erkannt wird:
     @Test
     public void testCameraPartiallyCovered() {
         // When
@@ -147,7 +145,6 @@ public class ActiveAndIdleEventProducerTest {
                         new AppIdleEvent(new Instant(120))));
     }
 
-    // altes Gesicht verschwindet (onMissing, onDone 22:15:07), neues Gesicht wird erkannt (22:15:19 onNewItem):
     @Test
     public void testFaceDisappearsAndReappears() {
         // When
@@ -190,7 +187,6 @@ public class ActiveAndIdleEventProducerTest {
                         new AppIdleEvent(new Instant(60))));
     }
 
-// Gesicht der Kamera zeigen und wieder aus dem Kamerasichtfeld entfernen:
     @Test
     public void testStarAtCameraAndThenGoAway() {
         // When
