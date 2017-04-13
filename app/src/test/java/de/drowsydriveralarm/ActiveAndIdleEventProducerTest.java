@@ -4,10 +4,12 @@ import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
 
+import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.drowsydriveralarm.event.AppActiveEvent;
+import de.drowsydriveralarm.event.AppIdleEvent;
 import de.drowsydriveralarm.eventproducer.ActiveAndIdleEventProducer;
 import de.drowsydriveralarm.eventproducer.DefaultConfigFactory;
 import de.drowsydriveralarm.eventproducer.DrowsyEventProducer;
@@ -18,6 +20,7 @@ import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventProducer;
 import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventsProvider;
 
 import static de.drowsydriveralarm.EventProducingGraphicFaceTrackerTest.createFaceWithEyesClosed;
+import static de.drowsydriveralarm.EventProducingGraphicFaceTrackerTest.getFaceDetections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.core.Is.isA;
@@ -54,11 +57,21 @@ public class ActiveAndIdleEventProducerTest {
     }
 
     @Test
-    public void shouldCreateActiveAndIdleEvents() {
+    public void shouldCreateAppActiveEvent() {
         // When
         this.tracker.onNewItem(1, createFaceWithEyesClosed());
 
         // Then
         assertThat(this.eventListener.getEvents(), hasItem(isA(AppActiveEvent.class)));
+    }
+
+    @Test
+    public void shouldCreateAppIdleEvent() {
+        // When
+        this.tracker.onNewItem(1, createFaceWithEyesClosed());
+        this.tracker.onMissing(getFaceDetections(new Instant(501)));
+
+        // Then
+        assertThat(this.eventListener.getEvents(), hasItem(isA(AppIdleEvent.class)));
     }
 }

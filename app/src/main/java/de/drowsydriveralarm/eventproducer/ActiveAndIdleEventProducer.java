@@ -6,6 +6,7 @@ import com.google.android.gms.vision.face.Face;
 import com.google.common.eventbus.EventBus;
 
 import de.drowsydriveralarm.event.AppActiveEvent;
+import de.drowsydriveralarm.event.AppIdleEvent;
 
 public class ActiveAndIdleEventProducer extends Tracker<Face> {
 
@@ -27,7 +28,7 @@ public class ActiveAndIdleEventProducer extends Tracker<Face> {
 
     @Override
     public void onMissing(Detector.Detections<Face> detections) {
-        super.onMissing(detections);
+        this.eventBus.post(new AppIdleEvent(null));
     }
 
     @Override
