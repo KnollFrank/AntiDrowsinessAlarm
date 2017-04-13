@@ -42,7 +42,6 @@ public class ActiveAndIdleEventProducerTest {
         eventBus.register(new SlowEyelidClosureEventProducer(configFactory.getSlowEyelidClosureMinDuration(), eventBus));
         eventBus.register(new EyesOpenedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
         eventBus.register(new EyesClosedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
-        eventBus.register(new ActiveAndIdleEventProducer(eventBus));
 
         this.tracker =
                 new CompositeFaceTracker(
