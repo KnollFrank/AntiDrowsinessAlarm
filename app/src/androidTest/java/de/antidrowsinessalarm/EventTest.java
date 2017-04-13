@@ -350,8 +350,6 @@ public class EventTest {
         assertThat(this.eventListener.getEvents(), hasItem(isA(AwakeEvent.class)));
     }
 
-    // TODO: Test schreiben: Kamera sieht Gesicht + Augen, Gesicht abwenden und wider der Kamera zuwenden. Die durch das Abwenden
-    // entstandene "Pause" soll einfach ignoriert werden.
     @Test
     public void shouldNotLooseEventsWhenLoosingFace() {
         // When
@@ -365,7 +363,6 @@ public class EventTest {
                 contains(
                         instanceOf(EyesOpenedEvent.class),
                         instanceOf(EyesClosedEvent.class)));
-
     }
 
     private void detectorReceivesImage(final int imageResource, final long millis) {
