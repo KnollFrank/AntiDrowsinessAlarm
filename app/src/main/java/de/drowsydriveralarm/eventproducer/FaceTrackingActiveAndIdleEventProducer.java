@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
+import com.google.common.base.Supplier;
 import com.google.common.eventbus.EventBus;
 
 import org.joda.time.Instant;
@@ -12,6 +13,7 @@ import org.joda.time.Instant;
 import de.drowsydriveralarm.Clock;
 import de.drowsydriveralarm.event.AppActiveEvent;
 import de.drowsydriveralarm.event.AppIdleEvent;
+import de.drowsydriveralarm.event.Event;
 
 public class FaceTrackingActiveAndIdleEventProducer extends Tracker<Face> {
 
@@ -26,56 +28,56 @@ public class FaceTrackingActiveAndIdleEventProducer extends Tracker<Face> {
 
     @Override
     public void onNewItem(final int i, final Face face) {
-        this.onTransitionFromUnknownOrIdle2Active(this.createAppActiveEvent(this.clock.now()));
+        this.onTransitionFromUnknownOrIdle2ActivePostEvent(this.createAppActiveEvent(this.clock.now()));
     }
 
     @Override
     public void onUpdate(final Detector.Detections<Face> detections, final Face face) {
-        this.onTransitionFromUnknownOrIdle2Active(this.createAppActiveEvent(this.getInstant(detections)));
+        this.onTransitionFromUnknownOrIdle2ActivePostEvent(this.createAppActiveEvent(this.getInstant(detections)));
     }
 
     @Override
     public void onMissing(final Detector.Detections<Face> detections) {
-        this.onTransitionFromUnknownOrActive2Idle(this.createAppIdleEvent(this.getInstant(detections)));
+        this.onTransitionFromUnknownOrActive2IdlePostEvent(this.createAppIdleEvent(this.getInstant(detections)));
     }
 
     @Override
     public void onDone() {
-        this.onTransitionFromUnknownOrActive2Idle(this.createAppIdleEvent(this.clock.now()));
+        this.onTransitionFromUnknownOrActive2IdlePostEvent(this.createAppIdleEvent(this.clock.now()));
     }
 
-    private void onTransitionFromUnknownOrIdle2Active(final Runnable runnable) {
+    private void onTransitionFromUnknownOrIdle2ActivePostEvent(final Supplier<Event> eventSupplier) {
         if(this.activeState.isUnknown() || this.activeState.isIdle()) {
             this.activeState.setActive();
-            runnable.run();
+            this.eventBus.post(eventSupplier.get());
         }
     }
 
-    private void onTransitionFromUnknownOrActive2Idle(final Runnable runnable) {
+    private void onTransitionFromUnknownOrActive2IdlePostEvent(final Supplier<Event> eventSupplier) {
         if (this.activeState.isUnknown() || this.activeState.isActive()) {
             this.activeState.setIdle();
-            runnable.run();
+            this.eventBus.post(eventSupplier.get());
         }
     }
 
     @NonNull
-    private Runnable createAppActiveEvent(final Instant instant) {
-        return new Runnable() {
+    private Supplier<Event> createAppActiveEvent(final Instant instant) {
+        return new Supplier<Event>() {
+
             @Override
-            public void run() {
-                FaceTrackingActiveAndIdleEventProducer.this.eventBus.post(
-                        new AppActiveEvent(instant));
+            public Event get() {
+                return new AppActiveEvent(instant);
             }
         };
     }
 
     @NonNull
-    private Runnable createAppIdleEvent(final Instant instant) {
-        return new Runnable() {
+    private Supplier<Event> createAppIdleEvent(final Instant instant) {
+        return new Supplier<Event>() {
+
             @Override
-            public void run() {
-                FaceTrackingActiveAndIdleEventProducer.this.eventBus.post(
-                        new AppIdleEvent(instant));
+            public Event get() {
+                return new AppIdleEvent(instant);
             }
         };
     }
