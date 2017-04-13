@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.antidrowsinessalarm"
+    package="de.drowsydriveralarm"
     android:installLocation="auto"
     android:versionCode="1"
     android:versionName="1">
@@ -20,7 +20,7 @@
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
-        android:label="AntiDrowsinessAlarm"
+        android:label="DrowsyDriverAlarm"
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <meta-data
             android:name="com.google.android.gms.version"
@@ -30,9 +30,9 @@
             android:value="face" />
 
         <activity
-            android:name=".FaceTrackerActivity"
+            android:name="de.drowsydriveralarm.FaceTrackerActivity"
             android:icon="@drawable/icon"
-            android:label="AntiDrowsinessAlarm"
+            android:label="DrowsyDriverAlarm"
             android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,13 +42,13 @@
         </activity>
 
         <activity
-            android:name=".SettingsActivity"
+            android:name="de.drowsydriveralarm.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".FaceTrackerActivity"
+            android:parentActivityName="de.drowsydriveralarm.FaceTrackerActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".FaceTrackerActivity" />
+                android:value="de.drowsydriveralarm.FaceTrackerActivity" />
         </activity>
     </application>
 

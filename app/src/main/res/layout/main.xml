@@ -28,16 +28,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <de.antidrowsinessalarm.camera.CameraSourcePreview
+    <de.drowsydriveralarm.camera.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <de.antidrowsinessalarm.camera.GraphicOverlay
+        <de.drowsydriveralarm.camera.GraphicOverlay
             android:id="@+id/faceOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </de.antidrowsinessalarm.camera.CameraSourcePreview>
+    </de.drowsydriveralarm.camera.CameraSourcePreview>
 
 </LinearLayout>
