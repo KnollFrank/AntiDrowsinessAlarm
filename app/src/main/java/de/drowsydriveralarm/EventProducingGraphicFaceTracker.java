@@ -51,11 +51,11 @@ public class EventProducingGraphicFaceTracker extends Tracker<Face> {
         this.drowsyEventProducer.maybeProduceDrowsyEvent(this.timeConverter.convertToFrameTime(clockTime));
     }
 
-    private boolean areBothEyesRecognized(Face face) {
+    private boolean areBothEyesRecognized(final Face face) {
         return this.getLandmarkTypes(face.getLandmarks()).containsAll(Arrays.asList(Landmark.LEFT_EYE, Landmark.RIGHT_EYE));
     }
 
-    private ImmutableList<Integer> getLandmarkTypes(List<Landmark> landmarks) {
+    private ImmutableList<Integer> getLandmarkTypes(final List<Landmark> landmarks) {
         return FluentIterable
                 .from(landmarks)
                 .transform(
