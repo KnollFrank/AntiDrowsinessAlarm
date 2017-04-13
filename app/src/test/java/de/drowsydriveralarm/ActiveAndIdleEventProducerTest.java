@@ -189,4 +189,46 @@ public class ActiveAndIdleEventProducerTest {
                         new AppActiveEvent(new Instant(30)),
                         new AppIdleEvent(new Instant(60))));
     }
+
+// Gesicht der Kamera zeigen und wieder aus dem Kamerasichtfeld entfernen:
+    @Test
+    public void testStarAtCameraAndThenGoAway() {
+        // When
+        final MockedClock clock = new MockedClock();
+        this.setup(clock);
+
+        clock.setNow(new Instant(0));
+        this.tracker.onNewItem(1, createFaceWithEyesClosed());
+
+        clock.setNow(new Instant(10));
+        this.tracker.onUpdate(getFaceDetections(new Instant(10)), createFaceWithEyesClosed());
+
+        clock.setNow(new Instant(20));
+        this.tracker.onUpdate(getFaceDetections(new Instant(20)), createFaceWithEyesClosed());
+
+        clock.setNow(new Instant(30));
+        this.tracker.onUpdate(getFaceDetections(new Instant(30)), createFaceWithEyesClosed());
+
+        clock.setNow(new Instant(40));
+        this.tracker.onUpdate(getFaceDetections(new Instant(40)), createFaceWithEyesClosed());
+
+        clock.setNow(new Instant(50));
+        this.tracker.onUpdate(getFaceDetections(new Instant(50)), createFaceWithEyesClosed());
+
+        clock.setNow(new Instant(60));
+        this.tracker.onMissing(getFaceDetections(new Instant(60)));
+
+        clock.setNow(new Instant(70));
+        this.tracker.onMissing(getFaceDetections(new Instant(70)));
+
+        clock.setNow(new Instant(80));
+        this.tracker.onDone();
+
+        // Then
+        assertThat(
+                this.eventListener.filterEventsBy(AppActiveEvent.class, AppIdleEvent.class),
+                contains(
+                        new AppActiveEvent(new Instant(0)),
+                        new AppIdleEvent(new Instant(60))));
+    }
 }
