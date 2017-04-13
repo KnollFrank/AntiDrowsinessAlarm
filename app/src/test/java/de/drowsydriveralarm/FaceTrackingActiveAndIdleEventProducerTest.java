@@ -10,11 +10,11 @@ import org.junit.Test;
 
 import de.drowsydriveralarm.event.AppActiveEvent;
 import de.drowsydriveralarm.event.AppIdleEvent;
-import de.drowsydriveralarm.eventproducer.ActiveAndIdleEventProducer;
 import de.drowsydriveralarm.eventproducer.DefaultConfigFactory;
 import de.drowsydriveralarm.eventproducer.DrowsyEventProducer;
 import de.drowsydriveralarm.eventproducer.EyesClosedEventProducer;
 import de.drowsydriveralarm.eventproducer.EyesOpenedEventProducer;
+import de.drowsydriveralarm.eventproducer.FaceTrackingActiveAndIdleEventProducer;
 import de.drowsydriveralarm.eventproducer.NormalEyeBlinkEventProducer;
 import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventProducer;
 import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventsProvider;
@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.isA;
 
-public class ActiveAndIdleEventProducerTest {
+public class FaceTrackingActiveAndIdleEventProducerTest {
 
     private EventListener eventListener;
     private Tracker<Face> tracker;
@@ -50,7 +50,7 @@ public class ActiveAndIdleEventProducerTest {
 
         this.tracker =
                 new CompositeFaceTracker(
-                        new ActiveAndIdleEventProducer(eventBus, clock),
+                        new FaceTrackingActiveAndIdleEventProducer(eventBus, clock),
                         new EventProducingGraphicFaceTracker(
                                 eventBus,
                                 new DrowsyEventProducer(

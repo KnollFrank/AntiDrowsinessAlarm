@@ -10,13 +10,13 @@ import de.drowsydriveralarm.Clock;
 import de.drowsydriveralarm.event.AppActiveEvent;
 import de.drowsydriveralarm.event.AppIdleEvent;
 
-public class ActiveAndIdleEventProducer extends Tracker<Face> {
+public class FaceTrackingActiveAndIdleEventProducer extends Tracker<Face> {
 
     private final EventBus eventBus;
     private final Clock clock;
     private Optional<Boolean> active = Optional.absent();
 
-    public ActiveAndIdleEventProducer(final EventBus eventBus, final Clock clock) {
+    public FaceTrackingActiveAndIdleEventProducer(final EventBus eventBus, final Clock clock) {
         this.eventBus = eventBus;
         this.clock = clock;
     }
