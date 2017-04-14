@@ -1,4 +1,4 @@
-package de.drowsydriveralarm;
+package de.drowsydriveralarm.eventproducer;
 
 import com.google.common.eventbus.EventBus;
 
@@ -7,16 +7,14 @@ import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.drowsydriveralarm.EventListener;
+import de.drowsydriveralarm.SystemClock;
 import de.drowsydriveralarm.event.AwakeEvent;
 import de.drowsydriveralarm.event.DrowsyEvent;
 import de.drowsydriveralarm.event.Event;
 import de.drowsydriveralarm.event.LikelyDrowsyEvent;
 import de.drowsydriveralarm.event.SlowEyelidClosureEvent;
 import de.drowsydriveralarm.event.UpdateEvent;
-import de.drowsydriveralarm.eventproducer.DefaultConfigFactory;
-import de.drowsydriveralarm.eventproducer.DrowsyEventDetector;
-import de.drowsydriveralarm.eventproducer.DrowsyEventDetectorConfig;
-import de.drowsydriveralarm.eventproducer.DrowsyEventProducer;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;

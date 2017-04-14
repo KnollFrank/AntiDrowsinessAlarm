@@ -1,4 +1,4 @@
-package de.drowsydriveralarm;
+package de.drowsydriveralarm.eventproducer;
 
 import android.support.annotation.NonNull;
 

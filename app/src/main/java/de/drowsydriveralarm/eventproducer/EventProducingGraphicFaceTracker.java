@@ -1,4 +1,4 @@
-package de.drowsydriveralarm;
+package de.drowsydriveralarm.eventproducer;
 
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
@@ -14,8 +14,8 @@ import org.joda.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
+import de.drowsydriveralarm.Clock;
 import de.drowsydriveralarm.event.UpdateEvent;
-import de.drowsydriveralarm.eventproducer.DrowsyEventProducer;
 
 public class EventProducingGraphicFaceTracker extends Tracker<Face> {
 

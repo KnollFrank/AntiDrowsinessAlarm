@@ -1,4 +1,4 @@
-package de.drowsydriveralarm;
+package de.drowsydriveralarm.eventproducer;
 
 import android.graphics.PointF;
 import android.support.annotation.NonNull;
@@ -21,18 +21,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import de.drowsydriveralarm.EventListener;
+import de.drowsydriveralarm.SystemClock;
 import de.drowsydriveralarm.event.Event;
 import de.drowsydriveralarm.event.EyesClosedEvent;
 import de.drowsydriveralarm.event.EyesOpenedEvent;
 import de.drowsydriveralarm.event.NormalEyeBlinkEvent;
 import de.drowsydriveralarm.event.SlowEyelidClosureEvent;
-import de.drowsydriveralarm.eventproducer.DefaultConfigFactory;
-import de.drowsydriveralarm.eventproducer.DrowsyEventProducer;
-import de.drowsydriveralarm.eventproducer.EyesClosedEventProducer;
-import de.drowsydriveralarm.eventproducer.EyesOpenedEventProducer;
-import de.drowsydriveralarm.eventproducer.NormalEyeBlinkEventProducer;
-import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventProducer;
-import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventsProvider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;

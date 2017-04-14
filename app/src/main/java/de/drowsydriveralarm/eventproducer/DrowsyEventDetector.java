@@ -3,7 +3,6 @@ package de.drowsydriveralarm.eventproducer;
 import com.google.common.eventbus.EventBus;
 
 import de.drowsydriveralarm.Clock;
-import de.drowsydriveralarm.EventProducingGraphicFaceTracker;
 import de.drowsydriveralarm.listener.EventLogger;
 
 public class DrowsyEventDetector {

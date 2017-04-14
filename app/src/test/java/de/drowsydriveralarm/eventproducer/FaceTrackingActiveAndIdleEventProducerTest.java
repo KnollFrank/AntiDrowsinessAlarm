@@ -1,4 +1,4 @@
-package de.drowsydriveralarm;
+package de.drowsydriveralarm.eventproducer;
 
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
@@ -8,20 +8,17 @@ import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.drowsydriveralarm.Clock;
+import de.drowsydriveralarm.CompositeFaceTracker;
+import de.drowsydriveralarm.EventListener;
+import de.drowsydriveralarm.MockedClock;
+import de.drowsydriveralarm.SystemClock;
 import de.drowsydriveralarm.event.AppActiveEvent;
 import de.drowsydriveralarm.event.AppIdleEvent;
-import de.drowsydriveralarm.eventproducer.DefaultConfigFactory;
-import de.drowsydriveralarm.eventproducer.DrowsyEventProducer;
-import de.drowsydriveralarm.eventproducer.EyesClosedEventProducer;
-import de.drowsydriveralarm.eventproducer.EyesOpenedEventProducer;
-import de.drowsydriveralarm.eventproducer.FaceTrackingActiveAndIdleEventProducer;
-import de.drowsydriveralarm.eventproducer.NormalEyeBlinkEventProducer;
-import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventProducer;
-import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventsProvider;
 
-import static de.drowsydriveralarm.EventProducingGraphicFaceTrackerTest.createFaceWithEyesClosed;
-import static de.drowsydriveralarm.EventProducingGraphicFaceTrackerTest.createFaceWithEyesOpened;
-import static de.drowsydriveralarm.EventProducingGraphicFaceTrackerTest.getFaceDetections;
+import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createFaceWithEyesClosed;
+import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createFaceWithEyesOpened;
+import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.getFaceDetections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
