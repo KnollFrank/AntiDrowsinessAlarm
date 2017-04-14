@@ -20,6 +20,7 @@ import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventProducer;
 import de.drowsydriveralarm.eventproducer.SlowEyelidClosureEventsProvider;
 
 import static de.drowsydriveralarm.EventProducingGraphicFaceTrackerTest.createFaceWithEyesClosed;
+import static de.drowsydriveralarm.EventProducingGraphicFaceTrackerTest.createFaceWithEyesOpened;
 import static de.drowsydriveralarm.EventProducingGraphicFaceTrackerTest.getFaceDetections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -188,7 +189,7 @@ public class FaceTrackingActiveAndIdleEventProducerTest {
     }
 
     @Test
-    public void testStarAtCameraAndThenGoAway() {
+    public void testStareAtCameraAndThenGoAway() {
         // When
         final MockedClock clock = new MockedClock();
         this.setup(clock);
@@ -197,19 +198,19 @@ public class FaceTrackingActiveAndIdleEventProducerTest {
         this.tracker.onNewItem(1, createFaceWithEyesClosed());
 
         clock.setNow(new Instant(10));
-        this.tracker.onUpdate(getFaceDetections(new Instant(10)), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(new Instant(10)), createFaceWithEyesOpened());
 
         clock.setNow(new Instant(20));
-        this.tracker.onUpdate(getFaceDetections(new Instant(20)), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(new Instant(20)), createFaceWithEyesOpened());
 
         clock.setNow(new Instant(30));
-        this.tracker.onUpdate(getFaceDetections(new Instant(30)), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(new Instant(30)), createFaceWithEyesOpened());
 
         clock.setNow(new Instant(40));
-        this.tracker.onUpdate(getFaceDetections(new Instant(40)), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(new Instant(40)), createFaceWithEyesOpened());
 
         clock.setNow(new Instant(50));
-        this.tracker.onUpdate(getFaceDetections(new Instant(50)), createFaceWithEyesClosed());
+        this.tracker.onUpdate(getFaceDetections(new Instant(50)), createFaceWithEyesOpened());
 
         clock.setNow(new Instant(60));
         this.tracker.onMissing(getFaceDetections(new Instant(60)));
