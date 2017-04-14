@@ -28,22 +28,30 @@ public class FaceTrackingActiveAndIdleEventProducer extends Tracker<Face> {
 
     @Override
     public void onNewItem(final int i, final Face face) {
-        this.onTransitionFromUnknownOrIdle2ActivePostEvent(this.createAppActiveEvent(this.clock.now()));
+        this.maybePostAppActiveEvent(this.clock.now());
     }
 
     @Override
     public void onUpdate(final Detector.Detections<Face> detections, final Face face) {
-        this.onTransitionFromUnknownOrIdle2ActivePostEvent(this.createAppActiveEvent(this.getInstant(detections)));
+        this.maybePostAppActiveEvent(this.getInstant(detections));
     }
 
     @Override
     public void onMissing(final Detector.Detections<Face> detections) {
-        this.onTransitionFromUnknownOrActive2IdlePostEvent(this.createAppIdleEvent(this.getInstant(detections)));
+        this.maybePostAppIdleEvent(this.getInstant(detections));
     }
 
     @Override
     public void onDone() {
-        this.onTransitionFromUnknownOrActive2IdlePostEvent(this.createAppIdleEvent(this.clock.now()));
+        this.maybePostAppIdleEvent(this.clock.now());
+    }
+
+    private void maybePostAppActiveEvent(final Instant instant) {
+        this.onTransitionFromUnknownOrIdle2ActivePostEvent(this.createAppActiveEvent(instant));
+    }
+
+    private void maybePostAppIdleEvent(final Instant instant) {
+        this.onTransitionFromUnknownOrActive2IdlePostEvent(this.createAppIdleEvent(instant));
     }
 
     private void onTransitionFromUnknownOrIdle2ActivePostEvent(final Supplier<Event> eventSupplier) {
@@ -83,7 +91,7 @@ public class FaceTrackingActiveAndIdleEventProducer extends Tracker<Face> {
     }
 
     @NonNull
-    private Instant getInstant(Detector.Detections<Face> detections) {
+    private Instant getInstant(final Detector.Detections<Face> detections) {
         return new Instant(detections.getFrameMetadata().getTimestampMillis());
     }
 }
