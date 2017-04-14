@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 
 import org.joda.time.Duration;
 
-public class DrowsyEventDetectorConfig {
+public class DrowsyEventDetectorConfig implements IDrowsyEventDetectorConfig {
 
     private final float eyeOpenProbabilityThreshold;
     private final DrowsyEventProducer.Config config;
@@ -22,18 +22,22 @@ public class DrowsyEventDetectorConfig {
         return new DrowsyEventDetectorConfigBuilder();
     }
 
+    @Override
     public float getEyeOpenProbabilityThreshold() {
         return this.eyeOpenProbabilityThreshold;
     }
 
+    @Override
     public DrowsyEventProducer.Config getConfig() {
         return this.config;
     }
 
+    @Override
     public Duration getSlowEyelidClosureMinDuration() {
         return this.slowEyelidClosureMinDuration;
     }
 
+    @Override
     public Duration getTimeWindow() {
         return this.timeWindow;
     }

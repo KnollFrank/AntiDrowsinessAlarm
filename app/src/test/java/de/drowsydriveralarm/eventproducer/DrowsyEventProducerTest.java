@@ -31,7 +31,7 @@ public class DrowsyEventProducerTest {
 
     @Before
     public void setup() {
-        final DefaultConfigFactory configFactory = new DefaultConfigFactory(SharedPreferencesTestFactory.createSharedPreferences());
+        final IDrowsyEventDetectorConfig configFactory = new TestingDrowsyEventDetectorConfig(SharedPreferencesTestFactory.createSharedPreferences());
         final DrowsyEventDetector drowsyEventDetector =
                 new DrowsyEventDetector(
                         DrowsyEventDetectorConfig

@@ -7,9 +7,10 @@ import android.util.Log;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 
-import de.drowsydriveralarm.eventproducer.DefaultConfigFactory;
 import de.drowsydriveralarm.eventproducer.DrowsyEventDetector;
 import de.drowsydriveralarm.eventproducer.DrowsyEventDetectorConfig;
+import de.drowsydriveralarm.eventproducer.IDrowsyEventDetectorConfig;
+import de.drowsydriveralarm.eventproducer.TestingDrowsyEventDetectorConfig;
 
 class GraphicFaceTrackerFactory {
 
@@ -23,8 +24,8 @@ class GraphicFaceTrackerFactory {
 
     @NonNull
     public Tracker<Face> createFaceTracker() {
-        final DefaultConfigFactory configFactory = new DefaultConfigFactory(PreferenceManager.getDefaultSharedPreferences(this.faceTrackerActivity));
-        DrowsyEventDetectorConfig drowsyEventDetectorConfig = DrowsyEventDetectorConfig
+        final IDrowsyEventDetectorConfig configFactory = new TestingDrowsyEventDetectorConfig(PreferenceManager.getDefaultSharedPreferences(this.faceTrackerActivity));
+        final DrowsyEventDetectorConfig drowsyEventDetectorConfig = DrowsyEventDetectorConfig
                 .builder()
                 .withEyeOpenProbabilityThreshold(configFactory.getEyeOpenProbabilityThreshold())
                 .withConfig(configFactory.getConfig())

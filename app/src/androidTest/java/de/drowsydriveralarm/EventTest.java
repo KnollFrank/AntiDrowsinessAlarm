@@ -30,9 +30,9 @@ import de.drowsydriveralarm.event.EyesOpenedEvent;
 import de.drowsydriveralarm.event.LikelyDrowsyEvent;
 import de.drowsydriveralarm.event.NormalEyeBlinkEvent;
 import de.drowsydriveralarm.event.SlowEyelidClosureEvent;
-import de.drowsydriveralarm.eventproducer.DefaultConfigFactory;
 import de.drowsydriveralarm.eventproducer.DrowsyEventDetector;
 import de.drowsydriveralarm.eventproducer.DrowsyEventDetectorConfig;
+import de.drowsydriveralarm.eventproducer.TestingDrowsyEventDetectorConfig;
 
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -56,7 +56,7 @@ public class EventTest {
 
     private void setup(final Clock clock) {
         this.appContext = InstrumentationRegistry.getTargetContext();
-        final DefaultConfigFactory configFactory = new DefaultConfigFactory(this.createSharedPreferences());
+        final TestingDrowsyEventDetectorConfig configFactory = new TestingDrowsyEventDetectorConfig(this.createSharedPreferences());
         this.drowsyEventDetector =
                 new DrowsyEventDetector(
                         DrowsyEventDetectorConfig
