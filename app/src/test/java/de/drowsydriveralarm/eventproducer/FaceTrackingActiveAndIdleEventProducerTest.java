@@ -39,10 +39,9 @@ public class FaceTrackingActiveAndIdleEventProducerTest {
         this.eventListener = new EventListener();
         final EventBus eventBus = new EventBus();
         eventBus.register(this.eventListener);
-        final TestingDrowsyEventDetectorConfig configFactory = new TestingDrowsyEventDetectorConfig(SharedPreferencesTestFactory.createSharedPreferences());
-        // TODO: DRY with DrowsyEventDetector
-        final SlowEyelidClosureEventsProvider slowEyelidClosureEventsProvider = new SlowEyelidClosureEventsProvider(configFactory.getTimeWindow());
-        DrowsyEventDetector.registerEventProducersOnEventBus(eventBus, configFactory, slowEyelidClosureEventsProvider);
+        final IDrowsyEventDetectorConfig config = new TestingDrowsyEventDetectorConfig(SharedPreferencesTestFactory.createSharedPreferences());
+        final EventSubscriberProvider eventSubscriberProvider = new EventSubscriberProvider(eventBus, config);
+        DrowsyEventDetector.registerEventSubscribersOnEventBus(eventSubscriberProvider.getEventSubscribers(), eventBus);
 
         this.tracker =
                 new CompositeFaceTracker(
@@ -50,9 +49,9 @@ public class FaceTrackingActiveAndIdleEventProducerTest {
                         new EventProducingGraphicFaceTracker(
                                 eventBus,
                                 new DrowsyEventProducer(
-                                        configFactory.getConfig(),
+                                        config.getConfig(),
                                         eventBus,
-                                        slowEyelidClosureEventsProvider),
+                                        eventSubscriberProvider.getSlowEyelidClosureEventsProvider()),
                                 clock));
     }
 

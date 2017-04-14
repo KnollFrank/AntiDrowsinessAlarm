@@ -75,20 +75,17 @@ public class EventProducingGraphicFaceTrackerTest {
         this.eventListener = new EventListener();
         final EventBus eventBus = new EventBus();
         eventBus.register(this.eventListener);
-        final TestingDrowsyEventDetectorConfig configFactory = new TestingDrowsyEventDetectorConfig(SharedPreferencesTestFactory.createSharedPreferences());
-        // TODO: DRY with DrowsyEventDetector
-        eventBus.register(new NormalEyeBlinkEventProducer(configFactory.getSlowEyelidClosureMinDuration(), eventBus));
-        eventBus.register(new SlowEyelidClosureEventProducer(configFactory.getSlowEyelidClosureMinDuration(), eventBus));
-        eventBus.register(new EyesOpenedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
-        eventBus.register(new EyesClosedEventProducer(configFactory.getEyeOpenProbabilityThreshold(), eventBus));
+        final IDrowsyEventDetectorConfig config = new TestingDrowsyEventDetectorConfig(SharedPreferencesTestFactory.createSharedPreferences());
+        final EventSubscriberProvider eventSubscriberProvider = new EventSubscriberProvider(eventBus, config);
+        DrowsyEventDetector.registerEventSubscribersOnEventBus(eventSubscriberProvider.getEventSubscribers(), eventBus);
 
         this.tracker =
                 new EventProducingGraphicFaceTracker(
                         eventBus,
                         new DrowsyEventProducer(
-                                configFactory.getConfig(),
+                                config.getConfig(),
                                 eventBus,
-                                new SlowEyelidClosureEventsProvider(configFactory.getTimeWindow())),
+                                eventSubscriberProvider.getSlowEyelidClosureEventsProvider()),
                         new SystemClock());
     }
 
