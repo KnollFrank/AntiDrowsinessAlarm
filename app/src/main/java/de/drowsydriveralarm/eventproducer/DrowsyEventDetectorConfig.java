@@ -11,7 +11,7 @@ public class DrowsyEventDetectorConfig {
     private final Duration slowEyelidClosureMinDuration;
     private final Duration timeWindow;
 
-    DrowsyEventDetectorConfig(DrowsyEventDetectorConfigBuilder builder) {
+    DrowsyEventDetectorConfig(final DrowsyEventDetectorConfigBuilder builder) {
         this.eyeOpenProbabilityThreshold = builder.getEyeOpenProbabilityThreshold();
         this.config = builder.getConfig();
         this.slowEyelidClosureMinDuration = builder.getSlowEyelidClosureMinDuration();

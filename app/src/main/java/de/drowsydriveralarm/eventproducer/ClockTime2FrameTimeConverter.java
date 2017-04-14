@@ -18,7 +18,7 @@ class ClockTime2FrameTimeConverter {
     }
 
     @NonNull
-    public Instant convertToFrameTime(Instant clockTime) {
+    public Instant convertToFrameTime(final Instant clockTime) {
         return clockTime.plus(this.delta);
     }
 }
