@@ -4,6 +4,7 @@ import com.google.common.eventbus.EventBus;
 
 import org.joda.time.Duration;
 import org.joda.time.Instant;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -17,6 +18,16 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class AppIdleCalculatorTest {
+
+    private EventBus eventBus;
+    private AppIdleCalculator appIdleCalculator;
+
+    @Before
+    public void seetup() {
+        this.eventBus = new EventBus();
+        this.appIdleCalculator = new AppIdleCalculator();
+        this.eventBus.register(this.appIdleCalculator);
+    }
 
     @Test
     public void shouldGetAppIdleDuration1() {
@@ -81,41 +92,32 @@ public class AppIdleCalculatorTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotGetAppIdleDurationForPast() {
         // Given
-        final EventBus eventBus = new EventBus();
-        final AppIdleCalculator appIdleCalculator = new AppIdleCalculator();
-        eventBus.register(appIdleCalculator);
 
         // When
-        eventBus.post(new AppIdleEvent(new Instant(50)));
+        this.eventBus.post(new AppIdleEvent(new Instant(50)));
 
-        appIdleCalculator.getAppIdleDuration(new Instant(40));
+        this.appIdleCalculator.getAppIdleDuration(new Instant(40));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotGetAppIdleDurationForPast2() {
         // Given
-        final EventBus eventBus = new EventBus();
-        final AppIdleCalculator appIdleCalculator = new AppIdleCalculator();
-        eventBus.register(appIdleCalculator);
 
         // When
-        eventBus.post(new AppActiveEvent(new Instant(50)));
+        this.eventBus.post(new AppActiveEvent(new Instant(50)));
 
-        appIdleCalculator.getAppIdleDuration(new Instant(40));
+        this.appIdleCalculator.getAppIdleDuration(new Instant(40));
     }
 
     private void shouldGetAppIdleDuration(final List<? extends Event> events, final Instant now, final Duration appIdleDurationExpected) {
         // Given
-        final EventBus eventBus = new EventBus();
-        final AppIdleCalculator appIdleCalculator = new AppIdleCalculator();
-        eventBus.register(appIdleCalculator);
 
         // When
         for (final Event event : events) {
-            eventBus.post(event);
+            this.eventBus.post(event);
         }
 
         // Then
-        assertThat(appIdleCalculator.getAppIdleDuration(now), is(appIdleDurationExpected));
+        assertThat(this.appIdleCalculator.getAppIdleDuration(now), is(appIdleDurationExpected));
     }
 }
