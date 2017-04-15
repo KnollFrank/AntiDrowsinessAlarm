@@ -30,27 +30,31 @@ public class AppIdleCalculatorTest {
     }
 
     @Test
-    public void shouldGetAppIdleDuration1() {
+    public void shouldGetAppIdleDuration_oneAppIdleInterval_nowIsPastIntervalEnd() {
+        final int intervalEnd = 10;
+        final int now = intervalEnd + 5;
         this.shouldGetAppIdleDuration(
                 Arrays.asList(
                         new AppIdleEvent(new Instant(0)),
-                        new AppActiveEvent(new Instant(10))),
-                new Instant(15),
+                        new AppActiveEvent(new Instant(intervalEnd))),
+                new Instant(now),
                 new Duration(10));
     }
 
     @Test
-    public void shouldGetAppIdleDuration1a() {
+    public void shouldGetAppIdleDuration_oneAppIdleInterval_nowIsAtIntervalEnd() {
+        final int intervalEnd = 10;
+        final int now = intervalEnd;
         this.shouldGetAppIdleDuration(
                 Arrays.asList(
                         new AppIdleEvent(new Instant(0)),
-                        new AppActiveEvent(new Instant(10))),
-                new Instant(10),
+                        new AppActiveEvent(new Instant(intervalEnd))),
+                new Instant(now),
                 new Duration(10));
     }
 
     @Test
-    public void shouldGetAppIdleDuration1c() {
+    public void shouldGetAppIdleDuration_appIdleDurationIsZero() {
         this.shouldGetAppIdleDuration(
                 Arrays.asList(
                         new AppActiveEvent(new Instant(10))),
@@ -59,17 +63,19 @@ public class AppIdleCalculatorTest {
     }
 
     @Test
-    public void shouldGetAppIdleDuration2() {
+    public void shouldGetAppIdleDuration_oneAppIdleInterval_nowIsPastIntervalEnd2() {
+        final int intervalEnd = 25;
+        final int now = intervalEnd + 2;
         this.shouldGetAppIdleDuration(
                 Arrays.asList(
                         new AppIdleEvent(new Instant(20)),
-                        new AppActiveEvent(new Instant(25))),
-                new Instant(27),
+                        new AppActiveEvent(new Instant(intervalEnd))),
+                new Instant(now),
                 new Duration(5));
     }
 
     @Test
-    public void shouldGetAppIdleDuration3() {
+    public void shouldGetAppIdleDuration_twoAppIdleIntervals() {
         this.shouldGetAppIdleDuration(
                 Arrays.asList(
                         new AppIdleEvent(new Instant(0)),
@@ -81,7 +87,7 @@ public class AppIdleCalculatorTest {
     }
 
     @Test
-    public void shouldGetAppIdleDuration4() {
+    public void shouldGetAppIdleDuration_onePendingAppIdleInterval() {
         this.shouldGetAppIdleDuration(
                 Arrays.asList(
                         new AppIdleEvent(new Instant(10))),
@@ -91,27 +97,17 @@ public class AppIdleCalculatorTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotGetAppIdleDurationForPast() {
-        // Given
-
-        // When
         this.eventBus.post(new AppIdleEvent(new Instant(50)));
-
         this.appIdleCalculator.getAppIdleDuration(new Instant(40));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldNotGetAppIdleDurationForPast2() {
-        // Given
-
-        // When
         this.eventBus.post(new AppActiveEvent(new Instant(50)));
-
         this.appIdleCalculator.getAppIdleDuration(new Instant(40));
     }
 
     private void shouldGetAppIdleDuration(final List<? extends Event> events, final Instant now, final Duration appIdleDurationExpected) {
-        // Given
-
         // When
         for (final Event event : events) {
             this.eventBus.post(event);
