@@ -1,5 +1,7 @@
 package de.drowsydriveralarm;
 
+import android.support.annotation.NonNull;
+
 import com.google.common.base.Optional;
 import com.google.common.eventbus.Subscribe;
 
@@ -24,15 +26,23 @@ class AppIdleCalculator {
 
     @Subscribe
     public void onAppActive(final AppActiveEvent appActiveEvent) {
-        this.appIdleDuration = this.appIdleDuration.plus(new Duration(this.idleEventBeforeActiveEvent.get().getInstant(), appActiveEvent.getInstant()));
+        this.appIdleDuration = this.appIdleDuration.plus(this.getAppIdleDuration(appActiveEvent));
         this.idleEventBeforeActiveEvent = Optional.absent();
     }
 
+    @NonNull
+    private Duration getAppIdleDuration(final AppActiveEvent appActiveEvent) {
+        return this.getPendingAppIdleDuration(appActiveEvent.getInstant());
+    }
+
     public Duration getAppIdleDuration(final Instant now) {
-        if (this.idleEventBeforeActiveEvent.isPresent()) {
-            return this.appIdleDuration.plus(new Duration(this.idleEventBeforeActiveEvent.get().getInstant(), now));
-        } else {
-            return this.appIdleDuration;
-        }
+        return this.idleEventBeforeActiveEvent.isPresent()
+                ? this.appIdleDuration.plus(this.getPendingAppIdleDuration(now))
+                : this.appIdleDuration;
+    }
+
+    @NonNull
+    private Duration getPendingAppIdleDuration(final Instant now) {
+        return new Duration(this.idleEventBeforeActiveEvent.get().getInstant(), now);
     }
 }
