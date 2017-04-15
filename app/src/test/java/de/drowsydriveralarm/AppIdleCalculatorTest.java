@@ -38,6 +38,18 @@ public class AppIdleCalculatorTest {
                 new Duration(5));
     }
 
+    @Test
+    public void shouldGetAppIdleDuration3() {
+        this.shouldGetAppIdleDuration(
+                Arrays.asList(
+                        new AppIdleEvent(new Instant(0)),
+                        new AppActiveEvent(new Instant(10)),
+                        new AppIdleEvent(new Instant(50)),
+                        new AppActiveEvent(new Instant(70))),
+                new Instant(80),
+                new Duration((10 - 0) + (70 - 50)));
+    }
+
     private void shouldGetAppIdleDuration(final List<Event> events, final Instant now, final Duration appIdleDurationExpected) {
         // Given
         final EventBus eventBus = new EventBus();
@@ -45,7 +57,7 @@ public class AppIdleCalculatorTest {
         eventBus.register(appIdleCalculator);
 
         // When
-        for(final Event event : events) {
+        for (final Event event : events) {
             eventBus.post(event);
         }
 

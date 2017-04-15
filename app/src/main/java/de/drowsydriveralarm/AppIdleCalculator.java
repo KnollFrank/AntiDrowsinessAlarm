@@ -10,7 +10,7 @@ import de.drowsydriveralarm.event.AppIdleEvent;
 
 class AppIdleCalculator {
 
-    private Duration appIdleDuration = new Duration(10);
+    private Duration appIdleDuration = new Duration(0);
     private AppIdleEvent appIdleEvent;
 
     public AppIdleCalculator() {
@@ -23,7 +23,7 @@ class AppIdleCalculator {
 
     @Subscribe
     public void onAppActive(final AppActiveEvent appActiveEvent) {
-        this.appIdleDuration = new Duration(this.appIdleEvent.getInstant(), appActiveEvent.getInstant());
+        this.appIdleDuration = this.appIdleDuration.plus(new Duration(this.appIdleEvent.getInstant(), appActiveEvent.getInstant()));
     }
 
     public Duration getAppIdleDuration(final Instant now) {
