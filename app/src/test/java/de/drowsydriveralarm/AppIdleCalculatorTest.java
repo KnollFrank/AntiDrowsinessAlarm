@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class AppIdleCalculatorTest {
 
     @Test
-    public void shouldGetAppIdleDuration() {
+    public void shouldGetAppIdleDuration1() {
         this.shouldGetAppIdleDuration(
                 Arrays.asList(
                         new AppIdleEvent(new Instant(0)),
@@ -50,7 +50,16 @@ public class AppIdleCalculatorTest {
                 new Duration((10 - 0) + (70 - 50)));
     }
 
-    private void shouldGetAppIdleDuration(final List<Event> events, final Instant now, final Duration appIdleDurationExpected) {
+    @Test
+    public void shouldGetAppIdleDuration4() {
+        this.shouldGetAppIdleDuration(
+                Arrays.asList(
+                        new AppIdleEvent(new Instant(10))),
+                new Instant(15),
+                new Duration(5));
+    }
+
+    private void shouldGetAppIdleDuration(final List<? extends Event> events, final Instant now, final Duration appIdleDurationExpected) {
         // Given
         final EventBus eventBus = new EventBus();
         final AppIdleCalculator appIdleCalculator = new AppIdleCalculator();

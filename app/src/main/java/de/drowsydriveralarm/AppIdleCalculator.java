@@ -24,9 +24,14 @@ class AppIdleCalculator {
     @Subscribe
     public void onAppActive(final AppActiveEvent appActiveEvent) {
         this.appIdleDuration = this.appIdleDuration.plus(new Duration(this.appIdleEvent.getInstant(), appActiveEvent.getInstant()));
+        this.appIdleEvent = null;
     }
 
     public Duration getAppIdleDuration(final Instant now) {
-        return this.appIdleDuration;
+        if (this.appIdleEvent != null) {
+            return this.appIdleDuration.plus(new Duration(this.appIdleEvent.getInstant(), now));
+        } else {
+            return this.appIdleDuration;
+        }
     }
 }
