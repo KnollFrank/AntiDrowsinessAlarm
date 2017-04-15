@@ -59,6 +59,19 @@ public class AppIdleCalculatorTest {
                 new Duration(5));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotGetAppIdleDurationForPast() {
+        // Given
+        final EventBus eventBus = new EventBus();
+        final AppIdleCalculator appIdleCalculator = new AppIdleCalculator();
+        eventBus.register(appIdleCalculator);
+
+        // When
+        eventBus.post(new AppIdleEvent(new Instant(50)));
+
+        appIdleCalculator.getAppIdleDuration(new Instant(40));
+    }
+
     private void shouldGetAppIdleDuration(final List<? extends Event> events, final Instant now, final Duration appIdleDurationExpected) {
         // Given
         final EventBus eventBus = new EventBus();

@@ -36,6 +36,10 @@ class AppIdleCalculator {
     }
 
     public Duration getAppIdleDuration(final Instant now) {
+        if(this.idleEventBeforeActiveEvent.isPresent() && now.isBefore(this.idleEventBeforeActiveEvent.get().getInstant())) {
+            throw new IllegalArgumentException();
+        }
+
         return this.idleEventBeforeActiveEvent.isPresent()
                 ? this.appIdleDuration.plus(this.getPendingAppIdleDuration(now))
                 : this.appIdleDuration;
