@@ -11,6 +11,7 @@ import org.joda.time.Instant;
 
 import de.drowsydriveralarm.event.AppActiveEvent;
 import de.drowsydriveralarm.event.AppIdleEvent;
+import de.drowsydriveralarm.event.Event;
 
 class AppIdleCalculator {
 
@@ -33,11 +34,6 @@ class AppIdleCalculator {
         this.idleEventBeforeActiveEvent = Optional.absent();
     }
 
-    @NonNull
-    private Duration getAppIdleDuration(final AppActiveEvent appActiveEvent) {
-        return this.getPendingAppIdleDuration(appActiveEvent.getInstant());
-    }
-
     public Duration getAppIdleDuration(final Instant now) {
         Preconditions.checkArgument(!this.shallGetAppIdleDurationForUnknownPast(now));
 
@@ -46,9 +42,17 @@ class AppIdleCalculator {
                 : this.appIdleDuration;
     }
 
+    @NonNull
+    private Duration getAppIdleDuration(final AppActiveEvent appActiveEvent) {
+        return this.getPendingAppIdleDuration(appActiveEvent.getInstant());
+    }
+
     private boolean shallGetAppIdleDurationForUnknownPast(final Instant now) {
-        return (this.appActiveEvent.isPresent() && now.isBefore(this.appActiveEvent.get().getInstant()))
-                || (this.idleEventBeforeActiveEvent.isPresent() && now.isBefore(this.idleEventBeforeActiveEvent.get().getInstant()));
+        return this.isNowBeforeEvent(now, this.appActiveEvent) || this.isNowBeforeEvent(now, this.idleEventBeforeActiveEvent);
+    }
+
+    private boolean isNowBeforeEvent(final Instant now, final Optional<? extends Event> event) {
+        return event.isPresent() && now.isBefore(event.get().getInstant());
     }
 
     @NonNull

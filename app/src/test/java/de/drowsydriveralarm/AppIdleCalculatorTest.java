@@ -23,7 +23,7 @@ public class AppIdleCalculatorTest {
     private AppIdleCalculator appIdleCalculator;
 
     @Before
-    public void seetup() {
+    public void setup() {
         this.eventBus = new EventBus();
         this.appIdleCalculator = new AppIdleCalculator();
         this.eventBus.register(this.appIdleCalculator);
