@@ -16,6 +16,7 @@ class AppIdleCalculator {
 
     private Duration appIdleDuration = new Duration(0);
     private Optional<AppIdleEvent> idleEventBeforeActiveEvent = Optional.absent();
+    private Optional<AppActiveEvent> appActiveEvent = Optional.absent();
 
     public AppIdleCalculator() {
     }
@@ -28,6 +29,7 @@ class AppIdleCalculator {
     @Subscribe
     public void onAppActive(final AppActiveEvent appActiveEvent) {
         this.appIdleDuration = this.appIdleDuration.plus(this.getAppIdleDuration(appActiveEvent));
+        this.appActiveEvent = Optional.of(appActiveEvent);
         this.idleEventBeforeActiveEvent = Optional.absent();
     }
 
@@ -44,12 +46,15 @@ class AppIdleCalculator {
                 : this.appIdleDuration;
     }
 
-    private boolean shallGetAppIdleDurationForUnknownPast(Instant now) {
-        return this.idleEventBeforeActiveEvent.isPresent() && now.isBefore(this.idleEventBeforeActiveEvent.get().getInstant());
+    private boolean shallGetAppIdleDurationForUnknownPast(final Instant now) {
+        return (this.appActiveEvent.isPresent() && now.isBefore(this.appActiveEvent.get().getInstant()))
+                || (this.idleEventBeforeActiveEvent.isPresent() && now.isBefore(this.idleEventBeforeActiveEvent.get().getInstant()));
     }
 
     @NonNull
     private Duration getPendingAppIdleDuration(final Instant now) {
-        return new Duration(this.idleEventBeforeActiveEvent.get().getInstant(), now);
+        return this.idleEventBeforeActiveEvent.isPresent()
+                ? new Duration(this.idleEventBeforeActiveEvent.get().getInstant(), now)
+                : Duration.ZERO;
     }
 }
