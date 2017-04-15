@@ -3,6 +3,7 @@ package de.drowsydriveralarm;
 import android.support.annotation.NonNull;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.eventbus.Subscribe;
 
 import org.joda.time.Duration;
@@ -36,13 +37,15 @@ class AppIdleCalculator {
     }
 
     public Duration getAppIdleDuration(final Instant now) {
-        if(this.idleEventBeforeActiveEvent.isPresent() && now.isBefore(this.idleEventBeforeActiveEvent.get().getInstant())) {
-            throw new IllegalArgumentException();
-        }
+        Preconditions.checkArgument(!this.shallGetAppIdleDurationForUnknownPast(now));
 
         return this.idleEventBeforeActiveEvent.isPresent()
                 ? this.appIdleDuration.plus(this.getPendingAppIdleDuration(now))
                 : this.appIdleDuration;
+    }
+
+    private boolean shallGetAppIdleDurationForUnknownPast(Instant now) {
+        return this.idleEventBeforeActiveEvent.isPresent() && now.isBefore(this.idleEventBeforeActiveEvent.get().getInstant());
     }
 
     @NonNull
