@@ -113,7 +113,9 @@ public class AppIdleCalculatorTest {
             this.eventBus.post(event);
         }
 
+        final Duration appIdleDurationActual = this.appIdleCalculator.getAppIdleDuration(now);
+
         // Then
-        assertThat(this.appIdleCalculator.getAppIdleDuration(now), is(appIdleDurationExpected));
+        assertThat(appIdleDurationActual, is(appIdleDurationExpected));
     }
 }
