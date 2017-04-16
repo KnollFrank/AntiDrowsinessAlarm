@@ -245,6 +245,11 @@ public class FaceTrackingActiveAndIdleEventProducerTest {
         this.shouldCreateNoEventsForFaceWithLandmarks(Arrays.asList(createLandmark(Landmark.RIGHT_EYE)));
     }
 
+    @Test
+    public void shouldCreateAppIdleEventWhenFaceRecognizedButRIGHT_EYENotRecognized() {
+        this.shouldCreateNoEventsForFaceWithLandmarks(Arrays.asList(createLandmark(Landmark.LEFT_EYE)));
+    }
+
     private void shouldCreateNoEventsForFaceWithLandmarks(final List<Landmark> landmarks) {
         // When
         final MockedClock clock = new MockedClock();
