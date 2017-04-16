@@ -237,34 +237,27 @@ public class FaceTrackingActiveAndIdleEventProducerTest {
 
     @Test
     public void shouldCreateAppIdleEventWhenFaceRecognizedButEyesNotRecognized() {
-        // When
-        final MockedClock clock = new MockedClock();
-        this.setup(clock);
-
-        clock.setNow(new Instant(0));
-        this.tracker.onUpdate(getFaceDetections(new Instant(0)), this.createFaceWithLandmarks(Collections.<Landmark> emptyList()));
-
-        // Then
-        assertThat(
-                this.eventListener.filterEventsBy(AppActiveEvent.class, AppIdleEvent.class),
-                IsIterableContainingInOrder.<Event> contains(
-                        new AppIdleEvent(new Instant(00))));
+        this.shouldCreateNoEventsForFaceWithLandmarks(Collections.<Landmark> emptyList());
     }
 
     @Test
     public void shouldCreateAppIdleEventWhenFaceRecognizedButLEFT_EYENotRecognized() {
+        this.shouldCreateNoEventsForFaceWithLandmarks(Arrays.asList(createLandmark(Landmark.RIGHT_EYE)));
+    }
+
+    private void shouldCreateNoEventsForFaceWithLandmarks(final List<Landmark> landmarks) {
         // When
         final MockedClock clock = new MockedClock();
         this.setup(clock);
 
         clock.setNow(new Instant(0));
-        this.tracker.onUpdate(getFaceDetections(new Instant(0)), this.createFaceWithLandmarks(Arrays.asList(createLandmark(Landmark.RIGHT_EYE))));
+        this.tracker.onUpdate(getFaceDetections(new Instant(0)), this.createFaceWithLandmarks(landmarks));
 
         // Then
         assertThat(
                 this.eventListener.filterEventsBy(AppActiveEvent.class, AppIdleEvent.class),
                 IsIterableContainingInOrder.<Event> contains(
-                        new AppIdleEvent(new Instant(00))));
+                        new AppIdleEvent(new Instant(0))));
     }
 
     // TODO: DRY mit EventProducingGraphicFaceTrackerTest
