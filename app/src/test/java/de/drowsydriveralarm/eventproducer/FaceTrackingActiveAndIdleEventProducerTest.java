@@ -1,5 +1,8 @@
 package de.drowsydriveralarm.eventproducer;
 
+import android.graphics.PointF;
+import android.support.annotation.NonNull;
+
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.Landmark;
@@ -11,7 +14,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import de.drowsydriveralarm.Clock;
 import de.drowsydriveralarm.CompositeFaceTracker;
@@ -237,7 +242,7 @@ public class FaceTrackingActiveAndIdleEventProducerTest {
         this.setup(clock);
 
         clock.setNow(new Instant(0));
-        this.tracker.onUpdate(getFaceDetections(new Instant(0)), this.createFaceWithNoEyesRecognized());
+        this.tracker.onUpdate(getFaceDetections(new Instant(0)), this.createFaceWithLandmarks(Collections.<Landmark> emptyList()));
 
         // Then
         assertThat(
@@ -246,9 +251,31 @@ public class FaceTrackingActiveAndIdleEventProducerTest {
                         new AppIdleEvent(new Instant(00))));
     }
 
-    private Face createFaceWithNoEyesRecognized() {
+    @Test
+    public void shouldCreateAppIdleEventWhenFaceRecognizedButLEFT_EYENotRecognized() {
+        // When
+        final MockedClock clock = new MockedClock();
+        this.setup(clock);
+
+        clock.setNow(new Instant(0));
+        this.tracker.onUpdate(getFaceDetections(new Instant(0)), this.createFaceWithLandmarks(Arrays.asList(createLandmark(Landmark.RIGHT_EYE))));
+
+        // Then
+        assertThat(
+                this.eventListener.filterEventsBy(AppActiveEvent.class, AppIdleEvent.class),
+                IsIterableContainingInOrder.<Event> contains(
+                        new AppIdleEvent(new Instant(00))));
+    }
+
+    // TODO: DRY mit EventProducingGraphicFaceTrackerTest
+    @NonNull
+    private static Landmark createLandmark(final int type) {
+        return new Landmark(new PointF(1, 1), type);
+    }
+
+    private Face createFaceWithLandmarks(final List<Landmark> landmarks) {
         final Face face = Mockito.mock(Face.class);
-        doReturn(Collections.<Landmark> emptyList()).when(face).getLandmarks();
+        doReturn(landmarks).when(face).getLandmarks();
         return face;
     }
 }

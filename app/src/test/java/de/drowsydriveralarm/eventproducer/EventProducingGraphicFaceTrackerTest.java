@@ -268,6 +268,7 @@ public class EventProducingGraphicFaceTrackerTest {
 
     private void shouldCreateNoEventsForFaceWithLandmarks(final List<Landmark> landmarks) {
         // Given
+        // TODO: DRY with FaceTrackingActiveAndIdleEventProducerTest
         final Face face = Mockito.mock(Face.class);
         doReturn(landmarks).when(face).getLandmarks();
 
