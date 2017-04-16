@@ -5,6 +5,7 @@ import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import de.drowsydriveralarm.event.EventHelper;
 import de.drowsydriveralarm.event.EyesClosedEvent;
 import de.drowsydriveralarm.event.EyesOpenedEvent;
 import de.drowsydriveralarm.event.UpdateEvent;
@@ -20,7 +21,7 @@ public class EyesClosedEventProducer extends EventProducer {
     }
 
     @Subscribe
-    public void onEyesOpenedEvent(EyesOpenedEvent event) {
+    public void onEyesOpenedEvent(final EyesOpenedEvent event) {
         this.previouslyEyesOpened = Optional.of(true);
     }
 
@@ -28,7 +29,7 @@ public class EyesClosedEventProducer extends EventProducer {
     public void onUpdateEvent(final UpdateEvent actualEvent) {
         if (this.isPreviouslyEyesOpened() && this.isEyesClosed(actualEvent.getFace())) {
             this.previouslyEyesOpened = Optional.of(false);
-            this.postEvent(new EyesClosedEvent(EyesOpenedEventProducer.getInstantOf(actualEvent)));
+            this.postEvent(new EyesClosedEvent(EventHelper.getInstantOf(actualEvent)));
         }
     }
 
@@ -36,14 +37,12 @@ public class EyesClosedEventProducer extends EventProducer {
         return !this.previouslyEyesOpened.isPresent() || this.previouslyEyesOpened.get();
     }
 
-    // TODO: verwende face.getLandmarks(), um festzustellen, ob beide Augen als Landmarks erkannt wurden.
-    // Falls nicht, ist der DrowsyDriverAlarm außer Betrieb zu setzen.
     private boolean isEyesClosed(final Face face) {
         return this.isDefined(face.getIsLeftEyeOpenProbability()) && face.getIsLeftEyeOpenProbability() < this.eyeOpenProbabilityThreshold &&
                 this.isDefined(face.getIsRightEyeOpenProbability()) && face.getIsRightEyeOpenProbability() < this.eyeOpenProbabilityThreshold;
     }
 
-    private boolean isDefined(float probability) {
+    private boolean isDefined(final float probability) {
         return probability != Face.UNCOMPUTED_PROBABILITY;
     }
 }

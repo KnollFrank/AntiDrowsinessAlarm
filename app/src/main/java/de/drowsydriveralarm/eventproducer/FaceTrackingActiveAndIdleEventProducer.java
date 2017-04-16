@@ -21,6 +21,7 @@ import de.drowsydriveralarm.Clock;
 import de.drowsydriveralarm.event.AppActiveEvent;
 import de.drowsydriveralarm.event.AppIdleEvent;
 import de.drowsydriveralarm.event.Event;
+import de.drowsydriveralarm.event.EventHelper;
 
 public class FaceTrackingActiveAndIdleEventProducer extends Tracker<Face> {
 
@@ -41,10 +42,9 @@ public class FaceTrackingActiveAndIdleEventProducer extends Tracker<Face> {
     @Override
     public void onUpdate(final Detector.Detections<Face> detections, final Face face) {
         if (!this.areBothEyesRecognized(face)) {
-            // DRY: new Instant(detections.getFrameMetadata().getTimestampMillis())
-            this.eventBus.post(new AppIdleEvent(new Instant(detections.getFrameMetadata().getTimestampMillis())));
+            this.eventBus.post(new AppIdleEvent(EventHelper.getInstantOf(detections)));
         } else {
-            this.maybePostAppActiveEvent(this.getInstant(detections));
+            this.maybePostAppActiveEvent(EventHelper.getInstantOf(detections));
         }
     }
 
@@ -74,7 +74,7 @@ public class FaceTrackingActiveAndIdleEventProducer extends Tracker<Face> {
 
     @Override
     public void onMissing(final Detector.Detections<Face> detections) {
-        this.maybePostAppIdleEvent(this.getInstant(detections));
+        this.maybePostAppIdleEvent(EventHelper.getInstantOf(detections));
     }
 
     @Override
@@ -124,10 +124,5 @@ public class FaceTrackingActiveAndIdleEventProducer extends Tracker<Face> {
                 return new AppIdleEvent(instant);
             }
         };
-    }
-
-    @NonNull
-    private Instant getInstant(final Detector.Detections<Face> detections) {
-        return new Instant(detections.getFrameMetadata().getTimestampMillis());
     }
 }
