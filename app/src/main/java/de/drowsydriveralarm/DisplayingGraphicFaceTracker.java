@@ -8,6 +8,8 @@ import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.common.eventbus.Subscribe;
 
+import de.drowsydriveralarm.event.AppActiveEvent;
+import de.drowsydriveralarm.event.AppIdleEvent;
 import de.drowsydriveralarm.event.AwakeEvent;
 import de.drowsydriveralarm.event.DrowsyEvent;
 import de.drowsydriveralarm.event.LikelyDrowsyEvent;
@@ -60,6 +62,26 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
             public void run() {
                 DisplayingGraphicFaceTracker.this.faceTrackerActivity.getEyesInfoView().setText("" + event);
                 DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.green);
+            }
+        });
+    }
+
+    @Subscribe
+    public void onAppActiveEvent(final AppActiveEvent event) {
+        this.faceTrackerActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getAppActiveIdleView().setImageResource(R.drawable.green);
+            }
+        });
+    }
+
+    @Subscribe
+    public void onAppIdleEvent(final AppIdleEvent event) {
+        this.faceTrackerActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getAppActiveIdleView().setImageResource(R.drawable.red);
             }
         });
     }

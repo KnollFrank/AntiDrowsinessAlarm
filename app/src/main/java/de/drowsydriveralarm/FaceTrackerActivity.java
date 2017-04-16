@@ -42,6 +42,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private GraphicOverlay graphicOverlay;
     private TextView eyesInfoView;
     private ImageView imageView;
+    private ImageView appActiveIdleView;
     private CameraSourceHandler cameraSourceHandler;
     private CameraPermissionHandler cameraPermissionHandler;
 
@@ -56,6 +57,7 @@ public final class FaceTrackerActivity extends AppCompatActivity {
         this.graphicOverlay = (GraphicOverlay) this.findViewById(R.id.faceOverlay);
         this.eyesInfoView = (TextView) this.findViewById(R.id.eyesInfoView);
         this.imageView = (ImageView) this.findViewById(R.id.imageView);
+        this.appActiveIdleView = (ImageView) this.findViewById(R.id.appActiveIdleView);
         this.cameraSourceHandler = new CameraSourceHandler(this);
         this.cameraPermissionHandler = new CameraPermissionHandler(this, this.cameraSourceHandler);
         this.cameraPermissionHandler.createCameraSourceOrRequestCameraPermission();
@@ -71,6 +73,10 @@ public final class FaceTrackerActivity extends AppCompatActivity {
 
     public ImageView getImageView() {
         return this.imageView;
+    }
+
+    public ImageView getAppActiveIdleView() {
+        return this.appActiveIdleView;
     }
 
     public CameraSourcePreview getPreview() {

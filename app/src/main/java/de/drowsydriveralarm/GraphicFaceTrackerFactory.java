@@ -9,6 +9,7 @@ import com.google.android.gms.vision.face.Face;
 
 import de.drowsydriveralarm.eventproducer.DrowsyEventDetector;
 import de.drowsydriveralarm.eventproducer.DrowsyEventDetectorConfig;
+import de.drowsydriveralarm.eventproducer.FaceTrackingActiveAndIdleEventProducer;
 import de.drowsydriveralarm.eventproducer.IDrowsyEventDetectorConfig;
 import de.drowsydriveralarm.eventproducer.TestingDrowsyEventDetectorConfig;
 
@@ -33,11 +34,16 @@ class GraphicFaceTrackerFactory {
                 .withTimeWindow(configFactory.getTimeWindow())
                 .build();
         Log.i(TAG, "" + drowsyEventDetectorConfig);
-        final DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(drowsyEventDetectorConfig, true, new SystemClock());
+        final SystemClock clock = new SystemClock();
+        final DrowsyEventDetector drowsyEventDetector = new DrowsyEventDetector(drowsyEventDetectorConfig, true, clock);
 
         final Tracker<Face> tracker = new DisplayingGraphicFaceTracker(this.faceTrackerActivity);
         drowsyEventDetector.getEventBus().register(tracker);
 
-        return new CompositeFaceTracker(drowsyEventDetector.getEventProducingGraphicFaceTracker(), tracker);
+        return new CompositeFaceTracker(
+                new CompositeFaceTracker(
+                        drowsyEventDetector.getEventProducingGraphicFaceTracker(),
+                        tracker),
+                new FaceTrackingActiveAndIdleEventProducer(drowsyEventDetector.getEventBus(), clock));
     }
 }
