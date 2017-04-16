@@ -40,10 +40,7 @@ public class EventProducingGraphicFaceTracker extends Tracker<Face> {
         // TODO: use RetroLambda (https://github.com/orfjackal/retrolambda)
         final Instant clockTime = this.clock.now();
         if (this.timeConverter == null) {
-            this.timeConverter =
-                    ClockTime2FrameTimeConverter.fromClockTimeAndFrameTime(
-                            clockTime,
-                            new Instant(detections.getFrameMetadata().getTimestampMillis()));
+            this.timeConverter = ClockTime2FrameTimeConverter.fromClockTimeAndFrameTime(clockTime, this.getFrameTime(detections));
         }
 
         if (!this.areBothEyesRecognized(face)) {
@@ -52,6 +49,11 @@ public class EventProducingGraphicFaceTracker extends Tracker<Face> {
 
         this.eventBus.post(new UpdateEvent(detections, face));
         this.drowsyEventProducer.maybeProduceDrowsyEvent(this.timeConverter.convertToFrameTime(clockTime));
+    }
+
+    @NonNull
+    private Instant getFrameTime(final Detector.Detections<Face> detections) {
+        return new Instant(detections.getFrameMetadata().getTimestampMillis());
     }
 
     private boolean areBothEyesRecognized(final Face face) {
