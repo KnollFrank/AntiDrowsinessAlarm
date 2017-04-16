@@ -1,8 +1,5 @@
 package de.drowsydriveralarm.eventproducer;
 
-import android.graphics.PointF;
-import android.support.annotation.NonNull;
-
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.Landmark;
@@ -12,7 +9,6 @@ import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,12 +25,13 @@ import de.drowsydriveralarm.event.Event;
 
 import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createFaceWithEyesClosed;
 import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createFaceWithEyesOpened;
+import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createFaceWithLandmarks;
+import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createLandmark;
 import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.getFaceDetections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.isA;
-import static org.mockito.Mockito.doReturn;
 
 public class FaceTrackingActiveAndIdleEventProducerTest {
 
@@ -256,24 +253,12 @@ public class FaceTrackingActiveAndIdleEventProducerTest {
         this.setup(clock);
 
         clock.setNow(new Instant(0));
-        this.tracker.onUpdate(getFaceDetections(new Instant(0)), this.createFaceWithLandmarks(landmarks));
+        this.tracker.onUpdate(getFaceDetections(new Instant(0)), createFaceWithLandmarks(landmarks));
 
         // Then
         assertThat(
                 this.eventListener.filterEventsBy(AppActiveEvent.class, AppIdleEvent.class),
                 IsIterableContainingInOrder.<Event> contains(
                         new AppIdleEvent(new Instant(0))));
-    }
-
-    // TODO: DRY mit EventProducingGraphicFaceTrackerTest
-    @NonNull
-    private static Landmark createLandmark(final int type) {
-        return new Landmark(new PointF(1, 1), type);
-    }
-
-    private Face createFaceWithLandmarks(final List<Landmark> landmarks) {
-        final Face face = Mockito.mock(Face.class);
-        doReturn(landmarks).when(face).getLandmarks();
-        return face;
     }
 }

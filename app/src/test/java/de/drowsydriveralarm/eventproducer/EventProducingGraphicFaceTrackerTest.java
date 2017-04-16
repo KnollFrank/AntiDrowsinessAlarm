@@ -58,8 +58,7 @@ public class EventProducingGraphicFaceTrackerTest {
     }
 
     static Face createFace(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability) {
-        final Face face = Mockito.mock(Face.class);
-        doReturn(Arrays.asList(createLandmark(Landmark.LEFT_EYE), createLandmark(Landmark.RIGHT_EYE))).when(face).getLandmarks();
+        final Face face = createFaceWithLandmarks(Arrays.asList(createLandmark(Landmark.LEFT_EYE), createLandmark(Landmark.RIGHT_EYE)));
         doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
         doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
         return face;
@@ -67,6 +66,17 @@ public class EventProducingGraphicFaceTrackerTest {
 
     static Face createFaceWithEyesOpened() {
         return createFace(0.8f, 0.8f);
+    }
+
+    static Face createFaceWithLandmarks(final List<Landmark> landmarks) {
+        final Face face = Mockito.mock(Face.class);
+        doReturn(landmarks).when(face).getLandmarks();
+        return face;
+    }
+
+    @NonNull
+    static Landmark createLandmark(final int type) {
+        return new Landmark(new PointF(1, 1), type);
     }
 
     @Before
@@ -268,20 +278,13 @@ public class EventProducingGraphicFaceTrackerTest {
 
     private void shouldCreateNoEventsForFaceWithLandmarks(final List<Landmark> landmarks) {
         // Given
-        // TODO: DRY with FaceTrackingActiveAndIdleEventProducerTest
-        final Face face = Mockito.mock(Face.class);
-        doReturn(landmarks).when(face).getLandmarks();
+        final Face face = createFaceWithLandmarks(landmarks);
 
         // When
         this.tracker.onUpdate(getFaceDetections(new Instant(100)), face);
 
         // Then
         assertThat(this.eventListener.getEvents(), is(empty()));
-    }
-
-    @NonNull
-    private static Landmark createLandmark(final int type) {
-        return new Landmark(new PointF(1, 1), type);
     }
 
     private Face createFaceWithLeftEyeOpenRightEyeClosed() {
