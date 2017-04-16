@@ -1,20 +1,11 @@
 package de.drowsydriveralarm.eventproducer;
 
-import android.support.annotation.NonNull;
-
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
-import com.google.android.gms.vision.face.Landmark;
-import com.google.common.base.Function;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 
 import org.joda.time.Instant;
-
-import java.util.Arrays;
-import java.util.List;
 
 import de.drowsydriveralarm.Clock;
 import de.drowsydriveralarm.event.EventHelper;
@@ -44,34 +35,11 @@ public class EventProducingGraphicFaceTracker extends Tracker<Face> {
             this.timeConverter = ClockTime2FrameTimeConverter.fromClockTimeAndFrameTime(clockTime, EventHelper.getInstantOf(detections));
         }
 
-        if (!this.areBothEyesRecognized(face)) {
+        if (!BothEyesRecognizedPredicate.areBothEyesRecognized(face)) {
             return;
         }
 
         this.eventBus.post(new UpdateEvent(detections, face));
         this.drowsyEventProducer.maybeProduceDrowsyEvent(this.timeConverter.convertToFrameTime(clockTime));
-    }
-
-    private boolean areBothEyesRecognized(final Face face) {
-        return this.getLandmarkTypes(face.getLandmarks()).containsAll(this.getBothEyes());
-    }
-
-    private ImmutableList<Integer> getLandmarkTypes(final List<Landmark> landmarks) {
-        return FluentIterable
-                .from(landmarks)
-                .transform(
-                        new Function<Landmark, Integer>() {
-
-                            @Override
-                            public Integer apply(final Landmark landmark) {
-                                return landmark.getType();
-                            }
-                        })
-                .toList();
-    }
-
-    @NonNull
-    private List<Integer> getBothEyes() {
-        return Arrays.asList(Landmark.LEFT_EYE, Landmark.RIGHT_EYE);
     }
 }

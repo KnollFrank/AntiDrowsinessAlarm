@@ -5,17 +5,10 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
-import com.google.android.gms.vision.face.Landmark;
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 
 import org.joda.time.Instant;
-
-import java.util.Arrays;
-import java.util.List;
 
 import de.drowsydriveralarm.Clock;
 import de.drowsydriveralarm.event.AppActiveEvent;
@@ -41,35 +34,11 @@ public class FaceTrackingActiveAndIdleEventProducer extends Tracker<Face> {
 
     @Override
     public void onUpdate(final Detector.Detections<Face> detections, final Face face) {
-        if (!this.areBothEyesRecognized(face)) {
+        if (!BothEyesRecognizedPredicate.areBothEyesRecognized(face)) {
             this.eventBus.post(new AppIdleEvent(EventHelper.getInstantOf(detections)));
         } else {
             this.maybePostAppActiveEvent(EventHelper.getInstantOf(detections));
         }
-    }
-
-    // TODO: DRY this method an dependent ones in EventProducingGraphicFaceTracker
-    private boolean areBothEyesRecognized(final Face face) {
-        return this.getLandmarkTypes(face.getLandmarks()).containsAll(this.getBothEyes());
-    }
-
-    private ImmutableList<Integer> getLandmarkTypes(final List<Landmark> landmarks) {
-        return FluentIterable
-                .from(landmarks)
-                .transform(
-                        new Function<Landmark, Integer>() {
-
-                            @Override
-                            public Integer apply(final Landmark landmark) {
-                                return landmark.getType();
-                            }
-                        })
-                .toList();
-    }
-
-    @NonNull
-    private List<Integer> getBothEyes() {
-        return Arrays.asList(Landmark.LEFT_EYE, Landmark.RIGHT_EYE);
     }
 
     @Override
