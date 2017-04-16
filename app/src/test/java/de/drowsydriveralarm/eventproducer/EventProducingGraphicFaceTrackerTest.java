@@ -1,10 +1,5 @@
 package de.drowsydriveralarm.eventproducer;
 
-import android.graphics.PointF;
-import android.support.annotation.NonNull;
-
-import com.google.android.gms.vision.Detector;
-import com.google.android.gms.vision.Frame.Metadata;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.Landmark;
@@ -15,7 +10,6 @@ import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +23,12 @@ import de.drowsydriveralarm.event.EyesOpenedEvent;
 import de.drowsydriveralarm.event.NormalEyeBlinkEvent;
 import de.drowsydriveralarm.event.SlowEyelidClosureEvent;
 
+import static de.drowsydriveralarm.eventproducer.VisionHelper.createFace;
+import static de.drowsydriveralarm.eventproducer.VisionHelper.createFaceWithEyesClosed;
+import static de.drowsydriveralarm.eventproducer.VisionHelper.createFaceWithEyesOpened;
+import static de.drowsydriveralarm.eventproducer.VisionHelper.createFaceWithLandmarks;
+import static de.drowsydriveralarm.eventproducer.VisionHelper.createLandmark;
+import static de.drowsydriveralarm.eventproducer.VisionHelper.getFaceDetections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
@@ -36,48 +36,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsNot.not;
-import static org.mockito.Mockito.doReturn;
 
 public class EventProducingGraphicFaceTrackerTest {
 
     private EventListener eventListener;
     private Tracker<Face> tracker;
-
-    static Detector.Detections<Face> getFaceDetections(final Instant instant) {
-        final Metadata metaData = Mockito.mock(Metadata.class);
-        doReturn(instant.getMillis()).when(metaData).getTimestampMillis();
-
-        final Detector.Detections<Face> detections = Mockito.mock(Detector.Detections.class);
-        doReturn(metaData).when(detections).getFrameMetadata();
-
-        return detections;
-    }
-
-    static Face createFaceWithEyesClosed() {
-        return createFace(0.4f, 0.4f);
-    }
-
-    static Face createFace(final float isLeftEyeOpenProbability, final float isRightEyeOpenProbability) {
-        final Face face = createFaceWithLandmarks(Arrays.asList(createLandmark(Landmark.LEFT_EYE), createLandmark(Landmark.RIGHT_EYE)));
-        doReturn(isLeftEyeOpenProbability).when(face).getIsLeftEyeOpenProbability();
-        doReturn(isRightEyeOpenProbability).when(face).getIsRightEyeOpenProbability();
-        return face;
-    }
-
-    static Face createFaceWithEyesOpened() {
-        return createFace(0.8f, 0.8f);
-    }
-
-    static Face createFaceWithLandmarks(final List<Landmark> landmarks) {
-        final Face face = Mockito.mock(Face.class);
-        doReturn(landmarks).when(face).getLandmarks();
-        return face;
-    }
-
-    @NonNull
-    static Landmark createLandmark(final int type) {
-        return new Landmark(new PointF(1, 1), type);
-    }
 
     @Before
     public void setup() {

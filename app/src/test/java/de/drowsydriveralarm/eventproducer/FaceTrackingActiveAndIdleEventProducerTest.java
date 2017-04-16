@@ -23,11 +23,11 @@ import de.drowsydriveralarm.event.AppActiveEvent;
 import de.drowsydriveralarm.event.AppIdleEvent;
 import de.drowsydriveralarm.event.Event;
 
-import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createFaceWithEyesClosed;
-import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createFaceWithEyesOpened;
-import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createFaceWithLandmarks;
-import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createLandmark;
-import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.getFaceDetections;
+import static de.drowsydriveralarm.eventproducer.VisionHelper.createFaceWithEyesClosed;
+import static de.drowsydriveralarm.eventproducer.VisionHelper.createFaceWithEyesOpened;
+import static de.drowsydriveralarm.eventproducer.VisionHelper.createFaceWithLandmarks;
+import static de.drowsydriveralarm.eventproducer.VisionHelper.createLandmark;
+import static de.drowsydriveralarm.eventproducer.VisionHelper.getFaceDetections;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
