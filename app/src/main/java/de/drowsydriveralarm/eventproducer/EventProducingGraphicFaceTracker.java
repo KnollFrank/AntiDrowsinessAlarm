@@ -1,5 +1,7 @@
 package de.drowsydriveralarm.eventproducer;
 
+import android.support.annotation.NonNull;
+
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
@@ -36,10 +38,6 @@ public class EventProducingGraphicFaceTracker extends Tracker<Face> {
         // TODO: Falls über einen in den Settings zu konfigurierenden Zeitraum beide Augen nicht erkannt werden,
         // soll DrowsyDriverAlarm außer Betrieb gesetzt werden.
         // TODO: use RetroLambda (https://github.com/orfjackal/retrolambda)
-        if (!this.areBothEyesRecognized(face)) {
-            return;
-        }
-
         final Instant clockTime = this.clock.now();
         if (this.timeConverter == null) {
             this.timeConverter =
@@ -47,12 +45,17 @@ public class EventProducingGraphicFaceTracker extends Tracker<Face> {
                             clockTime,
                             new Instant(detections.getFrameMetadata().getTimestampMillis()));
         }
+
+        if (!this.areBothEyesRecognized(face)) {
+            return;
+        }
+
         this.eventBus.post(new UpdateEvent(detections, face));
         this.drowsyEventProducer.maybeProduceDrowsyEvent(this.timeConverter.convertToFrameTime(clockTime));
     }
 
     private boolean areBothEyesRecognized(final Face face) {
-        return this.getLandmarkTypes(face.getLandmarks()).containsAll(Arrays.asList(Landmark.LEFT_EYE, Landmark.RIGHT_EYE));
+        return this.getLandmarkTypes(face.getLandmarks()).containsAll(this.getBothEyes());
     }
 
     private ImmutableList<Integer> getLandmarkTypes(final List<Landmark> landmarks) {
@@ -67,5 +70,10 @@ public class EventProducingGraphicFaceTracker extends Tracker<Face> {
                             }
                         })
                 .toList();
+    }
+
+    @NonNull
+    private List<Integer> getBothEyes() {
+        return Arrays.asList(Landmark.LEFT_EYE, Landmark.RIGHT_EYE);
     }
 }

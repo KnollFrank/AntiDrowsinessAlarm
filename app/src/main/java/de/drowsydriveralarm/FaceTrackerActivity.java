@@ -31,6 +31,8 @@ import de.drowsydriveralarm.camera.GraphicOverlay;
 // TODO: brauchen Ampel, die anzeigt, wie lange die Anwendung bereits unbrauchbar ist,
 // also z.B. das Gesicht des Fahrers oder seine Augen nicht verfolgen bzw. erkennen konnte und
 // infolgedessen keinen möglicherweise notwendigen Schläfrigkeitsalarm auslösen konnte.
+// Ampel rot: Anwendung gerade außer Betrieb (idle)
+// Ampel grün: Anwendung gerade in Betrieb (active)
 // TOOO: die Anwendung soll sich in den Hintegrund schalten können, und sich im Falle von erkannter Schläfrigkeit des Fahrers in den Vordergrund schalten können, bzw. lediglich einen Alarmton abgeben und ein rotes Signal über der gerade aktiven Anwendung einblenden.
 public final class FaceTrackerActivity extends AppCompatActivity {
 

@@ -2,11 +2,16 @@ package de.drowsydriveralarm.eventproducer;
 
 import com.google.android.gms.vision.Tracker;
 import com.google.android.gms.vision.face.Face;
+import com.google.android.gms.vision.face.Landmark;
 import com.google.common.eventbus.EventBus;
 
+import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.joda.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.util.Collections;
 
 import de.drowsydriveralarm.Clock;
 import de.drowsydriveralarm.CompositeFaceTracker;
@@ -15,6 +20,7 @@ import de.drowsydriveralarm.MockedClock;
 import de.drowsydriveralarm.SystemClock;
 import de.drowsydriveralarm.event.AppActiveEvent;
 import de.drowsydriveralarm.event.AppIdleEvent;
+import de.drowsydriveralarm.event.Event;
 
 import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createFaceWithEyesClosed;
 import static de.drowsydriveralarm.eventproducer.EventProducingGraphicFaceTrackerTest.createFaceWithEyesOpened;
@@ -23,6 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.hamcrest.core.Is.isA;
+import static org.mockito.Mockito.doReturn;
 
 public class FaceTrackingActiveAndIdleEventProducerTest {
 
@@ -221,5 +228,27 @@ public class FaceTrackingActiveAndIdleEventProducerTest {
                 contains(
                         new AppActiveEvent(new Instant(0)),
                         new AppIdleEvent(new Instant(60))));
+    }
+
+    @Test
+    public void shouldCreateAppIdleEventWhenFaceRecognizedButEyesNotRecognized() {
+        // When
+        final MockedClock clock = new MockedClock();
+        this.setup(clock);
+
+        clock.setNow(new Instant(0));
+        this.tracker.onUpdate(getFaceDetections(new Instant(0)), this.createFaceWithNoEyesRecognized());
+
+        // Then
+        assertThat(
+                this.eventListener.filterEventsBy(AppActiveEvent.class, AppIdleEvent.class),
+                IsIterableContainingInOrder.<Event> contains(
+                        new AppIdleEvent(new Instant(00))));
+    }
+
+    private Face createFaceWithNoEyesRecognized() {
+        final Face face = Mockito.mock(Face.class);
+        doReturn(Collections.<Landmark> emptyList()).when(face).getLandmarks();
+        return face;
     }
 }

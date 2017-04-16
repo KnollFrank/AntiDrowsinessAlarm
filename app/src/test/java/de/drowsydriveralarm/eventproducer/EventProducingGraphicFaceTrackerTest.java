@@ -259,7 +259,6 @@ public class EventProducingGraphicFaceTrackerTest {
     @Test
     public void shouldCreateNoEventsWhenLEFT_EYENWasNotDetected() {
         this.shouldCreateNoEventsForFaceWithLandmarks(Arrays.asList(createLandmark(Landmark.RIGHT_EYE)));
-
     }
 
     @Test
