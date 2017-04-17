@@ -27,8 +27,6 @@ public class EventProducingGraphicFaceTracker extends Tracker<Face> {
 
     @Override
     public void onUpdate(final Detector.Detections<Face> detections, final Face face) {
-        // TODO: Falls über einen in den Settings zu konfigurierenden Zeitraum beide Augen nicht erkannt werden,
-        // soll DrowsyDriverAlarm außer Betrieb gesetzt werden.
         // TODO: use RetroLambda (https://github.com/orfjackal/retrolambda)
         final Instant clockTime = this.clock.now();
         if (this.timeConverter == null) {
