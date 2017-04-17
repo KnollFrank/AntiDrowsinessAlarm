@@ -28,6 +28,7 @@ import android.widget.TextView;
 import de.drowsydriveralarm.camera.CameraSourcePreview;
 import de.drowsydriveralarm.camera.GraphicOverlay;
 
+// FIXME: manchmal ist die Anwendung in Betrieb während eines Hupens, aber trotzdem kam kein AppActiveEvent, der grün anzeigen würde.
 // TODO: brauchen Ampel, die anzeigt, wie lange die Anwendung bereits unbrauchbar ist,
 // also z.B. das Gesicht des Fahrers oder seine Augen nicht verfolgen bzw. erkennen konnte und
 // infolgedessen keinen möglicherweise notwendigen Schläfrigkeitsalarm auslösen konnte.

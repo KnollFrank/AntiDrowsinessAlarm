@@ -38,7 +38,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
             @Override
             public void run() {
                 DisplayingGraphicFaceTracker.this.faceTrackerActivity.getEyesInfoView().setText("" + event);
-                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.red);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.red_light);
                 DisplayingGraphicFaceTracker.this.mediaPlayer.start();
             }
         });
@@ -50,7 +50,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
             @Override
             public void run() {
                 DisplayingGraphicFaceTracker.this.faceTrackerActivity.getEyesInfoView().setText("" + event);
-                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.yellow);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.yellow_light);
             }
         });
     }
@@ -61,7 +61,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
             @Override
             public void run() {
                 DisplayingGraphicFaceTracker.this.faceTrackerActivity.getEyesInfoView().setText("" + event);
-                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.green);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.green_light);
             }
         });
     }
@@ -71,7 +71,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
         this.faceTrackerActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getAppActiveIdleView().setImageResource(R.drawable.green);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getAppActiveIdleView().setImageResource(R.drawable.green_light);
             }
         });
     }
@@ -81,7 +81,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
         this.faceTrackerActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getAppActiveIdleView().setImageResource(R.drawable.red);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getAppActiveIdleView().setImageResource(R.drawable.red_light);
             }
         });
     }

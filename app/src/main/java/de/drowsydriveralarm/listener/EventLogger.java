@@ -10,7 +10,7 @@ import de.drowsydriveralarm.event.UpdateEvent;
 public class EventLogger {
 
     @Subscribe
-    public void logEvent(Event event) {
+    public void logEvent(final Event event) {
         if (event instanceof UpdateEvent) {
             return;
         }
