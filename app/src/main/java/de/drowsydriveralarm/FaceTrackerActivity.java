@@ -30,6 +30,7 @@ import de.drowsydriveralarm.camera.GraphicOverlay;
 
 // FIXME: manchmal ist die Anwendung in Betrieb während eines Hupens, aber trotzdem kam kein AppActiveEvent, der grün anzeigen würde.
 // TODO: die Anwendung soll sich in den Hintegrund schalten können, und sich im Falle von erkannter Schläfrigkeit des Fahrers in den Vordergrund schalten können, bzw. lediglich einen Alarmton abgeben und ein rotes Signal über der gerade aktiven Anwendung einblenden.
+// TODO: fork MaterialSeekBarPreference (https://github.com/MrBIMC/MaterialSeekBarPreference) and make it a subproject of DrowsyDriverAlarm
 public final class FaceTrackerActivity extends AppCompatActivity {
 
     private static final String TAG = "FaceTrackerActivity";
