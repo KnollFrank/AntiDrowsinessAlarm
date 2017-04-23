@@ -1,1 +1,3 @@
 include ':app'
+include ':MaterialSeekBarPreference'
+project(':MaterialSeekBarPreference').projectDir = new File(settingsDir, '../MaterialSeekBarPreference/library')

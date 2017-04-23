@@ -1,4 +1,5 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sample="http://schemas.android.com/apk/res-auto">
 
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
@@ -23,12 +24,17 @@
         android:summary="slowEyelidClosureMinDuration"
         android:title="slowEyelidClosureMinDuration" />
 
-    <EditTextPreference
-        android:defaultValue="0.5"
-        android:inputType="numberDecimal"
+    <com.pavelsikun.seekbarpreference.SeekBarPreference
         android:key="eyeOpenProbabilityThreshold"
+        android:title="eyeOpenProbabilityThreshold"
         android:summary="eyeOpenProbabilityThreshold"
-        android:title="eyeOpenProbabilityThreshold" />
+        android:defaultValue="50"
+
+        sample:msbp_minValue="0"
+        sample:msbp_maxValue="100"
+        sample:msbp_interval="1"
+        sample:msbp_measurementUnit="%"
+        sample:msbp_dialogEnabled="true" />
 
     <EditTextPreference
         android:defaultValue="15000"

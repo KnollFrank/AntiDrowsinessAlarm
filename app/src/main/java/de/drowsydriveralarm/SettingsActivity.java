@@ -21,6 +21,8 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.pavelsikun.seekbarpreference.SeekBarPreference;
+
 import java.util.List;
 
 /**
@@ -180,7 +182,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
             bindPreferenceSummaryToValue(this.findPreference("drowsyThreshold"));
             bindPreferenceSummaryToValue(this.findPreference("slowEyelidClosureMinDuration"));
-            bindPreferenceSummaryToValue(this.findPreference("eyeOpenProbabilityThreshold"));
             bindPreferenceSummaryToValue(this.findPreference("likelyDrowsyThreshold"));
             bindPreferenceSummaryToValue(this.findPreference("timeWindow"));
 
@@ -190,6 +191,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 @Override
                 public boolean onPreferenceClick(final Preference preference) {
                     final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(preference.getContext());
+                    SeekBarPreference eyeOpenProbabilityThresholdSeekBar = (SeekBarPreference) GeneralPreferenceFragment.this.findPreference("eyeOpenProbabilityThreshold");
+                    eyeOpenProbabilityThresholdSeekBar.setCurrentValue(50);
                     this.clearPreferences(preferences, preference.getContext());
                     this.updatePreferenceSummaries(preferences);
                     return true;
@@ -200,7 +203,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     PreferenceManager.setDefaultValues(context, R.xml.pref_general, true);
                 }
 
-                private void updatePreferenceSummaries(SharedPreferences preferences) {
+                private void updatePreferenceSummaries(final SharedPreferences preferences) {
                     this.updatePreferenceSummary(preferences, "drowsyThreshold");
                     this.updatePreferenceSummary(preferences, "slowEyelidClosureMinDuration");
                     this.updatePreferenceSummary(preferences, "eyeOpenProbabilityThreshold");

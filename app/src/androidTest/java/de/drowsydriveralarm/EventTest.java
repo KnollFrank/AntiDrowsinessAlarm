@@ -92,7 +92,7 @@ public class EventTest {
                     case "slowEyelidClosureMinDuration":
                         return "500";
                     case "eyeOpenProbabilityThreshold":
-                        return "0.5";
+                        return "50";
                     case "likelyDrowsyThreshold":
                         return "0.08";
                     case "timeWindow":

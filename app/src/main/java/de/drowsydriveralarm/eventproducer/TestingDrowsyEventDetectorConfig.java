@@ -40,7 +40,7 @@ public class TestingDrowsyEventDetectorConfig implements IDrowsyEventDetectorCon
     // TODO: constrain to 0 <= eyeOpenProbabilityThreshold <= 1
     @Override
     public float getEyeOpenProbabilityThreshold() {
-        return Float.valueOf(this.sharedPreferences.getString("eyeOpenProbabilityThreshold", "0.5"));
+        return this.sharedPreferences.getInt("eyeOpenProbabilityThreshold", 50) / 100.0f;
     }
 
     @Override
