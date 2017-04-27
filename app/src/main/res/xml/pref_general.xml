@@ -17,19 +17,22 @@
         android:summary="drowsyThreshold"
         android:title="drowsyThreshold" />
 
-    <EditTextPreference
-        android:defaultValue="500"
-        android:inputType="number"
+    <com.pavelsikun.seekbarpreference.SeekBarPreference
         android:key="slowEyelidClosureMinDuration"
+        android:title="slowEyelidClosureMinDuration"
         android:summary="slowEyelidClosureMinDuration"
-        android:title="slowEyelidClosureMinDuration" />
+        android:defaultValue="500"
+        sample:msbp_minValue="300"
+        sample:msbp_maxValue="500"
+        sample:msbp_interval="1"
+        sample:msbp_measurementUnit="milliseconds"
+        sample:msbp_dialogEnabled="true" />
 
     <com.pavelsikun.seekbarpreference.SeekBarPreference
         android:key="eyeOpenProbabilityThreshold"
         android:title="eyeOpenProbabilityThreshold"
         android:summary="eyeOpenProbabilityThreshold"
         android:defaultValue="50"
-
         sample:msbp_minValue="0"
         sample:msbp_maxValue="100"
         sample:msbp_interval="1"

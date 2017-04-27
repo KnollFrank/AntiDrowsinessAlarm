@@ -31,13 +31,11 @@ public class TestingDrowsyEventDetectorConfig implements IDrowsyEventDetectorCon
         return Double.valueOf(this.sharedPreferences.getString("drowsyThreshold", "0.15"));
     }
 
-    // TODO: make durationMillis configurable from 300 to 500 milliseconds
     @Override
     public Duration getSlowEyelidClosureMinDuration() {
-        return new Duration(Long.valueOf(this.sharedPreferences.getString("slowEyelidClosureMinDuration", "500")));
+        return new Duration(this.sharedPreferences.getInt("slowEyelidClosureMinDuration", 500));
     }
 
-    // TODO: constrain to 0 <= eyeOpenProbabilityThreshold <= 1
     @Override
     public float getEyeOpenProbabilityThreshold() {
         return this.sharedPreferences.getInt("eyeOpenProbabilityThreshold", 50) / 100.0f;

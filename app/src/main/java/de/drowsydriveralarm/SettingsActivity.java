@@ -176,12 +176,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             this.addPreferencesFromResource(R.xml.pref_general);
             this.setHasOptionsMenu(true);
 
+            final SeekBarPreference slowEyelidClosureMinDurationSeekBar = (SeekBarPreference) GeneralPreferenceFragment.this.findPreference("slowEyelidClosureMinDuration");
+            slowEyelidClosureMinDurationSeekBar.setMinValue(300);
+            slowEyelidClosureMinDurationSeekBar.setMaxValue(500);
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(this.findPreference("drowsyThreshold"));
-            bindPreferenceSummaryToValue(this.findPreference("slowEyelidClosureMinDuration"));
             bindPreferenceSummaryToValue(this.findPreference("likelyDrowsyThreshold"));
             bindPreferenceSummaryToValue(this.findPreference("timeWindow"));
 
@@ -191,11 +193,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 @Override
                 public boolean onPreferenceClick(final Preference preference) {
                     final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(preference.getContext());
-                    SeekBarPreference eyeOpenProbabilityThresholdSeekBar = (SeekBarPreference) GeneralPreferenceFragment.this.findPreference("eyeOpenProbabilityThreshold");
-                    eyeOpenProbabilityThresholdSeekBar.setCurrentValue(50);
+                    this.clearEyeOpenProbabilityThreshold();
+                    this.clearSlowEyelidClosureMinDuration();
                     this.clearPreferences(preferences, preference.getContext());
                     this.updatePreferenceSummaries(preferences);
                     return true;
+                }
+
+                private void clearEyeOpenProbabilityThreshold() {
+                    final SeekBarPreference eyeOpenProbabilityThresholdSeekBar = (SeekBarPreference) GeneralPreferenceFragment.this.findPreference("eyeOpenProbabilityThreshold");
+                    // FIXME: der Default-Wert 50 soll aus der xml-Datei pref_general.xml gelesen werden.
+                    eyeOpenProbabilityThresholdSeekBar.setCurrentValue(50);
+                }
+
+                private void clearSlowEyelidClosureMinDuration() {
+                    final SeekBarPreference slowEyelidClosureMinDurationSeekBar = (SeekBarPreference) GeneralPreferenceFragment.this.findPreference("slowEyelidClosureMinDuration");
+                    // FIXME: der Default-Wert 500 soll aus der xml-Datei pref_general.xml gelesen werden.
+                    slowEyelidClosureMinDurationSeekBar.setCurrentValue(500);
                 }
 
                 private void clearPreferences(final SharedPreferences preferences, final Context context) {
@@ -205,8 +219,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
                 private void updatePreferenceSummaries(final SharedPreferences preferences) {
                     this.updatePreferenceSummary(preferences, "drowsyThreshold");
-                    this.updatePreferenceSummary(preferences, "slowEyelidClosureMinDuration");
-                    this.updatePreferenceSummary(preferences, "eyeOpenProbabilityThreshold");
                     this.updatePreferenceSummary(preferences, "likelyDrowsyThreshold");
                     this.updatePreferenceSummary(preferences, "timeWindow");
                 }
