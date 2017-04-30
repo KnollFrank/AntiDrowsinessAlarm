@@ -42,6 +42,7 @@ class CameraSourceHandler {
                         .setRequestedPreviewSize(640, 480)
                         .setFacing(CameraSource.CAMERA_FACING_FRONT)
                         .setRequestedFps(30.0f)
+                        .setAutoFocusEnabled(true)
                         .build();
     }
 
