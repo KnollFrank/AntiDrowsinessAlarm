@@ -195,6 +195,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     return true;
                 }
 
+                // FIXME: die Default-Werte werden nach clearPreferences()-Aufruf zwar in der Summary korrekt dargestellt,
+                // bei einem erneuten Aufruf, z.B. von drowsyThreshold, werden jedoch die alten Werte dargestellt, anstelle der Default-Werte.
+                // Vielleicht über API-Aufrufe der UI-Elemente die Default-Werte setzen, die in res/values zu definieren sind und in pref_general als Default-Werte zu referenzieren sind.
                 private void clearPreferences(final SharedPreferences preferences, final Context context) {
                     preferences.edit().clear().commit();
                     PreferenceManager.setDefaultValues(context, R.xml.pref_general, true);
