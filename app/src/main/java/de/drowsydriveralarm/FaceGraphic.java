@@ -171,7 +171,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         final Optional<PointF> eyePos = this.getLandmarkPosition(face, eyeLandmark);
         if (eyePos.isPresent()) {
             final PointF eyePos2Draw = new PointF(this.translateX(eyePos.get().x), this.translateY(eyePos.get().y));
-            canvas.drawCircle(this.translateX(eyePos.get().x), eyePos2Draw.y, eyeRadius, this.eyeOutlinePaint);
+            canvas.drawCircle(eyePos2Draw.x, eyePos2Draw.y, eyeRadius, this.eyeOutlinePaint);
         }
     }
 
