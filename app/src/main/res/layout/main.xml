@@ -27,7 +27,8 @@
         android:id="@+id/linear2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_weight="1">
 
         <ImageView
             android:id="@+id/imageView"
@@ -45,7 +46,8 @@
     <de.drowsydriveralarm.camera.CameraSourcePreview
         android:id="@+id/preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
         <de.drowsydriveralarm.camera.GraphicOverlay
             android:id="@+id/faceOverlay"

@@ -30,7 +30,6 @@ import de.drowsydriveralarm.camera.GraphicOverlay;
 
 // FIXME: manchmal ist die Anwendung in Betrieb während eines Hupens, aber trotzdem kam kein AppActiveEvent, der grün anzeigen würde.
 // TODO: die Anwendung soll sich in den Hintegrund schalten können, und sich im Falle von erkannter Schläfrigkeit des Fahrers in den Vordergrund schalten können, bzw. lediglich einen Alarmton abgeben und ein rotes Signal über der gerade aktiven Anwendung einblenden.
-// TODO: die Ampeln in angemessener Größe darstellen, z.B. 1/3 der verfügbaren Bildschirmhöhe.
 // TODO: innerhalb der Active/Idle-Ampel ein Bauarbeitersymbol transparent darstellen und ein Label der Ampel voranstellen.
 // TODO: innerhalb der Drowsy/Likelydrowsy/Awake-Ampel ein waches Gesicht, schläfriges Gesicht und ein schlafendes Gesicht einblenden.
 public final class FaceTrackerActivity extends AppCompatActivity {
