@@ -34,6 +34,7 @@ import java.util.List;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
+// FIXME: wähle Settings aus (das Werkzeugsymbol). Klicke auf den Links-Pfeil neben Settings. Es sollte zur Anwendung zurückgesprungen werden, es geschieht jedoch gar nichts.
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
     /**
