@@ -108,8 +108,7 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         // Draws a circle at the position of the detected face, with the face's track id below.
         final float x = this.translateX(face.getPosition().x + face.getWidth() / 2);
         final float y = this.translateY(face.getPosition().y + face.getHeight() / 2);
-        canvas.drawCircle(x, y, FACE_POSITION_RADIUS, this.facePositionPaint);
-        canvas.drawText("id: " + this.faceId, x + ID_X_OFFSET, y + ID_Y_OFFSET, this.idPaint);
+        this.drawId(canvas, x, y);
         this.drawEyesIfDetected(canvas, face);
         this.drawEyesOpenProbabilitiesIfDetected(canvas, face);
 
@@ -121,6 +120,11 @@ class FaceGraphic extends GraphicOverlay.Graphic {
         final float right = x + xOffset;
         final float bottom = y + yOffset;
         canvas.drawRect(left, top, right, bottom, this.boxPaint);
+    }
+
+    private void drawId(final Canvas canvas, final float x, final float y) {
+        canvas.drawCircle(x, y, FACE_POSITION_RADIUS, this.facePositionPaint);
+        canvas.drawText("id: " + this.faceId, x + ID_X_OFFSET, y + ID_Y_OFFSET, this.idPaint);
     }
 
     private void drawEyesOpenProbabilitiesIfDetected(final Canvas canvas, final Face face) {
@@ -162,28 +166,23 @@ class FaceGraphic extends GraphicOverlay.Graphic {
     }
 
     private void drawEyesIfDetected(final Canvas canvas, final Face face) {
-        double eyeRadius = this.getEyeRadius(face);
-        this.drawEyeIfDetected(canvas, face, Landmark.LEFT_EYE, eyeRadius);
-        this.drawEyeIfDetected(canvas, face, Landmark.RIGHT_EYE, eyeRadius);
+        this.drawEyeIfDetected(canvas, face, Landmark.LEFT_EYE);
+        this.drawEyeIfDetected(canvas, face, Landmark.RIGHT_EYE);
     }
 
-    private double getEyeRadius(Face face) {
+    private double getEyeRadius(final Face face) {
         final Optional<PointF> eyePosLeft = this.getLandmarkPosition(face, Landmark.LEFT_EYE);
         final Optional<PointF> eyePosRight = this.getLandmarkPosition(face, Landmark.RIGHT_EYE);
-        double eyeRadius = 50;
-        if (eyePosLeft.isPresent() && eyePosRight.isPresent()) {
-            double distance = eyePosLeft.get().x - eyePosRight.get().x;
-            eyeRadius = distance / 4.0;
-        }
-
-        return eyeRadius;
+        return eyePosLeft.isPresent() && eyePosRight.isPresent()
+                ? (eyePosLeft.get().x - eyePosRight.get().x) / 4.0
+                : 50;
     }
 
-    private void drawEyeIfDetected(final Canvas canvas, final Face face, final int eyeLandmark, double eyeRadius) {
+    private void drawEyeIfDetected(final Canvas canvas, final Face face, final int eyeLandmark) {
         final Optional<PointF> eyePos = this.getLandmarkPosition(face, eyeLandmark);
         if (eyePos.isPresent()) {
             final PointF eyePos2Draw = new PointF(this.translateX(eyePos.get().x), this.translateY(eyePos.get().y));
-            canvas.drawCircle(eyePos2Draw.x, eyePos2Draw.y, this.scaleX((float) eyeRadius), this.eyeOutlinePaint);
+            canvas.drawCircle(eyePos2Draw.x, eyePos2Draw.y, this.scaleX((float) this.getEyeRadius(face)), this.eyeOutlinePaint);
         }
     }
 
