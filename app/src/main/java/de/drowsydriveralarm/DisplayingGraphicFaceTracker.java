@@ -38,7 +38,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
             @Override
             public void run() {
                 DisplayingGraphicFaceTracker.this.faceTrackerActivity.getEyesInfoView().setText("" + event);
-                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.red_light);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getDrowsinessView().setImageResource(R.drawable.red_light);
                 DisplayingGraphicFaceTracker.this.mediaPlayer.start();
             }
         });
@@ -50,7 +50,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
             @Override
             public void run() {
                 DisplayingGraphicFaceTracker.this.faceTrackerActivity.getEyesInfoView().setText("" + event);
-                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.yellow_light);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getDrowsinessView().setImageResource(R.drawable.yellow_light);
             }
         });
     }
@@ -61,7 +61,7 @@ class DisplayingGraphicFaceTracker extends Tracker<Face> {
             @Override
             public void run() {
                 DisplayingGraphicFaceTracker.this.faceTrackerActivity.getEyesInfoView().setText("" + event);
-                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getImageView().setImageResource(R.drawable.green_light);
+                DisplayingGraphicFaceTracker.this.faceTrackerActivity.getDrowsinessView().setImageResource(R.drawable.green_light);
             }
         });
     }

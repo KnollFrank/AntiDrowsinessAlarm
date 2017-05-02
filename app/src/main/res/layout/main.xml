@@ -30,17 +30,43 @@
         android:orientation="horizontal"
         android:layout_weight="1">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:orientation="horizontal"
+            android:layout_weight="1">
 
-        <ImageView
-            android:id="@+id/appActiveIdleView"
-            android:layout_width="0dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Schläfrigkeitsampel:" />
+
+            <ImageView
+                android:id="@+id/drowsinessView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Betriebszustand:" />
+
+            <ImageView
+                android:id="@+id/appActiveIdleView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right|center_vertical" />
+        </LinearLayout>
     </LinearLayout>
 
     <de.drowsydriveralarm.camera.CameraSourcePreview
@@ -53,7 +79,5 @@
             android:id="@+id/faceOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
     </de.drowsydriveralarm.camera.CameraSourcePreview>
-
 </LinearLayout>
