@@ -46,8 +46,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
     private CameraPermissionHandler cameraPermissionHandler;
 
     @Override
-    public void onCreate(final Bundle icicle) {
-        super.onCreate(icicle);
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         this.setContentView(R.layout.main);
         final Toolbar myToolbar = (Toolbar) this.findViewById(R.id.my_toolbar);
         this.setSupportActionBar(myToolbar);
