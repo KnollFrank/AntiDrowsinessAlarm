@@ -6,6 +6,6 @@ public class SystemClock implements Clock {
 
     @Override
     public Instant now() {
-        return new Instant();
+        return Instant.now();
     }
 }
