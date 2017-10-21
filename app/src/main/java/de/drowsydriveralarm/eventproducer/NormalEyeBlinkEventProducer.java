@@ -18,7 +18,7 @@ public class NormalEyeBlinkEventProducer extends DurationEventProducer {
     }
 
     @Override
-    protected boolean shallCreateEventFor(Duration duration) {
+    protected boolean shallCreateEventFor(final Duration duration) {
         return this.isNormalEyeBlink(duration);
     }
 

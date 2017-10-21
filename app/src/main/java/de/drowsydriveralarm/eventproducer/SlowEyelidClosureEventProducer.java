@@ -22,7 +22,7 @@ public class SlowEyelidClosureEventProducer extends DurationEventProducer {
     }
 
     @Override
-    protected boolean shallCreateEventFor(Duration duration) {
+    protected boolean shallCreateEventFor(final Duration duration) {
         return isSlowEyelidClosure(duration, this.slowEyelidClosureMinDuration);
     }
 
