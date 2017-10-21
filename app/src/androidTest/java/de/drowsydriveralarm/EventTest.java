@@ -244,10 +244,6 @@ public class EventTest {
         clock.setNow(new Instant(5000));
         this.detectorReceivesImage(R.drawable.eyes_opened, 5000);
 
-        clock.setNow(new Instant(5001));
-        // dummy image in order to give DrowsyEventProducer a chance to produce a DrowsyEvent
-        this.detectorReceivesImage(R.drawable.eyes_closed, 5001);
-
         // Then
         assertThat(this.eventListener.getEvents(), hasItem(isA(DrowsyEvent.class)));
     }
